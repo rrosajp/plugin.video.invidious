@@ -24,18 +24,14 @@ def Url(url):
 class Thumbnails(object):
 
     def __new__(cls, thumbnails):
-        if thumbnails:
-            return super(Thumbnails, cls).__new__(cls)
-        return None
+        return super(Thumbnails, cls).__new__(cls) if thumbnails else None
 
 
 # ------------------------------------------------------------------------------
 # Item
 
 def __date__(value):
-    if isinstance(value, int):
-        return datetime.fromtimestamp(value)
-    return value
+    return datetime.fromtimestamp(value) if isinstance(value, int) else value
 
 
 class ItemType(Type):

@@ -50,19 +50,17 @@ __descrambleFuncNamePatterns__ = (
 def findDescrambleFuncName(js):
     for pattern in __descrambleFuncNamePatterns__:
         try:
-            match = __find__(pattern, js)
-            if match:
+            if match := __find__(pattern, js):
                 if len(match.groups()) == 1:
                     return match.group(1)
-                idx = match.group(2)
-                if idx:
+                if idx := match.group(2):
                     idx = idx.strip("[]")
-                    array = search(
+                    if array := search(
                         r'var {nfunc}\s*=\s*(\[.+?\]);'.format(
-                            nfunc=escape(match.group(1))),
-                        js
-                    )
-                    if array:
+                            nfunc=escape(match.group(1))
+                        ),
+                        js,
+                    ):
                         array = array.group(1).strip("[]").split(",")
                         array = [x.strip() for x in array]
                         return array[int(idx)]
