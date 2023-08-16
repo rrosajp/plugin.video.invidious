@@ -52,15 +52,11 @@ class Video(Item):
 
     @property
     def label(self):
-        if self.liveNow:
-            return self.__live__.format(self)
-        return self.title
+        return self.__live__.format(self) if self.liveNow else self.title
 
     @property
     def infos(self):
-        if self.liveNow:
-            return dict(self.__infos__, playcount=0)
-        return self.__infos__
+        return dict(self.__infos__, playcount=0) if self.liveNow else self.__infos__
 
     @property
     def subplot(self):

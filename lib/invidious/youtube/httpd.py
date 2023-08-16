@@ -189,25 +189,26 @@ class YouTubeServer(Server):
     # http ---------------------------------------------------------------------
 
     def __manifest__(self, streamingData, videoDetails):
-        if (streams := streamingData.get("adaptiveFormats", [])):
-            solver = self.solver(videoDetails["jsUrl"])
-            data = {}
-            for stream in streams:
-                stream["enabled"] = True
-                mimeType, codecs = self.__regex__.findall(stream["mimeType"])
-                for codec, enabled in self.__codecs__.items():
-                    if codecs.startswith(codec):
-                        stream["enabled"] = enabled
-                        break
-                if stream["enabled"]:
-                    stream["codecs"] = codecs
-                    stream["url"] = solver.extractUrl(stream)
-                    data.setdefault(mimeType, []).append(stream)
-            if data:
-                return (
-                    MPD(videoDetails["lengthSeconds"], data).toString(),
-                    "video/vnd.mpeg.dash.mpd"
-                )
+        if not (streams := streamingData.get("adaptiveFormats", [])):
+            return
+        solver = self.solver(videoDetails["jsUrl"])
+        data = {}
+        for stream in streams:
+            stream["enabled"] = True
+            mimeType, codecs = self.__regex__.findall(stream["mimeType"])
+            for codec, enabled in self.__codecs__.items():
+                if codecs.startswith(codec):
+                    stream["enabled"] = enabled
+                    break
+            if stream["enabled"]:
+                stream["codecs"] = codecs
+                stream["url"] = solver.extractUrl(stream)
+                data.setdefault(mimeType, []).append(stream)
+        if data:
+            return (
+                MPD(videoDetails["lengthSeconds"], data).toString(),
+                "video/vnd.mpeg.dash.mpd"
+            )
 
     @http()
     def manifest(self, **kwargs):

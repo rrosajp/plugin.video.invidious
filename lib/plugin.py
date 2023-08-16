@@ -94,7 +94,7 @@ class InvidiousPlugin(Plugin):
 
     @action()
     def channel(self, **kwargs):
-        if (not "continuation" in kwargs) and (not self.addPlaylists(**kwargs)):
+        if "continuation" not in kwargs and not self.addPlaylists(**kwargs):
             return False
         return self.addDirectory(client.channel(**kwargs), "video", **kwargs)
 
@@ -108,9 +108,7 @@ class InvidiousPlugin(Plugin):
 
     @action()
     def home(self, **kwargs):
-        if self.addDirectory(Folders(home)):
-            return self.addSettings()
-        return False
+        return self.addSettings() if self.addDirectory(Folders(home)) else False
 
     # feed ---------------------------------------------------------------------
 
@@ -136,7 +134,7 @@ class InvidiousPlugin(Plugin):
 
     @action(category=30009)
     def trending(self, **kwargs):
-        if not "type" in kwargs:
+        if "type" not in kwargs:
             if not self.addItems(self.getSubfolders("trending")):
                 return False
         return self.addDirectory(client.trending(**kwargs), "video")
@@ -178,9 +176,7 @@ class InvidiousPlugin(Plugin):
             query, kwargs["sort_by"] = newSearch(
                 kwargs["type"], sort_by=sort_by, history=history
             )
-        if query:
-            return self.__search__(query, **kwargs)
-        return False
+        return self.__search__(query, **kwargs) if query else False
 
     def __history__(self, **kwargs):
         search_cache.clear()
