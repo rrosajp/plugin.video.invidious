@@ -3,97 +3,12 @@
 
 from collections import OrderedDict
 
-
-languages = OrderedDict(
-    (
-        ("af", "Afrikaans"),
-        ("az", "Azərbaycan"),
-        ("id", "Bahasa Indonesia"),
-        ("ms", "Bahasa Malaysia"),
-        ("bs", "Bosanski"),
-        ("ca", "Català"),
-        ("cs", "Čeština"),
-        ("da", "Dansk"),
-        ("de", "Deutsch"),
-        ("et", "Eesti"),
-        ("en-IN", "English (India)"),
-        ("en-GB", "English (UK)"),
-        ("en", "English (US)"),
-        ("es", "Español (España)"),
-        ("es-419", "Español (Latinoamérica)"),
-        ("es-US", "Español (US)"),
-        ("eu", "Euskara"),
-        ("fil", "Filipino"),
-        ("fr", "Français"),
-        ("fr-CA", "Français (Canada)"),
-        ("gl", "Galego"),
-        ("hr", "Hrvatski"),
-        ("zu", "IsiZulu"),
-        ("is", "Íslenska"),
-        ("it", "Italiano"),
-        ("sw", "Kiswahili"),
-        ("lv", "Latviešu valoda"),
-        ("lt", "Lietuvių"),
-        ("hu", "Magyar"),
-        ("nl", "Nederlands"),
-        ("no", "Norsk"),
-        ("uz", "O‘zbek"),
-        ("pl", "Polski"),
-        ("pt-PT", "Português"),
-        ("pt", "Português (Brasil)"),
-        ("ro", "Română"),
-        ("sq", "Shqip"),
-        ("sk", "Slovenčina"),
-        ("sl", "Slovenščina"),
-        ("sr-Latn", "Srpski"),
-        ("fi", "Suomi"),
-        ("sv", "Svenska"),
-        ("vi", "Tiếng Việt"),
-        ("tr", "Türkçe"),
-        ("be", "Беларуская"),
-        ("bg", "Български"),
-        ("ky", "Кыргызча"),
-        ("kk", "Қазақ Тілі"),
-        ("mk", "Македонски"),
-        ("mn", "Монгол"),
-        ("ru", "Русский"),
-        ("sr", "Српски"),
-        ("uk", "Українська"),
-        ("el", "Ελληνικά"),
-        ("hy", "Հայերեն"),
-        ("iw", "עברית"),
-        ("ur", "اردو"),
-        ("ar", "العربية"),
-        ("fa", "فارسی"),
-        ("ne", "नेपाली"),
-        ("mr", "मराठी"),
-        ("hi", "हिन्दी"),
-        ("as", "অসমীয়া"),
-        ("bn", "বাংলা"),
-        ("pa", "ਪੰਜਾਬੀ"),
-        ("gu", "ગુજરાતી"),
-        ("or", "ଓଡ଼ିଆ"),
-        ("ta", "தமிழ்"),
-        ("te", "తెలుగు"),
-        ("kn", "ಕನ್ನಡ"),
-        ("ml", "മലയാളം"),
-        ("si", "සිංහල"),
-        ("th", "ภาษาไทย"),
-        ("lo", "ລາວ"),
-        ("my", "ဗမာ"),
-        ("ka", "ქართული"),
-        ("am", "አማርኛ"),
-        ("km", "ខ្មែរ"),
-        ("zh-CN", "中文 (简体)"),
-        ("zh-TW", "中文 (繁體)"),
-        ("zh-HK", "中文 (香港)"),
-        ("ja", "日本語"),
-        ("ko", "한국어")
-    )
-)
+from iapc.tools import getSetting, selectDialog, setSetting
 
 
-locations = OrderedDict(
+# selectRegion -----------------------------------------------------------------
+
+regions = OrderedDict(
     (
         ("DZ", "Algeria, الجزائر"),
         ("AR", "Argentina"),
@@ -205,3 +120,19 @@ locations = OrderedDict(
     )
 )
 
+def selectRegion():
+    region = getSetting("regional.region", str)
+    keys = list(regions.keys())
+    values = list(regions.values())
+    preselect = keys.index(region) if region in regions else -1
+    if (
+        (
+            index := selectDialog(
+                [f"{k} - {v}" for k, v in regions.items()],
+                heading=40123,
+                preselect=preselect
+            )
+        ) >= 0
+    ):
+        setSetting("regional.region", keys[index], str)
+        setSetting("regional.region.text", values[index], str)
