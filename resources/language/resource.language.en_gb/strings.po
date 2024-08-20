@@ -27,6 +27,26 @@ msgctxt "#30103"
 msgid "Settings"
 msgstr ""
 
+msgctxt "#30201"
+msgid "Videos"
+msgstr ""
+
+msgctxt "#30202"
+msgid "Channels"
+msgstr ""
+
+msgctxt "#30203"
+msgid "Playlists"
+msgstr ""
+
+msgctxt "#30801"
+msgid "New search"
+msgstr ""
+
+msgctxt "#30802"
+msgid "More..."
+msgstr ""
+
 msgctxt "#30901"
 msgid "VP9"
 msgstr ""

@@ -6,9 +6,10 @@ from urllib.parse import urlencode
 
 from inputstreamhelper import Helper
 
-from iapc.tools import action, parseQuery, Plugin
+from iapc.tools import action, getSetting, openSettings, parseQuery, Plugin
 
 from invidious.client import InvidiousClient
+from invidious.utils import moreItem, newSearchItem, settingsItem
 
 
 # ------------------------------------------------------------------------------
@@ -25,6 +26,34 @@ class InvidiousPlugin(Plugin):
             return super(InvidiousPlugin, self).dispatch(**kwargs)
         self.endDirectory(False)
         return False
+
+    # helpers ------------------------------------------------------------------
+
+    #def addDirectory(self, items, *args, **kwargs):
+    #    if super(MyPlugin, self).addDirectory(items, *args):
+    #        if (more := getattr(items, "more", None)):
+    #            return self.addMore(more, **kwargs)
+    #        return True
+    #    return False
+
+    #def addMore(self, more, **kwargs):
+    #    if more is True:
+    #        kwargs["page"] = int(kwargs.get("page", 1)) + 1
+    #    else:
+    #        kwargs["continuation"] = more
+    #    return self.addItem(
+    #        moreItem(self.url, action=self.action, **kwargs)
+    #    )
+
+    def addNewSearch(self, **kwargs):
+        return self.addItem(
+            newSearchItem(self.url, action="search", new=True, **kwargs)
+        )
+
+    def addSettings(self):
+        if getSetting("home.settings", bool):
+            return self.addItem(settingsItem(self.url, action="settings"))
+        return True
 
     def playItem(
         self, item, manifestType, mimeType=None, headers=None, params=None
@@ -55,9 +84,17 @@ class InvidiousPlugin(Plugin):
     @action()
     def home(self, **kwargs):
         self.logger.info(f"home(kwargs={kwargs})")
+        return self.addSettings()
         #if self.addDirectory(self.__client__.home()):
         #    return self.addSettings()
         #return False
+        return True
+
+    # settings -----------------------------------------------------------------
+
+    @action(directory=False)
+    def settings(self, **kwargs):
+        openSettings()
         return True
 
 

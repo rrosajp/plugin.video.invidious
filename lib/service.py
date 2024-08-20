@@ -44,6 +44,10 @@ class InvidiousService(Service):
     def instance(self):
         return self.__session__.__instance__
 
+    @public
+    def home(self):
+        return []
+
 # __main__ ---------------------------------------------------------------------
 
 if __name__ == "__main__":
