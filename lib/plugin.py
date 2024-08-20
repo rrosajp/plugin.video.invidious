@@ -6,13 +6,29 @@ from urllib.parse import urlencode
 
 from inputstreamhelper import Helper
 
+from iapc import Client
 from iapc.tools import action, parseQuery, Plugin
+
+from scripts import selectPublicInstance
 
 
 # ------------------------------------------------------------------------------
 # InvidiousPlugin
 
 class InvidiousPlugin(Plugin):
+
+    def __init__(self, *args, **kwargs):
+        super(InvidiousPlugin, self).__init__(*args, **kwargs)
+        self.__client__ = Client()
+
+    def dispatch(self, **kwargs):
+        if (
+            self.__client__.instance() or
+            (selectPublicInstance() and self.__client__.instance())
+        ):
+            return super(InvidiousPlugin, self).dispatch(**kwargs)
+        self.endDirectory(False)
+        return False
 
     def playItem(
         self, item, manifestType, mimeType=None, headers=None, params=None
@@ -33,14 +49,16 @@ class InvidiousPlugin(Plugin):
 
     # play ---------------------------------------------------------------------
 
-    @action()
+    @action(directory=False)
     def play(self, **kwargs):
-        return False
+        self.logger.info(f"play(kwargs={kwargs})")
+        return True
 
     # home ---------------------------------------------------------------------
 
     @action()
     def home(self, **kwargs):
+        self.logger.info(f"home(kwargs={kwargs})")
         return True
 
 

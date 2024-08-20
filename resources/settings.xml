@@ -73,6 +73,37 @@
 
         </category>
 
+        <!-- Interface -->
+        <category id="interface" label="40200">
+
+            <group id="home" label="40210">
+
+                <setting id="feed" type="boolean" label="30101">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                </setting>
+
+                <setting id="settings" type="boolean" label="30103">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                </setting>
+
+            </group>
+
+            <group id="context" label="40220">
+
+                <setting id="withyoutube" type="boolean" label="40221">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle" />
+                </setting>
+
+            </group>
+
+        </category>
+
     </section>
 
 </settings>

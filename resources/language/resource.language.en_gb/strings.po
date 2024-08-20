@@ -15,7 +15,15 @@ msgctxt "#30000"
 msgid "Invidious"
 msgstr ""
 
-msgctxt "#40000"
+msgctxt "#30101"
+msgid "Feed"
+msgstr ""
+
+msgctxt "#30102"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30103"
 msgid "Settings"
 msgstr ""
 
@@ -65,4 +73,20 @@ msgstr ""
 
 msgctxt "#40124"
 msgid "Region"
+msgstr ""
+
+msgctxt "#40200"
+msgid "Interface"
+msgstr ""
+
+msgctxt "#40210"
+msgid "Home"
+msgstr ""
+
+msgctxt "#40220"
+msgid "Context menus"
+msgstr ""
+
+msgctxt "#40221"
+msgid "Play with YouTube add-on"
 msgstr ""

@@ -54,15 +54,18 @@ class InvidiousSession(BaseSession):
         )
 
     def __setup__(self):
-        self.__url__ = buildUrl(
-            getSetting("instance.uri", str), getSetting("instance.path", str)
-        )
-        self.logger.info(f"{localizedString(40110)}: {self.__url__}")
+        if (uri := getSetting("instance.uri", str)):
+            self.__instance__ = buildUrl(uri, getSetting("instance.path", str))
+        else:
+            self.__instance__ = None
+        self.logger.info(f"{localizedString(40110)}: {self.__instance__}")
         super(InvidiousSession, self).__setup__()
         self.__region__ = getSetting("regional.region", str)
         self.logger.info(
             f"{localizedString(40124)}: {getSetting('regional.region.text', str)}"
         )
+
+    # --------------------------------------------------------------------------
 
     def request(self, *args, **kwargs):
         return super(InvidiousSession, self).request(*args, **kwargs).json()
@@ -71,12 +74,13 @@ class InvidiousSession(BaseSession):
         return super(InvidiousSession, self).get(*args, params=kwargs)
 
     def get(self, path, regional=True, **kwargs):
-        self.logger.info(f"url: {buildUrl(self.__url__, url)}")
-        #if regional:
-        #    kwargs["region"] = self.__region__
-        #else:
-        #    kwargs.pop("region", None)
-        #return self.__get__(buildUrl(self.__url__, url), **kwargs)
+        if self.__instance__:
+            self.logger.info(f"url: {buildUrl(self.__instance__, url)}")
+            #if regional:
+            #    kwargs["region"] = self.__region__
+            #else:
+            #    kwargs.pop("region", None)
+            #return self.__get__(buildUrl(self.__instance__, url), **kwargs)
 
     # --------------------------------------------------------------------------
 

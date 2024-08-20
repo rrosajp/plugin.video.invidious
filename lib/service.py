@@ -40,6 +40,10 @@ class InvidiousService(Service):
             if (instance["api"] and (instance["type"] in ("http", "https")))
         }
 
+    @public
+    def instance(self):
+        return self.__session__.__instance__
+
 # __main__ ---------------------------------------------------------------------
 
 if __name__ == "__main__":

@@ -29,6 +29,8 @@ def selectPublicInstance():
         index = selectDialog(values, heading=40113, preselect=preselect)
         if index >= 0:
             setSetting("instance.uri", keys[index], str)
+            return True
+    return False
 
 
 # __main__ ---------------------------------------------------------------------
