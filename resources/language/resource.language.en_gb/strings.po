@@ -27,6 +27,14 @@ msgctxt "#30103"
 msgid "Settings"
 msgstr ""
 
+msgctxt "#30901"
+msgid "VP9"
+msgstr ""
+
+msgctxt "#30902"
+msgid "AV1"
+msgstr ""
+
 msgctxt "#40100"
 msgid "General"
 msgstr ""
@@ -89,4 +97,28 @@ msgstr ""
 
 msgctxt "#40221"
 msgid "Play with YouTube add-on"
+msgstr ""
+
+msgctxt "#40300"
+msgid "Video"
+msgstr ""
+
+msgctxt "#40310"
+msgid "Codecs"
+msgstr ""
+
+msgctxt "#40311"
+msgid "Enable VP9"
+msgstr ""
+
+msgctxt "#40312"
+msgid "Enable AV1"
+msgstr ""
+
+msgctxt "#40320"
+msgid "Framerate"
+msgstr ""
+
+msgctxt "#40321"
+msgid "Limit framerate to 30 fps"
 msgstr ""

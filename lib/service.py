@@ -33,9 +33,9 @@ class InvidiousService(Service):
     # public api ---------------------------------------------------------------
 
     @public
-    def selectPublicInstance(self, **kwargs):
+    def instances(self, **kwargs):
         return {
-            instance["uri"]: f"[{instance['region']}] - {name}"
+            instance["uri"]: f"[{instance['region']}]\t{name}"
             for name, instance in self.__session__.instances(**kwargs)
             if (instance["api"] and (instance["type"] in ("http", "https")))
         }

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+from concurrent.futures import ThreadPoolExecutor
+
 from requests import Session, Timeout
 
 from iapc.tools import buildUrl, getSetting, localizedString, notify, ICONERROR
@@ -52,6 +54,7 @@ class InvidiousSession(BaseSession):
         super(InvidiousSession, self).__init__(
             logger, name, headers=self.__headers__
         )
+        self.__pool__ = ThreadPoolExecutor()
 
     def __setup__(self):
         if (uri := getSetting("instance.uri", str)):

@@ -6,10 +6,9 @@ from urllib.parse import urlencode
 
 from inputstreamhelper import Helper
 
-from iapc import Client
 from iapc.tools import action, parseQuery, Plugin
 
-from scripts import selectPublicInstance
+from invidious.client import InvidiousClient
 
 
 # ------------------------------------------------------------------------------
@@ -19,13 +18,10 @@ class InvidiousPlugin(Plugin):
 
     def __init__(self, *args, **kwargs):
         super(InvidiousPlugin, self).__init__(*args, **kwargs)
-        self.__client__ = Client()
+        self.__client__ = InvidiousClient()
 
     def dispatch(self, **kwargs):
-        if (
-            self.__client__.instance() or
-            (selectPublicInstance() and self.__client__.instance())
-        ):
+        if self.__client__.instance():
             return super(InvidiousPlugin, self).dispatch(**kwargs)
         self.endDirectory(False)
         return False
@@ -59,6 +55,9 @@ class InvidiousPlugin(Plugin):
     @action()
     def home(self, **kwargs):
         self.logger.info(f"home(kwargs={kwargs})")
+        #if self.addDirectory(self.__client__.home()):
+        #    return self.addSettings()
+        #return False
         return True
 
 

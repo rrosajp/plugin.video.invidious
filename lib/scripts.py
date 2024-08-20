@@ -4,9 +4,9 @@
 from sys import argv
 from urllib.parse import unquote
 
-from iapc import Client
-from iapc.tools import getSetting, playMedia, selectDialog, setSetting
+from iapc.tools import playMedia
 
+from invidious.client import InvidiousClient
 from invidious.regional import selectRegion
 
 
@@ -18,27 +18,18 @@ def playWithYouTube(videoId):
     playMedia(__withYoutube_url__.format(videoId))
 
 
-# selectPublicInstance ---------------------------------------------------------
+# selectInstance ---------------------------------------------------------------
 
-def selectPublicInstance():
-    if (instances := Client().selectPublicInstance(sort_by="location,health")):
-        uri = getSetting("instance.uri", str)
-        keys = list(instances.keys())
-        values = list(instances.values())
-        preselect = keys.index(uri) if uri in keys else -1
-        index = selectDialog(values, heading=40113, preselect=preselect)
-        if index >= 0:
-            setSetting("instance.uri", keys[index], str)
-            return True
-    return False
+def selectInstance():
+    return InvidiousClient().selectInstance()
 
 
 # __main__ ---------------------------------------------------------------------
 
 __scripts__ = {
     "playWithYouTube": playWithYouTube,
-    "selectPublicInstance": selectPublicInstance,
-    "selectRegion": selectRegion
+    "selectRegion": selectRegion,
+    "selectInstance": selectInstance
 }
 
 def dispatch(name, *args):
