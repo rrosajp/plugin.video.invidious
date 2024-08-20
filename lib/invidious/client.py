@@ -4,6 +4,10 @@
 from iapc import Client
 from iapc.tools import getSetting, selectDialog, setSetting, Logger
 
+from invidious.items import (
+    Folder, Folders
+)
+
 
 # ------------------------------------------------------------------------------
 # InvidiousClient
@@ -13,6 +17,8 @@ class InvidiousClient(object):
     def __init__(self):
         self.logger = Logger(component="client")
         self.__client__ = Client()
+        self.__subFolders__ = self.__client__.subFolders()
+        self.__home__ = self.__client__.home()
 
     # instance -----------------------------------------------------------------
 
@@ -37,4 +43,24 @@ class InvidiousClient(object):
     # home ---------------------------------------------------------------------
 
     def home(self):
-        return []
+        return Folders(
+            [
+                folder for folder in self.__home__
+                if (
+                    getSetting(f"home.{folder['type']}", bool)
+                    if folder.get("optional", False)
+                    else True
+                )
+            ],
+            category="Invidious"
+        )
+
+    # subFolders ---------------------------------------------------------------
+
+    def subFolders(self, type, **kwargs):
+        return Folders(self.__subFolders__[type], **kwargs)
+
+    # pushQuery ----------------------------------------------------------------
+
+    def pushQuery(self, query):
+        return self.__client__.pushQuery(query)

@@ -83,12 +83,9 @@ class InvidiousPlugin(Plugin):
 
     @action()
     def home(self, **kwargs):
-        self.logger.info(f"home(kwargs={kwargs})")
-        return self.addSettings()
-        #if self.addDirectory(self.__client__.home()):
-        #    return self.addSettings()
-        #return False
-        return True
+        if self.addDirectory(self.__client__.home()):
+            return self.addSettings()
+        return False
 
     # settings -----------------------------------------------------------------
 

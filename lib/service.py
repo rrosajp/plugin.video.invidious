@@ -2,8 +2,9 @@
 
 
 from iapc import public, Service
-from iapc.tools import containerRefresh, getSetting, localizedString, makeProfile
+from iapc.tools import containerRefresh, getSetting, makeProfile
 
+from invidious.folders import home, subFolders
 from invidious.session import InvidiousSession
 
 
@@ -14,8 +15,11 @@ class InvidiousService(Service):
 
     def __init__(self, *args, **kwargs):
         super(InvidiousService, self).__init__(*args, **kwargs)
-        self.__session__ = InvidiousSession(self.logger, "service.session")
         makeProfile()
+        self.__session__ = InvidiousSession(self.logger, "service.session")
+        self.__home__ = home
+        self.__subFolders__ = subFolders
+        self.__query__ = {}
 
     def __setup__(self):
         self.__session__.__setup__()
@@ -44,9 +48,19 @@ class InvidiousService(Service):
     def instance(self):
         return self.__session__.__instance__
 
+    # --------------------------------------------------------------------------
+
     @public
     def home(self):
-        return []
+        return self.__home__
+
+    @public
+    def subFolders(self):
+        return self.__subFolders__
+
+    @public
+    def pushQuery(self, query):
+        self.__query__ = query
 
 # __main__ ---------------------------------------------------------------------
 
