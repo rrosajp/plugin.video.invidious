@@ -6,7 +6,7 @@ from urllib.parse import unquote
 
 from iapc.tools import playMedia
 
-from invidious.client import InvidiousClient
+from invidious.client import IVClient
 from invidious.regional import selectRegion
 
 
@@ -21,7 +21,7 @@ def playWithYouTube(videoId):
 # selectInstance ---------------------------------------------------------------
 
 def selectInstance():
-    return InvidiousClient().selectInstance()
+    return IVClient().selectInstance()
 
 
 # __main__ ---------------------------------------------------------------------

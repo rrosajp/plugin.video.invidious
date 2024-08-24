@@ -128,7 +128,7 @@ def selectRegion():
     if (
         (
             index := selectDialog(
-                [f"{k} - {v}" for k, v in regions.items()],
+                [f"({k})\t{v}" for k, v in regions.items()],
                 heading=40123,
                 preselect=preselect
             )

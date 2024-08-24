@@ -43,15 +43,15 @@ class BaseSession(Session):
 
 
 # ------------------------------------------------------------------------------
-# InvidiousSession
+# IVSession
 
-class InvidiousSession(BaseSession):
+class IVSession(BaseSession):
 
     __headers__ = {
     }
 
     def __init__(self, logger, name):
-        super(InvidiousSession, self).__init__(
+        super(IVSession, self).__init__(
             logger, name, headers=self.__headers__
         )
         self.__pool__ = ThreadPoolExecutor()
@@ -62,7 +62,7 @@ class InvidiousSession(BaseSession):
         else:
             self.__instance__ = None
         self.logger.info(f"{localizedString(40110)}: {self.__instance__}")
-        super(InvidiousSession, self).__setup__()
+        super(IVSession, self).__setup__()
         self.__region__ = getSetting("regional.region", str)
         self.logger.info(
             f"{localizedString(40124)}: {getSetting('regional.region.text', str)}"
@@ -71,19 +71,20 @@ class InvidiousSession(BaseSession):
     # --------------------------------------------------------------------------
 
     def request(self, *args, **kwargs):
-        return super(InvidiousSession, self).request(*args, **kwargs).json()
+        return super(IVSession, self).request(*args, **kwargs).json()
 
     def __get__(self, *args, **kwargs):
-        return super(InvidiousSession, self).get(*args, params=kwargs)
+        return super(IVSession, self).get(*args, params=kwargs)
 
     def get(self, path, regional=True, **kwargs):
         if self.__instance__:
-            self.logger.info(f"url: {buildUrl(self.__instance__, url)}")
-            #if regional:
-            #    kwargs["region"] = self.__region__
-            #else:
-            #    kwargs.pop("region", None)
-            #return self.__get__(buildUrl(self.__instance__, url), **kwargs)
+            self.logger.info(f"get(url={buildUrl(self.__instance__, path)})")
+            self.logger.info(f"get(kwargs={kwargs})")
+            if regional:
+                kwargs["region"] = self.__region__
+            else:
+                kwargs.pop("region", None)
+            return self.__get__(buildUrl(self.__instance__, path), **kwargs)
 
     # --------------------------------------------------------------------------
 

@@ -26,11 +26,6 @@ def settingsItem(url, **kwargs):
     )
 
 
-# newSearch item
-def newSearchItem(url, **kwargs):
-    return __makeItem__(30801, url, "DefaultAddSource.png", **kwargs)
-
-
 # more item
 __more_art__ = getMedia("more")
 

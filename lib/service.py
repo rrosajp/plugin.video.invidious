@@ -2,27 +2,31 @@
 
 
 from iapc import public, Service
-from iapc.tools import containerRefresh, getSetting, makeProfile
+from iapc.tools import (
+    containerRefresh, getSetting, makeProfile, notify, ICONERROR
+)
 
-from invidious.folders import home, subFolders
-from invidious.session import InvidiousSession
+from invidious.extract import extractItems, Video
+from invidious.folders import home
+from invidious.search import IVSearch
+from invidious.session import IVSession
 
 
 # ------------------------------------------------------------------------------
-# InvidiousService
+# IVService
 
-class InvidiousService(Service):
+class IVService(Service):
 
     def __init__(self, *args, **kwargs):
-        super(InvidiousService, self).__init__(*args, **kwargs)
+        super(IVService, self).__init__(*args, **kwargs)
         makeProfile()
-        self.__session__ = InvidiousSession(self.logger, "service.session")
+        self.__session__ = IVSession(self.logger, "service.session")
+        self.__search__ = IVSearch(self.logger, "service.search")
         self.__home__ = home
-        self.__subFolders__ = subFolders
-        self.__query__ = {}
 
     def __setup__(self):
         self.__session__.__setup__()
+        self.__search__.__setup__()
 
     def start(self, **kwargs):
         self.logger.info("starting...")
@@ -34,12 +38,25 @@ class InvidiousService(Service):
         self.__setup__()
         containerRefresh()
 
-    # public api ---------------------------------------------------------------
+    # --------------------------------------------------------------------------
+
+    def __raise__(self, error, throw=True):
+        if not isinstance(error, Exception):
+            error = Exception(error)
+        notify(f"error: {error}", icon=ICONERROR)
+        if throw:
+            raise error
+
+    # --------------------------------------------------------------------------
+    # public api
+    # --------------------------------------------------------------------------
+
+    # instance -----------------------------------------------------------------
 
     @public
     def instances(self, **kwargs):
         return {
-            instance["uri"]: f"[{instance['region']}]\t{name}"
+            instance["uri"]: f"({instance['region']})\t{name}"
             for name, instance in self.__session__.instances(**kwargs)
             if (instance["api"] and (instance["type"] in ("http", "https")))
         }
@@ -48,21 +65,34 @@ class InvidiousService(Service):
     def instance(self):
         return self.__session__.__instance__
 
-    # --------------------------------------------------------------------------
+    # play ---------------------------------------------------------------------
+
+    @public
+    def play(self, **kwargs):
+        self.logger.info(f"play(kwargs={kwargs})")
+        if (videoId := kwargs.pop("videoId")):
+            if (video := Video(self.__session__.query("video", videoId))):
+                return (video, "mpd", {"mimeType": "application/dash+xml"})
+        self.__raise__("Missing videoId", throw=False)
+        return (None, "", {})
+
+    # home ---------------------------------------------------------------------
 
     @public
     def home(self):
         return self.__home__
 
-    @public
-    def subFolders(self):
-        return self.__subFolders__
+    # search -------------------------------------------------------------------
 
     @public
-    def pushQuery(self, query):
-        self.__query__ = query
+    def search(self, **kwargs):
+        self.logger.info(f"search(kwargs={kwargs})")
+        if (kwargs := self.__search__.search(**kwargs)):
+            return extractItems(self.__session__.query("search", **kwargs))
+
+
 
 # __main__ ---------------------------------------------------------------------
 
 if __name__ == "__main__":
-    InvidiousService().start()
+    IVService().start()

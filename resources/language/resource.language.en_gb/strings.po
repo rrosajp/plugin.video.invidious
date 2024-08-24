@@ -9,8 +9,6 @@ msgstr ""
 "Language: en_GB\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-# folders
-
 msgctxt "#30000"
 msgid "Invidious"
 msgstr ""
@@ -37,6 +35,42 @@ msgstr ""
 
 msgctxt "#30203"
 msgid "Playlists"
+msgstr ""
+
+msgctxt "#30210"
+msgid "All"
+msgstr ""
+
+msgctxt "#30211"
+msgid "Video"
+msgstr ""
+
+msgctxt "#30212"
+msgid "Channel"
+msgstr ""
+
+msgctxt "#30213"
+msgid "Playlist"
+msgstr ""
+
+msgctxt "#30214"
+msgid "Movie"
+msgstr ""
+
+msgctxt "#30215"
+msgid "Show"
+msgstr ""
+
+msgctxt "#30301"
+msgid "published {}"
+msgstr ""
+
+msgctxt "#30302"
+msgid "{} views"
+msgstr ""
+
+msgctxt "#30303"
+msgid "{} likes"
 msgstr ""
 
 msgctxt "#30801"
@@ -141,4 +175,48 @@ msgstr ""
 
 msgctxt "#40321"
 msgid "Limit framerate to 30 fps"
+msgstr ""
+
+msgctxt "#40410"
+msgid "History"
+msgstr ""
+
+msgctxt "#40411"
+msgid "Search history"
+msgstr ""
+
+msgctxt "#40412"
+msgid "Clear all search history"
+msgstr ""
+
+msgctxt "#40420"
+msgid "Queries"
+msgstr ""
+
+msgctxt "#40421"
+msgid "Sort order"
+msgstr ""
+
+msgctxt "#41420"
+msgid "Relevance"
+msgstr ""
+
+msgctxt "#41421"
+msgid "Upload date"
+msgstr ""
+
+msgctxt "#41422"
+msgid "View count"
+msgstr ""
+
+msgctxt "#41423"
+msgid "Rating"
+msgstr ""
+
+msgctxt "#41429"
+msgid "Always ask"
+msgstr ""
+
+msgctxt "#40431"
+msgid "Query type"
 msgstr ""

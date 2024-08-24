@@ -4,20 +4,17 @@
 from iapc import Client
 from iapc.tools import getSetting, selectDialog, setSetting, Logger
 
-from invidious.items import (
-    Folder, Folders
-)
+from invidious.items import buildItems, Folders, Video
 
 
 # ------------------------------------------------------------------------------
-# InvidiousClient
+# IVClient
 
-class InvidiousClient(object):
+class IVClient(object):
 
     def __init__(self):
         self.logger = Logger(component="client")
         self.__client__ = Client()
-        self.__subFolders__ = self.__client__.subFolders()
         self.__home__ = self.__client__.home()
 
     # instance -----------------------------------------------------------------
@@ -40,6 +37,15 @@ class InvidiousClient(object):
             (self.selectInstance() and self.__client__.instance())
         )
 
+    # play ---------------------------------------------------------------------
+
+    def play(self, **kwargs):
+        self.logger.info(f"play(kwargs={kwargs})")
+        video, *args = self.__client__.play(**kwargs)
+        if video:
+            return (Video(video).makeItem(video["url"]), *args)
+        return (None, *args)
+
     # home ---------------------------------------------------------------------
 
     def home(self):
@@ -55,12 +61,14 @@ class InvidiousClient(object):
             category="Invidious"
         )
 
-    # subFolders ---------------------------------------------------------------
+    # search -------------------------------------------------------------------
 
-    def subFolders(self, type, **kwargs):
-        return Folders(self.__subFolders__[type], **kwargs)
+    def search(self, **kwargs):
+        self.logger.info(f"search(kwargs={kwargs})")
+        if ((items := self.__client__.search(**kwargs)) is not None):
+            return buildItems(items, limit=20)
 
-    # pushQuery ----------------------------------------------------------------
 
-    def pushQuery(self, query):
-        return self.__client__.pushQuery(query)
+
+
+
