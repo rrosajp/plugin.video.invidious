@@ -154,7 +154,7 @@
 
             </group>
 
-            <group id="context" label="40220">
+            <!--<group id="context" label="40220">
 
                 <setting id="context.withyoutube" type="boolean" label="40221">
                     <level>0</level>
@@ -162,12 +162,12 @@
                     <control type="toggle" />
                 </setting>
 
-            </group>
+            </group>-->
 
         </category>
 
         <!-- Videos -->
-        <category id="video" label="40300">
+        <!--<category id="video" label="40300">
 
             <group id="codecs" label="40310">
 
@@ -195,7 +195,7 @@
 
             </group>
 
-        </category>
+        </category>-->
 
     </section>
 

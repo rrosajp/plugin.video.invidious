@@ -13,6 +13,11 @@ from iapc.tools.objects import List, Object
 
 class Item(Object):
 
+    def __infos__(self, *args):
+        for arg in args:
+            if (attr := getattr(self, arg, None)):
+                yield f"{attr}"
+
     @property
     def poster(self):
         return self.get("poster", self.__thumbnail__)
@@ -81,10 +86,12 @@ class Video(Item):
 
     __thumbnail__ = "DefaultAddonVideo.png"
 
-    def __infos__(self, *args):
-        for arg in args:
-            if (attr := getattr(self, arg, None)):
-                yield f"{attr}"
+    @property
+    def title(self):
+        #if self.live:
+        if self.live or (not self.duration):
+            return " ".join(("[COLOR red](₍.₎)[/COLOR]", self.get("title")))
+        return self.get("title")
 
     @property
     def infos(self):

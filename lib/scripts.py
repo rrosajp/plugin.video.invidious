@@ -4,30 +4,20 @@
 from sys import argv
 from urllib.parse import unquote
 
-from iapc.tools import playMedia
+from iapc import Client
 
-from invidious.client import IVClient
 from invidious.regional import selectRegion
-
-
-# playWithYouTube --------------------------------------------------------------
-
-__withYoutube_url__ = "plugin://plugin.video.youtube/play/?incognito=true&video_id={}"
-
-def playWithYouTube(videoId):
-    playMedia(__withYoutube_url__.format(videoId))
 
 
 # selectInstance ---------------------------------------------------------------
 
 def selectInstance():
-    return IVClient().selectInstance()
+    return Client().selectInstance()
 
 
 # __main__ ---------------------------------------------------------------------
 
 __scripts__ = {
-    "playWithYouTube": playWithYouTube,
     "selectRegion": selectRegion,
     "selectInstance": selectInstance
 }

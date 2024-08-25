@@ -6,10 +6,10 @@ from iapc.tools import (
     containerRefresh, getSetting, makeProfile, notify, ICONERROR
 )
 
-from invidious.extract import extractItems, Video
+from invidious.extract import extractIVItems, IVVideo
 from invidious.folders import home
+from invidious.instance import IVInstance
 from invidious.search import IVSearch
-from invidious.session import IVSession
 
 
 # ------------------------------------------------------------------------------
@@ -20,12 +20,11 @@ class IVService(Service):
     def __init__(self, *args, **kwargs):
         super(IVService, self).__init__(*args, **kwargs)
         makeProfile()
-        self.__session__ = IVSession(self.logger, "service.session")
-        self.__search__ = IVSearch(self.logger, "service.search")
-        self.__home__ = home
+        self.__instance__ = IVInstance(self.logger)
+        self.__search__ = IVSearch(self.logger)
 
     def __setup__(self):
-        self.__session__.__setup__()
+        self.__instance__.__setup__()
         self.__search__.__setup__()
 
     def start(self, **kwargs):
@@ -47,23 +46,15 @@ class IVService(Service):
         if throw:
             raise error
 
-    # --------------------------------------------------------------------------
-    # public api
-    # --------------------------------------------------------------------------
-
     # instance -----------------------------------------------------------------
 
     @public
-    def instances(self, **kwargs):
-        return {
-            instance["uri"]: f"({instance['region']})\t{name}"
-            for name, instance in self.__session__.instances(**kwargs)
-            if (instance["api"] and (instance["type"] in ("http", "https")))
-        }
+    def instance(self):
+        return self.__instance__.instance
 
     @public
-    def instance(self):
-        return self.__session__.__instance__
+    def selectInstance(self):
+        return self.__instance__.selectInstance()
 
     # play ---------------------------------------------------------------------
 
@@ -71,16 +62,27 @@ class IVService(Service):
     def play(self, **kwargs):
         self.logger.info(f"play(kwargs={kwargs})")
         if (videoId := kwargs.pop("videoId")):
-            if (video := Video(self.__session__.query("video", videoId))):
-                return (video, "mpd", {"mimeType": "application/dash+xml"})
+            return IVVideo(self.__instance__.query("video", videoId))
         self.__raise__("Missing videoId", throw=False)
-        return (None, "", {})
 
     # home ---------------------------------------------------------------------
 
     @public
     def home(self):
-        return self.__home__
+        return [
+            folder for folder in home
+            if (
+                getSetting(f"home.{folder['type']}", bool)
+                if folder.get("optional", False)
+                else True
+            )
+        ]
+
+    # feed ---------------------------------------------------------------------
+
+    @public
+    def feed(self, **kwargs):
+        self.logger.info(f"feed(kwargs={kwargs})")
 
     # search -------------------------------------------------------------------
 
@@ -88,8 +90,7 @@ class IVService(Service):
     def search(self, **kwargs):
         self.logger.info(f"search(kwargs={kwargs})")
         if (kwargs := self.__search__.search(**kwargs)):
-            return extractItems(self.__session__.query("search", **kwargs))
-
+            return extractIVItems(self.__instance__.query("search", **kwargs))
 
 
 # __main__ ---------------------------------------------------------------------

@@ -15,7 +15,7 @@ def __date__(timestamp):
 
 
 # ------------------------------------------------------------------------------
-# Video
+# IVVideo
 
 class VideoThumbnails(object):
 
@@ -31,7 +31,7 @@ class VideoThumbnails(object):
             setattr(self, thumbnail["quality"], thumbnail["url"])
 
 
-class Video(dict):
+class IVVideo(dict):
 
     def __init__(self, item):
         duration = (
@@ -39,6 +39,10 @@ class Video(dict):
             else item["lengthSeconds"]
             #else item.get("lengthSeconds", -1)
         )
+        manifestType = "hls"
+        if ((not live) or (not (url := item.get("hlsUrl")))):
+            url = item.get("dashUrl")
+            manifestType = "mpd"
         thumbnails = VideoThumbnails(item.get("videoThumbnails"))
         likes, likesText = item.get("likeCount", 0), item.get("likeCountText")
         if not likesText and likes:
@@ -53,7 +57,7 @@ class Video(dict):
             if (publishedText := item.get("publishedText"))
             else publishedDate
         )
-        super(Video, self).__init__(
+        super(IVVideo, self).__init__(
             type="video",
             videoId=item["videoId"],
             title=item["title"],
@@ -70,28 +74,29 @@ class Video(dict):
             published=published,
             publishedDate=f"{publishedDate}",
             publishedText=publishedText,
-            url=item.get("dashUrl")
+            url=url,
+            manifestType=manifestType
         )
 
 
 # ------------------------------------------------------------------------------
-# Channel
+# IVChannel
 
-class Channel(dict):
+class IVChannel(dict):
 
     def __init__(self, item):
-        super(Channel, self).__init__(
+        super(IVChannel, self).__init__(
             type="channel",
         )
 
 
 # ------------------------------------------------------------------------------
-# Playlist
+# IVPlaylist
 
-class Playlist(dict):
+class IVPlaylist(dict):
 
     def __init__(self, item):
-        super(Playlist, self).__init__(
+        super(IVPlaylist, self).__init__(
             type="playlist",
         )
 
@@ -99,10 +104,10 @@ class Playlist(dict):
 # ------------------------------------------------------------------------------
 
 __itemTypes__ = {
-    "video": Video,
-    "channel": Channel,
-    "playlist": Playlist
+    "video": IVVideo,
+    "channel": IVChannel,
+    "playlist": IVPlaylist
 }
 
-def extractItems(items):
+def extractIVItems(items):
     return [__itemTypes__[item["type"]](item) for item in items]

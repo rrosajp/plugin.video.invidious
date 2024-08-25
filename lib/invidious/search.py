@@ -33,8 +33,8 @@ class IVSearch(object):
         )
     )
 
-    def __init__(self, logger, name):
-        self.logger = logger.getLogger(name)
+    def __init__(self, logger):
+        self.logger = logger.getLogger(f"{logger.component}.search")
         self.__cache__ = deque()
 
     def __q_setup__(self, setting, ordered, label):

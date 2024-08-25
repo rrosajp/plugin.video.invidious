@@ -21,12 +21,6 @@ class IVPlugin(Plugin):
         super(IVPlugin, self).__init__(*args, **kwargs)
         self.__client__ = IVClient()
 
-    def dispatch(self, instance=True, **kwargs):
-        if (instance and (not self.__client__.instance())):
-            self.endDirectory(False)
-            return False
-        return super(IVPlugin, self).dispatch(**kwargs)
-
     # helpers ------------------------------------------------------------------
 
     #def addMore(self, more, **kwargs):
@@ -38,12 +32,12 @@ class IVPlugin(Plugin):
     #        moreItem(self.url, action=self.action, **kwargs)
     #    )
 
-    #def addDirectory(self, items, *args, **kwargs):
-    #    if super(IVPlugin, self).addDirectory(items, *args):
-    #        if (more := getattr(items, "more", None)):
-    #            return self.addMore(more, **kwargs)
-    #        return True
-    #    return False
+    def addDirectory(self, items, *args, **kwargs):
+        if super(IVPlugin, self).addDirectory(items, *args):
+            #if (more := getattr(items, "more", None)):
+            #    return self.addMore(more, **kwargs)
+            return True
+        return False
 
     def addSettings(self):
         if getSetting("home.settings", bool):
@@ -55,33 +49,32 @@ class IVPlugin(Plugin):
     def playItem(
         self, item, manifestType, mimeType=None, headers=None, params=None
     ):
-        if not Helper(manifestType).check_inputstream():
-            return False
-        item.setProperty("inputstream", "inputstream.adaptive")
-        item.setProperty("inputstream.adaptive.manifest_type", manifestType)
-        if headers and isinstance(headers, dict):
-            item.setProperty(
-                "inputstream.adaptive.manifest_headers", urlencode(headers)
-            )
-        if params and isinstance(params, dict):
-            item.setProperty(
-                "inputstream.adaptive.manifest_params", urlencode(params)
-            )
-        return super(IVPlugin, self).playItem(item, mimeType=mimeType)
+        if item:
+            if not Helper(manifestType).check_inputstream():
+                return False
+            item.setProperty("inputstream", "inputstream.adaptive")
+            item.setProperty("inputstream.adaptive.manifest_type", manifestType)
+            if headers and isinstance(headers, dict):
+                item.setProperty(
+                    "inputstream.adaptive.manifest_headers", urlencode(headers)
+                )
+            if params and isinstance(params, dict):
+                item.setProperty(
+                    "inputstream.adaptive.manifest_params", urlencode(params)
+                )
+            return super(IVPlugin, self).playItem(item, mimeType=mimeType)
+        return False
 
     # play ---------------------------------------------------------------------
 
     @action()
     def play(self, **kwargs):
         self.logger.info(f"play(kwargs={kwargs})")
-        item, manifestType, params = self.__client__.play(**kwargs)
-        if item:
-            return self.playItem(item, manifestType, **params)
-        return False
+        return self.playItem(*self.__client__.play(**kwargs))
 
     # home ---------------------------------------------------------------------
 
-    @action()
+    @action(category=30000)
     def home(self, **kwargs):
         if self.addDirectory(self.__client__.home()):
             return self.addSettings()
@@ -98,17 +91,8 @@ class IVPlugin(Plugin):
     @action(category=30102)
     def search(self, **kwargs):
         self.logger.info(f"search(kwargs={kwargs})")
-        #result = self.__client__.search(**kwargs)
-        #self.logger.info(f"\tresult: {result}")
-        #r = (False if (result is None) else True)
-        #self.logger.info(f"\tr: {r}")
-        #return r
         if ((items := self.__client__.search(**kwargs)) is not None):
-            res = self.addDirectory(items, **kwargs)
-            #executeBuiltin("Container.SetViewMode", "0")
-            #executeBuiltin("Container.SetViewMode", "50")
-            #executeBuiltin("Container.SetViewMode", "50")
-            return res
+            return self.addDirectory(items, **kwargs)
         return False
 
     # settings -----------------------------------------------------------------
