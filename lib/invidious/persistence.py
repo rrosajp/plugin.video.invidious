@@ -14,7 +14,7 @@ class IVSearchHistory(Persistent, OrderedDict):
     @save
     def record(self, query):
         self[(q := query["q"])] = query
-        self.move_to_end(q)
+        super(IVSearchHistory, self).move_to_end(q)
 
     @save
     def remove(self, q):
