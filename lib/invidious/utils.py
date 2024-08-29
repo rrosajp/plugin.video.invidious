@@ -14,6 +14,7 @@ def __makeItem__(label, url, art=None, isFolder=True, **kwargs):
         isFolder=isFolder,
         isPlayable=False,
         infoLabels={"video": {"title": label, "plot": label}},
+        thumb=art,
         poster=art,
         icon=art
     )
@@ -22,12 +23,17 @@ def __makeItem__(label, url, art=None, isFolder=True, **kwargs):
 # settings item
 def settingsItem(url, **kwargs):
     return __makeItem__(
-        30103, url, "icons/settings/system.png", isFolder=False, **kwargs
+        30103, url, art="icons/settings/system.png", isFolder=False, **kwargs
     )
+
+
+# newQuery item
+def newQueryItem(url, **kwargs):
+    return __makeItem__(30801, url, art="DefaultAddSource.png", **kwargs)
 
 
 # more item
 __more_art__ = getMedia("more")
 
 def moreItem(url, **kwargs):
-    return __makeItem__(30802, url, __more_art__, **kwargs)
+    return __makeItem__(30802, url, art=__more_art__, **kwargs)

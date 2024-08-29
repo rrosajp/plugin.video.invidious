@@ -6,7 +6,7 @@ from iapc.tools import (
     containerRefresh, getSetting, makeProfile, notify, ICONERROR
 )
 
-from invidious.extract import extractIVItems, IVVideo
+from invidious.extract import IVVideo
 from invidious.folders import home
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
@@ -21,7 +21,7 @@ class IVService(Service):
         super(IVService, self).__init__(*args, **kwargs)
         makeProfile()
         self.__instance__ = IVInstance(self.logger)
-        self.__search__ = IVSearch(self.logger)
+        self.__search__ = IVSearch(self.logger, self.__instance__)
 
     def __setup__(self):
         self.__instance__.__setup__()
@@ -46,23 +46,13 @@ class IVService(Service):
         if throw:
             raise error
 
-    # instance -----------------------------------------------------------------
-
-    @public
-    def instance(self):
-        return self.__instance__.instance
-
-    @public
-    def selectInstance(self):
-        return self.__instance__.selectInstance()
-
     # play ---------------------------------------------------------------------
 
     @public
     def play(self, **kwargs):
         self.logger.info(f"play(kwargs={kwargs})")
         if (videoId := kwargs.pop("videoId")):
-            return IVVideo(self.__instance__.query("video", videoId))
+            return IVVideo(self.__instance__.request("video", videoId))
         self.__raise__("Missing videoId", throw=False)
 
     # home ---------------------------------------------------------------------
@@ -84,16 +74,13 @@ class IVService(Service):
     def feed(self, **kwargs):
         self.logger.info(f"feed(kwargs={kwargs})")
 
-    # search -------------------------------------------------------------------
-
-    @public
-    def search(self, **kwargs):
-        self.logger.info(f"search(kwargs={kwargs})")
-        if (kwargs := self.__search__.search(**kwargs)):
-            return extractIVItems(self.__instance__.query("search", **kwargs))
-
 
 # __main__ ---------------------------------------------------------------------
 
 if __name__ == "__main__":
-    IVService().start()
+    service = IVService()
+    kwargs = {
+        "instance": service.__instance__,
+        "search": service.__search__
+    }
+    service.start(**kwargs)

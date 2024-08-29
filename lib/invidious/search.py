@@ -3,7 +3,14 @@
 
 from collections import deque, OrderedDict
 
-from iapc.tools import getSetting, inputDialog, localizedString, selectDialog
+from iapc import public
+from iapc.tools import (
+    containerRefresh, containerUpdate, getAddonId, getSetting,
+    inputDialog, localizedString, selectDialog
+)
+
+from invidious.extract import extractIVItems
+from invidious.persistence import IVSearchHistory
 
 
 #-------------------------------------------------------------------------------
@@ -33,9 +40,11 @@ class IVSearch(object):
         )
     )
 
-    def __init__(self, logger):
+    def __init__(self, logger, instance):
         self.logger = logger.getLogger(f"{logger.component}.search")
+        self.__instance__ = instance
         self.__cache__ = deque()
+        self.__history__ = IVSearchHistory()
 
     def __q_setup__(self, setting, ordered, label):
         q_setting = list(ordered.keys())[getSetting(*setting)]
@@ -67,16 +76,50 @@ class IVSearch(object):
     def q_sort(self, sort="relevance"):
         return self.__q_select__(sort, self.__query_sort__, 40421)
 
-    def newSearch(self, page=1):
-        self.logger.info(f"newSearch(page={page}))")
-        if (q := inputDialog(heading=30102)):
-            return {
-                "q": q,
-                "type": self.__q_type__ or self.q_type(),
-                "sort": self.__q_sort__ or self.q_sort(),
-                "page": page
-            }
+    # search -------------------------------------------------------------------
 
-    def search(self, **kwargs):
-        self.logger.info(f"search(kwargs={kwargs})")
-        return self.newSearch(**kwargs)
+    __search_url__ = f"plugin://{getAddonId()}/?action=search"
+
+    @public
+    def query(self, **query):
+        self.logger.info(f"query(query={query}))")
+        try:
+            query = self.__cache__.pop()
+        except IndexError:
+            if (q := inputDialog(heading=30102)):
+                self.__history__.record(
+                    (
+                        query := {
+                            "q": q,
+                            "type": self.__q_type__ or self.q_type(),
+                            "sort": self.__q_sort__ or self.q_sort(),
+                            "page": 1
+                        }
+                    )
+                )
+        return query
+
+    @public
+    def history(self):
+        self.logger.info(f"history()")
+        self.__cache__.clear()
+        return list(reversed(self.__history__.values()))
+
+    @public
+    def search(self, query):
+        self.logger.info(f"search(query={query})")
+        self.__cache__.append(query)
+        return extractIVItems(self.__instance__.request("search", **query))
+
+    @public
+    def removeQuery(self, q):
+        self.__history__.remove(q)
+        containerRefresh()
+
+    @public
+    def clearHistory(self, update=False):
+        self.__history__.clear()
+        if update:
+            containerUpdate(self.__search_url__, "replace")
+        else:
+            containerRefresh()

@@ -6,7 +6,7 @@ from functools import wraps
 from iapc import Client
 from iapc.tools import getSetting, selectDialog, setSetting, Logger
 
-from invidious.items import buildItems, Folders, Video
+from invidious.items import buildItems, Folders, Queries, Video
 
 
 # instance ---------------------------------------------------------------------
@@ -15,8 +15,11 @@ def instance(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if (
-            self.__client__.instance() or
-            (self.__client__.selectInstance() and self.__client__.instance())
+            self.__client__.instance.instance() or
+            (
+                self.__client__.instance.selectInstance() and
+                self.__client__.instance.instance()
+            )
         ):
             return func(self, *args, **kwargs)
     return wrapper
@@ -53,8 +56,18 @@ class IVClient(object):
 
     # search -------------------------------------------------------------------
 
+    def query(self):
+        self.logger.info(f"query()")
+        return self.__client__.search.query()
+
+
+    def history(self):
+        self.logger.info(f"history()")
+        return Queries(self.__client__.search.history())
+
     @instance
-    def search(self, **kwargs):
-        self.logger.info(f"search(kwargs={kwargs})")
-        if ((items := self.__client__.search(**kwargs)) is not None):
-            return buildItems(items, limit=20)
+    def search(self, query):
+        self.logger.info(f"search(query={query})")
+        return buildItems(
+            self.__client__.search.search(query), limit=20, category=query["q"]
+        )

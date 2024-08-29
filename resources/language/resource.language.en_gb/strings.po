@@ -186,7 +186,7 @@ msgid "Search history"
 msgstr ""
 
 msgctxt "#40412"
-msgid "Clear all search history"
+msgid "Clear search history"
 msgstr ""
 
 msgctxt "#40420"
@@ -219,4 +219,20 @@ msgstr ""
 
 msgctxt "#40431"
 msgid "Query type"
+msgstr ""
+
+msgctxt "#50501"
+msgid "Go to channel"
+msgstr ""
+
+msgctxt "#50502"
+msgid "Add channel to feed"
+msgstr ""
+
+msgctxt "#50503"
+msgid "Remove"
+msgstr ""
+
+msgctxt "#50504"
+msgid "Clear search history"
 msgstr ""

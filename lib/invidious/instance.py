@@ -3,6 +3,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
 
+from iapc import public
 from iapc.tools import (
     buildUrl, getSetting, localizedString, selectDialog, setSetting
 )
@@ -19,20 +20,20 @@ class IVInstance(object):
 
     def __init__(self, logger):
         self.logger = logger.getLogger(f"{logger.component}.instance")
-        self.session = IVSession(self.logger, headers=self.headers)
+        self.__session__ = IVSession(self.logger, headers=self.headers)
 
     def __setup__(self):
         if (uri := getSetting("instance.uri", str)):
-            self.instance = buildUrl(uri, getSetting("instance.path", str))
+            self.__instance__ = buildUrl(uri, getSetting("instance.path", str))
         else:
-            self.instance = None
-        self.logger.info(f"{localizedString(40110)}: {self.instance}")
+            self.__instance__ = None
+        self.logger.info(f"{localizedString(40110)}: {self.__instance__}")
 
         if (timeout := getSetting("instance.timeout", float)) > 0.0:
-            self.timeout = (((timeout - (timeout % 3)) + 0.05), timeout)
+            self.__timeout__ = (((timeout - (timeout % 3)) + 0.05), timeout)
         else:
-            self.timeout = None
-        self.logger.info(f"{localizedString(40116)}: {self.timeout}")
+            self.__timeout__ = None
+        self.logger.info(f"{localizedString(40116)}: {self.__timeout__}")
         self.region = getSetting("regional.region", str)
         self.logger.info(
             f"{localizedString(40124)}: "
@@ -40,7 +41,9 @@ class IVInstance(object):
         )
 
     def __get__(self, *args, **kwargs):
-        return self.session.get(*args, params=kwargs, timeout=self.timeout)
+        return self.__session__.get(
+            *args, params=kwargs, timeout=self.__timeout__
+        )
 
     # instance -----------------------------------------------------------------
 
@@ -56,6 +59,11 @@ class IVInstance(object):
             if (instance["api"] and (instance["type"] in ("http", "https")))
         }
 
+    @public
+    def instance(self):
+        return self.__instance__
+
+    @public
     def selectInstance(self):
         if (instances := self.instances()):
             uri = getSetting("instance.uri", str)
@@ -71,14 +79,15 @@ class IVInstance(object):
     # get ----------------------------------------------------------------------
 
     def get(self, path, regional=True, **kwargs):
-        if self.instance:
-            self.logger.info(f"get(url={buildUrl(self.instance, path)})")
-            self.logger.info(f"get(kwargs={kwargs})")
+        if self.__instance__:
+            self.logger.info(
+                f"get(url={buildUrl(self.__instance__, path)}, kwargs={kwargs})"
+            )
             if regional:
                 kwargs["region"] = self.region
             else:
                 kwargs.pop("region", None)
-            return self.__get__(buildUrl(self.instance, path), **kwargs)
+            return self.__get__(buildUrl(self.__instance__, path), **kwargs)
 
     # query --------------------------------------------------------------------
 
@@ -90,5 +99,5 @@ class IVInstance(object):
         "playlists": "channels/{}/playlists"
     }
 
-    def query(self, key, *args, **kwargs):
+    def request(self, key, *args, **kwargs):
         return self.get(self.__paths__.get(key, key).format(*args), **kwargs)

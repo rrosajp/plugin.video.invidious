@@ -3,7 +3,9 @@
 
 from urllib.parse import quote_plus
 
-from iapc.tools import buildUrl, localizedString, maybeLocalize, ListItem
+from iapc.tools import (
+    buildUrl, getAddonId, getSetting, localizedString, maybeLocalize, ListItem
+)
 from iapc.tools.objects import List, Object
 
 
@@ -13,10 +15,30 @@ from iapc.tools.objects import List, Object
 
 class Item(Object):
 
+    __menus__ = []
+
+    @classmethod
+    def menus(cls, **kwargs):
+        return [
+            (
+                maybeLocalize(label).format(**kwargs),
+                action.format(
+                    addonId=getAddonId(),
+                    **{key: quote_plus(value) for key, value in kwargs.items()}
+                )
+            )
+            for label, action, *settings in cls.__menus__
+            if all(getSetting(*iargs) == ires for iargs, ires in settings)
+        ]
+
     def __infos__(self, *args):
         for arg in args:
             if (attr := getattr(self, arg, None)):
                 yield f"{attr}"
+
+    @property
+    def thumbnail(self):
+        return self.get("thumbnail", self.__thumbnail__)
 
     @property
     def poster(self):
@@ -80,6 +102,48 @@ class Folders(Items):
 
 
 # ------------------------------------------------------------------------------
+# Queries
+
+class Query(Item):
+
+    __menus__ = [
+        (50503, "RunScript({addonId},removeQuery,{q})"),
+        (50504, "RunScript({addonId},clearHistory)")
+    ]
+
+    __thumbnail__ = "DefaultAddonsSearch.png"
+
+    def getItem(self, url):
+        return ListItem(
+            self.q,
+            buildUrl(
+                url,
+                action="search",
+                q=self.q,
+                type=self.type,
+                sort=self.sort,
+                page=self.page
+            ),
+            isFolder=True,
+            infoLabels={
+                "video": {
+                    "title": self.q,
+                    "plot": self.q
+                }
+            },
+            contextMenus=self.menus(
+                q=self.q
+            ),
+            thumb=self.thumbnail
+        )
+
+
+class Queries(Items):
+
+    __ctor__ = Query
+
+
+# ------------------------------------------------------------------------------
 # Videos
 
 class Video(Item):
@@ -97,7 +161,7 @@ class Video(Item):
     def infos(self):
         return (
             "\n".join((" • ".join(infos), self.publishedText))
-            if (infos := list(self.__infos__("likesText", "viewsText")))
+            if (infos := list(self.__infos__("viewsText", "likesText")))
             else self.publishedText
         )
 
@@ -106,10 +170,6 @@ class Video(Item):
         return "\n\n".join(
             self.__infos__("title", "channel", "infos", "description")
         )
-
-    @property
-    def thumbnail(self):
-        return self.get("thumbnail", self.__thumbnail__)
 
     def makeItem(self, path):
         return ListItem(
@@ -154,7 +214,7 @@ __itemTypes__ = {
 def buildItems(items, **kwargs):
     return MixBag(
         [__itemTypes__[item["type"]](item) for item in items],
-        content="movies",
+        content="videos",
         **kwargs
     )
 

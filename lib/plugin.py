@@ -9,7 +9,7 @@ from inputstreamhelper import Helper
 from iapc.tools import action, executeBuiltin, getSetting, openSettings, parseQuery, Plugin
 
 from invidious.client import IVClient
-from invidious.utils import moreItem, settingsItem
+from invidious.utils import moreItem, newQueryItem, settingsItem
 
 
 # ------------------------------------------------------------------------------
@@ -23,28 +23,32 @@ class IVPlugin(Plugin):
 
     # helpers ------------------------------------------------------------------
 
-    #def addMore(self, more, **kwargs):
-    #    if more is True:
-    #        kwargs["page"] = int(kwargs.get("page", 1)) + 1
-    #    else:
-    #        kwargs["continuation"] = more
-    #    return self.addItem(
-    #        moreItem(self.url, action=self.action, **kwargs)
-    #    )
+    def addMore(self, more, **kwargs):
+        if more is True:
+            kwargs["page"] = int(kwargs.get("page", 1)) + 1
+        else:
+            kwargs["continuation"] = more
+        return self.addItem(
+            moreItem(self.url, action=self.action, **kwargs)
+        )
 
     def addDirectory(self, items, *args, **kwargs):
         if super(IVPlugin, self).addDirectory(items, *args):
-            #if (more := getattr(items, "more", None)):
-            #    return self.addMore(more, **kwargs)
+            if (more := getattr(items, "more", None)):
+            #more = getattr(items, "more", None)
+            #self.logger.info(f"more: {more}")
+            #if more:
+                return self.addMore(more, **kwargs)
             return True
         return False
 
-    def addSettings(self):
+    def addSettingsItem(self):
         if getSetting("home.settings", bool):
-            return self.addItem(
-                settingsItem(self.url, action="settings", instance=False)
-            )
+            return self.addItem(settingsItem(self.url, action="settings"))
         return True
+
+    def addNewQueryItem(self):
+        return self.addItem(newQueryItem(self.url, action="search", new=True))
 
     def playItem(
         self, item, manifestType, mimeType=None, headers=None, params=None
@@ -77,7 +81,7 @@ class IVPlugin(Plugin):
     @action(category=30000)
     def home(self, **kwargs):
         if self.addDirectory(self.__client__.home()):
-            return self.addSettings()
+            return self.addSettingsItem()
         return False
 
     # feed ---------------------------------------------------------------------
@@ -88,12 +92,28 @@ class IVPlugin(Plugin):
 
     # search -------------------------------------------------------------------
 
+    def __query__(self):
+        self.logger.info(f"__query__()")
+        return self.__client__.query()
+
+    def __history__(self):
+        self.logger.info(f"__history__()")
+        if self.addNewQueryItem():
+            return self.addItems(self.__client__.history())
+        return False
+
+    def __search__(self, query):
+        self.logger.info(f"__search__(query={query})")
+        return self.addDirectory(self.__client__.search(query), **query)
+
     @action(category=30102)
     def search(self, **kwargs):
         self.logger.info(f"search(kwargs={kwargs})")
-        if ((items := self.__client__.search(**kwargs)) is not None):
-            return self.addDirectory(items, **kwargs)
-        return False
+        if kwargs:
+            if (query := (self.__query__() if "new" in kwargs else kwargs)):
+                return self.__search__(query)
+            return False
+        return self.__history__()
 
     # settings -----------------------------------------------------------------
 
@@ -106,7 +126,9 @@ class IVPlugin(Plugin):
 # __main__ ---------------------------------------------------------------------
 
 def dispatch(url, handle, query, *args):
-    IVPlugin(url, int(handle)).dispatch(**parseQuery(query))
+    plugin = IVPlugin(url, int(handle))
+    plugin.logger.info(f"dispatch(url='{url}', handle='{handle}', query='{query}', args={args})")
+    plugin.dispatch(**parseQuery(query))
 
 
 if __name__ == "__main__":
