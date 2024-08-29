@@ -73,6 +73,18 @@ msgctxt "#30303"
 msgid "{} likes"
 msgstr ""
 
+msgctxt "#30304"
+msgid "{} subscribers"
+msgstr ""
+
+msgctxt "#30305"
+msgid "{} videos"
+msgstr ""
+
+msgctxt "#30306"
+msgid "last updated {}"
+msgstr ""
+
 msgctxt "#30801"
 msgid "New search"
 msgstr ""

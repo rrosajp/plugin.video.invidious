@@ -14,13 +14,23 @@ def __date__(timestamp):
     return timestamp
 
 
+def __url__(url):
+    return f"https:{url}" if url.startswith("//") else url
+
+
+class Thumbnails(object):
+
+    def __new__(cls, thumbnails=None):
+        return super(Thumbnails, cls).__new__(cls) if thumbnails else None
+
+    def __getattribute__(self, name):
+        return __url__(super(Thumbnails, self).__getattribute__(name))
+
+
 # ------------------------------------------------------------------------------
 # IVVideo
 
-class VideoThumbnails(object):
-
-    def __new__(cls, thumbnails=None):
-        return super(VideoThumbnails, cls).__new__(cls) if thumbnails else None
+class VideoThumbnails(Thumbnails):
 
     def __init__(self, thumbnails):
         if isinstance(thumbnails[0], list):
@@ -51,7 +61,7 @@ class IVVideo(dict):
         if not viewsText and views:
             viewsText = localizedString(30302).format(views)
         published = item["published"]
-        publishedDate = __date__(published)
+        publishedDate = f"{__date__(published)}"
         publishedText = localizedString(30301).format(
             f"{publishedText} ({publishedDate})"
             if (publishedText := item.get("publishedText"))
@@ -66,27 +76,44 @@ class IVVideo(dict):
             channel=item["author"],
             duration=duration,
             live=live,
+            url=url,
+            manifestType=manifestType,
             thumbnail=getattr(thumbnails, "high", None),
             likes=likes,
             likesText=likesText,
             views=views,
             viewsText=viewsText,
             published=published,
-            publishedDate=f"{publishedDate}",
-            publishedText=publishedText,
-            url=url,
-            manifestType=manifestType
+            publishedDate=publishedDate,
+            publishedText=publishedText
         )
 
 
 # ------------------------------------------------------------------------------
 # IVChannel
 
+class ChannelThumbnails(Thumbnails):
+
+    def __init__(self, thumbnails):
+        for thumbnail in thumbnails:
+            setattr(self, str(thumbnail["height"]), thumbnail["url"])
+
+
 class IVChannel(dict):
 
     def __init__(self, item):
+        thumbnails = ChannelThumbnails(item.get("authorThumbnails"))
+        subs, subsText = item.get("subCount", 0), item.get("subCountText")
+        if not subsText and subs:
+            subsText = localizedString(30304).format(subs)
         super(IVChannel, self).__init__(
             type="channel",
+            channelId=item["authorId"],
+            channel=item["author"],
+            description=(item.get("description") or None),
+            thumbnail=getattr(thumbnails, "512", None),
+            subs=subs,
+            subsText=subsText
         )
 
 
@@ -96,8 +123,39 @@ class IVChannel(dict):
 class IVPlaylist(dict):
 
     def __init__(self, item):
+        thumbnail = (
+            __url__(url) if (url := item.get("playlistThumbnail")) else None
+        )
+        views, viewsText = item.get("viewCount", 0), item.get("viewCountText")
+        if not viewsText and views:
+            viewsText = localizedString(30302).format(views)
+        videos, videosText = item.get("videoCount", 0), item.get("videoCountText")
+        if not videosText and videos:
+            videosText = localizedString(30305).format(videos)
+        if (updated := item.get("updated")):
+            updatedDate = f"{__date__(updated)}"
+            updatedText = localizedString(30306).format(
+                f"{updatedText} ({updatedDate})"
+                if (updatedText := item.get("updatedText"))
+                else updatedDate
+            )
+        else:
+            updatedDate = updatedText = None
         super(IVPlaylist, self).__init__(
             type="playlist",
+            playlistId=item["playlistId"],
+            title=item["title"],
+            description=(item.get("description") or None),
+            channelId=item["authorId"],
+            channel=item["author"],
+            thumbnail=thumbnail,
+            views=views,
+            viewsText=viewsText,
+            videos=videos,
+            videosText=videosText,
+            updated=updated,
+            updatedDate=updatedDate,
+            updatedText=updatedText
         )
 
 

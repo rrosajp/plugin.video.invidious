@@ -159,10 +159,10 @@ class Video(Item):
 
     @property
     def infos(self):
+        infos = " • ".join(list(self.__infos__("viewsText", "likesText")))
         return (
-            "\n".join((" • ".join(infos), self.publishedText))
-            if (infos := list(self.__infos__("viewsText", "likesText")))
-            else self.publishedText
+            "\n".join((infos, self.publishedText))
+            if infos else self.publishedText
         )
 
     @property
@@ -200,6 +200,84 @@ class Videos(Items):
 
 
 # ------------------------------------------------------------------------------
+# Channels
+
+class Channel(Item):
+
+    __thumbnail__ = "DefaultArtist.png"
+
+    @property
+    def infos(self):
+        return self.subsText
+
+    @property
+    def plot(self):
+        return "\n\n".join(
+            self.__infos__("channel", "infos", "description")
+        )
+
+    def getItem(self, url):
+        return ListItem(
+            self.channel,
+            buildUrl(url, action="channel", channelId=self.channelId),
+            isFolder=True,
+            infoLabels={
+                "video": {
+                    "title": self.channel,
+                    "plot": self.plot
+                }
+            },
+            thumb=self.thumbnail
+        )
+
+
+class Channels(Items):
+
+    __ctor__ = Channel
+
+
+# ------------------------------------------------------------------------------
+# Playlists
+
+class Playlist(Item):
+
+    __thumbnail__ = "DefaultPlaylist.png"
+
+    @property
+    def infos(self):
+        infos = " • ".join(list(self.__infos__("viewsText", "videosText")))
+        return (
+            "\n".join((infos, self.updatedText))
+            if self.updatedText else infos
+        )
+
+    @property
+    def plot(self):
+        return "\n\n".join(
+            self.__infos__("title", "channel", "infos", "description")
+        )
+
+    def getItem(self, url):
+        return ListItem(
+            self.title,
+            buildUrl(url, action="playlist", playlistId=self.playlistId),
+            isFolder=True,
+            infoLabels={
+                "video": {
+                    "title": self.title,
+                    "plot": self.plot
+                }
+            },
+            thumb=self.thumbnail
+        )
+
+
+class Playlists(Items):
+
+    __ctor__ = Playlist
+
+
+# ------------------------------------------------------------------------------
 # MixBag
 
 class MixBag(Items):
@@ -208,7 +286,9 @@ class MixBag(Items):
 
 
 __itemTypes__ = {
-    "video": Video
+    "video": Video,
+    "channel": Channel,
+    "playlist": Playlist
 }
 
 def buildItems(items, **kwargs):
