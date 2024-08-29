@@ -158,12 +158,12 @@ class Video(Item):
         return self.get("title")
 
     @property
+    def _infos_(self):
+        return " • ".join(list(self.__infos__("viewsText", "likesText")))
+
+    @property
     def infos(self):
-        infos = " • ".join(list(self.__infos__("viewsText", "likesText")))
-        return (
-            "\n".join((infos, self.publishedText))
-            if infos else self.publishedText
-        )
+        return "\n".join(list(self.__infos__("_infos_", "publishedText")))
 
     @property
     def plot(self):
@@ -207,13 +207,9 @@ class Channel(Item):
     __thumbnail__ = "DefaultArtist.png"
 
     @property
-    def infos(self):
-        return self.subsText
-
-    @property
     def plot(self):
         return "\n\n".join(
-            self.__infos__("channel", "infos", "description")
+            self.__infos__("channel", "subsText", "description")
         )
 
     def getItem(self, url):
@@ -244,12 +240,12 @@ class Playlist(Item):
     __thumbnail__ = "DefaultPlaylist.png"
 
     @property
+    def _infos_(self):
+        return " • ".join(list(self.__infos__("viewsText", "videosText")))
+
+    @property
     def infos(self):
-        infos = " • ".join(list(self.__infos__("viewsText", "videosText")))
-        return (
-            "\n".join((infos, self.updatedText))
-            if self.updatedText else infos
-        )
+        return "\n".join(list(self.__infos__("_infos_", "updatedText")))
 
     @property
     def plot(self):

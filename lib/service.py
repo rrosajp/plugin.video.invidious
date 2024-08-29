@@ -55,6 +55,16 @@ class IVService(Service):
             return IVVideo(self.__instance__.request("video", videoId))
         self.__raise__("Missing videoId", throw=False)
 
+    # playlist -----------------------------------------------------------------
+
+    @public
+    def playlist(self, **kwargs):
+        self.logger.info(f"playlist(kwargs={kwargs})")
+        if (playlistId := kwargs.pop("playlistId")):
+            #self.__instance__.request("playlist", playlistId, **kwargs)
+            return ("test", [])
+        self.__raise__("Missing playlistId", throw=False)
+
     # home ---------------------------------------------------------------------
 
     @public

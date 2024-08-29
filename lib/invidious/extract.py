@@ -60,13 +60,15 @@ class IVVideo(dict):
         views, viewsText = item.get("viewCount", 0), item.get("viewCountText")
         if not viewsText and views:
             viewsText = localizedString(30302).format(views)
-        published = item["published"]
-        publishedDate = f"{__date__(published)}"
-        publishedText = localizedString(30301).format(
-            f"{publishedText} ({publishedDate})"
-            if (publishedText := item.get("publishedText"))
-            else publishedDate
-        )
+        if (published := item.get("published")):
+            publishedDate = f"{__date__(published)}"
+            publishedText = localizedString(30301).format(
+                f"{publishedText} ({publishedDate})"
+                if (publishedText := item.get("publishedText"))
+                else publishedDate
+            )
+        else:
+            publishedDate = publishedText = None
         super(IVVideo, self).__init__(
             type="video",
             videoId=item["videoId"],

@@ -35,9 +35,6 @@ class IVPlugin(Plugin):
     def addDirectory(self, items, *args, **kwargs):
         if super(IVPlugin, self).addDirectory(items, *args):
             if (more := getattr(items, "more", None)):
-            #more = getattr(items, "more", None)
-            #self.logger.info(f"more: {more}")
-            #if more:
                 return self.addMore(more, **kwargs)
             return True
         return False
@@ -75,6 +72,20 @@ class IVPlugin(Plugin):
     def play(self, **kwargs):
         self.logger.info(f"play(kwargs={kwargs})")
         return self.playItem(*self.__client__.play(**kwargs))
+
+    # channel ------------------------------------------------------------------
+
+    @action()
+    def channel(self, **kwargs):
+        self.logger.info(f"channel(kwargs={kwargs})")
+        return True
+
+    # playlist -----------------------------------------------------------------
+
+    @action()
+    def playlist(self, **kwargs):
+        self.logger.info(f"playlist(kwargs={kwargs})")
+        return self.addDirectory(self.__client__.playlist(**kwargs), **kwargs)
 
     # home ---------------------------------------------------------------------
 

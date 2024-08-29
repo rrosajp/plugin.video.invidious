@@ -6,7 +6,7 @@ from functools import wraps
 from iapc import Client
 from iapc.tools import getSetting, selectDialog, setSetting, Logger
 
-from invidious.items import buildItems, Folders, Queries, Video
+from invidious.items import buildItems, Folders, Queries, Video, Videos
 
 
 # instance ---------------------------------------------------------------------
@@ -42,6 +42,12 @@ class IVClient(object):
         if (video := self.__client__.play(**kwargs)):
             return (Video(video).makeItem(video["url"]), video["manifestType"])
         return (None, None)
+
+    # playlist -----------------------------------------------------------------
+
+    def playlist(self, **kwargs):
+        category, videos = self.__client__.playlist(**kwargs)
+        return Videos(videos, category=category)
 
     # home ---------------------------------------------------------------------
 

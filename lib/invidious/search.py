@@ -109,6 +109,7 @@ class IVSearch(object):
     def search(self, query):
         self.logger.info(f"search(query={query})")
         self.__cache__.append(query)
+        self.__history__.record(query)
         return extractIVItems(self.__instance__.request("search", **query))
 
     @public
