@@ -23,3 +23,7 @@ class IVSearchHistory(Persistent, OrderedDict):
     @save
     def clear(self):
         super(IVSearchHistory, self).clear()
+
+    @save
+    def move_to_end(self, q):
+        super(IVSearchHistory, self).move_to_end(q)
