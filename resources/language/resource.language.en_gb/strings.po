@@ -209,6 +209,10 @@ msgctxt "#40421"
 msgid "Sort order"
 msgstr ""
 
+msgctxt "#40422"
+msgid "Sort order: {_sort_}"
+msgstr ""
+
 msgctxt "#41420"
 msgid "Relevance"
 msgstr ""
@@ -231,6 +235,10 @@ msgstr ""
 
 msgctxt "#40431"
 msgid "Query type"
+msgstr ""
+
+msgctxt "#40432"
+msgid "Query type: {_type_}"
 msgstr ""
 
 msgctxt "#50501"

@@ -2,7 +2,7 @@
 
 
 from sys import argv
-from urllib.parse import unquote
+from urllib.parse import unquote_plus
 
 from iapc import Client
 from iapc.tools import containerUpdate, getAddonId
@@ -27,6 +27,18 @@ def goToChannel(channelId):
     containerUpdate(__channel_url__.format(channelId))
 
 
+# updateQueryType --------------------------------------------------------------
+
+def updateQueryType(q):
+    return Client().search.updateQueryType(q)
+
+
+# updateQuerySort --------------------------------------------------------------
+
+def updateQuerySort(q):
+    return Client().search.updateQuerySort(q)
+
+
 # removeQuery ------------------------------------------------------------------
 
 def removeQuery(q):
@@ -45,6 +57,8 @@ __scripts__ = {
     "selectRegion": selectRegion,
     "selectInstance": selectInstance,
     "goToChannel": goToChannel,
+    "updateQueryType": updateQueryType,
+    "updateQuerySort": updateQuerySort,
     "removeQuery": removeQuery,
     "clearHistory": clearHistory
 }
@@ -52,7 +66,7 @@ __scripts__ = {
 def dispatch(name, *args):
     if (not (script := __scripts__.get(name)) or not callable(script)):
         raise Exception(f"Invalid script '{name}'")
-    script(*(unquote(arg) for arg in args))
+    script(*(unquote_plus(arg) for arg in args))
 
 
 if __name__ == "__main__":

@@ -12,33 +12,36 @@ from iapc.tools import (
 from invidious.extract import extractIVItems
 from invidious.persistence import IVSearchHistory
 
+#-------------------------------------------------------------------------------
+
+queryType = OrderedDict(
+    (
+        ("all", 30210),
+        ("video", 30211),
+        ("channel", 30212),
+        ("playlist", 30213),
+        ("movie", 30214),
+        ("show", 30215),
+        (None, 41429)
+    )
+)
+
+
+querySort = OrderedDict(
+    (
+        ("relevance", 41420),
+        ("date", 41421),
+        ("views", 41422),
+        ("rating", 41423),
+        (None, 41429)
+    )
+)
+
 
 #-------------------------------------------------------------------------------
 # IVSearch
 
 class IVSearch(object):
-
-    __query_type__ = OrderedDict(
-        (
-            ("all", 30210),
-            ("video", 30211),
-            ("channel", 30212),
-            ("playlist", 30213),
-            ("movie", 30214),
-            ("show", 30215),
-            (None, 41429)
-        )
-    )
-
-    __query_sort__ = OrderedDict(
-        (
-            ("relevance", 41420),
-            ("date", 41421),
-            ("views", 41422),
-            ("rating", 41423),
-            (None, 41429)
-        )
-    )
 
     def __init__(self, logger, instance):
         self.logger = logger.getLogger(f"{logger.component}.search")
@@ -55,10 +58,10 @@ class IVSearch(object):
 
     def __setup__(self):
         self.__q_type__ = self.__q_setup__(
-            ("query.type", int), self.__query_type__, 40431
+            ("query.type", int), queryType, 40431
         )
         self.__q_sort__ = self.__q_setup__(
-            ("query.sort", int), self.__query_sort__, 40421
+            ("query.sort", int), querySort, 40421
         )
 
     def __q_select__(self, key, ordered, heading):
@@ -71,10 +74,10 @@ class IVSearch(object):
         return key if index < 0 else keys[index]
 
     def q_type(self, type="all"):
-        return self.__q_select__(type, self.__query_type__, 40431)
+        return self.__q_select__(type, queryType, 40431)
 
     def q_sort(self, sort="relevance"):
-        return self.__q_select__(sort, self.__query_sort__, 40421)
+        return self.__q_select__(sort, querySort, 40421)
 
     # search -------------------------------------------------------------------
 
@@ -111,6 +114,26 @@ class IVSearch(object):
         self.__cache__.append(query)
         self.__history__.move_to_end(query["q"])
         return extractIVItems(self.__instance__.request("search", **query))
+
+    # --------------------------------------------------------------------------
+
+    @public
+    def updateQueryType(self, q):
+        _query_ = self.__history__[q]
+        _type_ = _query_["type"]
+        if ((type := self.q_type(type=_type_)) != _type_):
+            _query_["type"] = type
+            self.__history__.record(_query_)
+            containerRefresh()
+
+    @public
+    def updateQuerySort(self, q):
+        _query_ = self.__history__[q]
+        _sort_ = _query_["sort"]
+        if ((sort := self.q_sort(sort=_sort_)) != _sort_):
+            _query_["sort"] = sort
+            self.__history__.record(_query_)
+            containerRefresh()
 
     @public
     def removeQuery(self, q):

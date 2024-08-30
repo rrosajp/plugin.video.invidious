@@ -8,6 +8,8 @@ from iapc.tools import (
 )
 from iapc.tools.objects import List, Object
 
+from invidious.search import queryType, querySort
+
 
 # ------------------------------------------------------------------------------
 # Items
@@ -107,11 +109,26 @@ class Folders(Items):
 class Query(Item):
 
     __menus__ = [
+        (40432, "RunScript({addonId},updateQueryType,{q})"),
+        (40422, "RunScript({addonId},updateQuerySort,{q})"),
         (50503, "RunScript({addonId},removeQuery,{q})"),
         (50504, "RunScript({addonId},clearHistory)")
     ]
 
     __thumbnail__ = "DefaultAddonsSearch.png"
+
+    __thumbnails__ = {
+        "all": "DefaultAddonsSearch.png",
+        "video": "DefaultAddonVideo.png",
+        "channel": "DefaultArtist.png",
+        "playlist": "DefaultPlaylist.png",
+        "movie": "DefaultMovies.png",
+        "show": "DefaultTVShows.png"
+    }
+
+    @property
+    def thumbnail(self):
+        return self.__thumbnails__.get(self.type, self.__thumbnail__)
 
     def getItem(self, url):
         return ListItem(
@@ -132,7 +149,9 @@ class Query(Item):
                 }
             },
             contextMenus=self.menus(
-                q=self.q
+                q=self.q,
+                _type_=localizedString(queryType[self.type]),
+                _sort_=localizedString(querySort[self.sort])
             ),
             thumb=self.thumbnail
         )
