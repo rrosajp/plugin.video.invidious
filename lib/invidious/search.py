@@ -43,6 +43,8 @@ querySort = OrderedDict(
 
 class IVSearch(object):
 
+    __search_url__ = f"plugin://{getAddonId()}/?action=search"
+
     def __init__(self, logger, instance):
         self.logger = logger.getLogger(f"{logger.component}.search")
         self.__instance__ = instance
@@ -80,8 +82,6 @@ class IVSearch(object):
         return self.__q_select__(sort, querySort, 40421)
 
     # search -------------------------------------------------------------------
-
-    __search_url__ = f"plugin://{getAddonId()}/?action=search"
 
     @public
     def query(self, **query):

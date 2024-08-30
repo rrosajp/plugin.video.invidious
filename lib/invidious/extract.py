@@ -162,6 +162,40 @@ class IVPlaylist(dict):
 
 
 # ------------------------------------------------------------------------------
+# IVPlaylistVideos
+
+class IVPlaylistVideos(IVPlaylist):
+
+    def __init__(self, item):
+        super(IVPlaylistVideos, self).__init__(item)
+        self["videos"] = [IVVideo(video) for video in item["videos"]]
+
+
+# ------------------------------------------------------------------------------
+# IVVideos
+
+class IVVideos(dict):
+
+    def __init__(self, item):
+        super(IVVideos, self).__init__(
+            videos=[IVVideo(video) for video in item["videos"]],
+            continuation=item["continuation"]
+        )
+
+
+# ------------------------------------------------------------------------------
+# IVVideos
+
+class IVPlaylists(dict):
+
+    def __init__(self, item):
+        super(IVPlaylists, self).__init__(
+            playlists=[IVPlaylist(playlist) for playlist in item["playlists"]],
+            continuation=item["continuation"]
+        )
+
+
+# ------------------------------------------------------------------------------
 
 __itemTypes__ = {
     "video": IVVideo,

@@ -46,8 +46,11 @@ class IVClient(object):
     # playlist -----------------------------------------------------------------
 
     def playlist(self, **kwargs):
-        category, videos = self.__client__.playlist(**kwargs)
-        return Videos(videos, category=category)
+        #title, videos = self.__client__.playlist(**kwargs)
+        #return Videos(videos, category=title)
+        playlist = self.__client__.playlist(**kwargs)
+        return Videos(playlist["videos"], category=playlist["title"])
+
 
     # home ---------------------------------------------------------------------
 

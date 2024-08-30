@@ -6,7 +6,7 @@ from iapc.tools import (
     containerRefresh, getSetting, makeProfile, notify, ICONERROR
 )
 
-from invidious.extract import IVVideo
+from invidious.extract import IVVideo, IVPlaylistVideos
 from invidious.folders import home
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
@@ -61,8 +61,16 @@ class IVService(Service):
     def playlist(self, **kwargs):
         self.logger.info(f"playlist(kwargs={kwargs})")
         if (playlistId := kwargs.pop("playlistId")):
-            #self.__instance__.request("playlist", playlistId, **kwargs)
-            return ("test", [])
+            return IVPlaylistVideos(
+                self.__instance__.request("playlist", playlistId, **kwargs)
+            )
+            #playlist = self.__instance__.request(
+            #    "playlist", playlistId, **kwargs
+            #)
+            #return (
+            #    playlist["title"],
+            #    [IVVideo(video) for video in playlist["videos"]]
+            #)
         self.__raise__("Missing playlistId", throw=False)
 
     # home ---------------------------------------------------------------------
