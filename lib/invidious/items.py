@@ -56,8 +56,14 @@ class Items(List):
     __ctor__ = Item
 
     def __init__(self, items, continuation=None, limit=0, **kwargs):
-        super(Items, self).__init__(items, content="videos", **kwargs)
+        super(Items, self).__init__(items, **kwargs)
         self.more = continuation or ((len(self) >= limit) if limit else False)
+
+
+class Contents(Items):
+
+    def __init__(self, items, **kwargs):
+        super(Contents, self).__init__(items, content="videos", **kwargs)
 
 
 # ------------------------------------------------------------------------------
@@ -213,7 +219,7 @@ class Video(Item):
         return self.makeItem(buildUrl(url, action="play", videoId=self.videoId))
 
 
-class Videos(Items):
+class Videos(Contents):
 
     __ctor__ = Video
 
@@ -246,7 +252,7 @@ class Channel(Item):
         )
 
 
-class Channels(Items):
+class Channels(Contents):
 
     __ctor__ = Channel
 
@@ -287,7 +293,7 @@ class Playlist(Item):
         )
 
 
-class Playlists(Items):
+class Playlists(Contents):
 
     __ctor__ = Playlist
 
@@ -295,19 +301,19 @@ class Playlists(Items):
 # ------------------------------------------------------------------------------
 # MixBag
 
-class MixBag(Items):
+class MixBag(Contents):
 
     __ctor__ = None
 
+    __itemTypes__ = {
+        "video": Video,
+        "channel": Channel,
+        "playlist": Playlist
+    }
 
-__itemTypes__ = {
-    "video": Video,
-    "channel": Channel,
-    "playlist": Playlist
-}
-
-def buildItems(items, **kwargs):
-    return MixBag(
-        [__itemTypes__[item["type"]](item) for item in items], **kwargs
-    )
+    def __init__(self, items, **kwargs):
+        super(MixBag, self).__init__(
+            [self.__itemTypes__[item["type"]](item) for item in items],
+            **kwargs
+        )
 

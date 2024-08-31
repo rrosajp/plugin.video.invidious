@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from inputstreamhelper import Helper
 
-from iapc.tools import action, executeBuiltin, getSetting, openSettings, parseQuery, Plugin
+from iapc.tools import action, getSetting, openSettings, parseQuery, Plugin
 
 from invidious.client import IVClient
 from invidious.utils import moreItem, newQueryItem, settingsItem
@@ -23,9 +23,15 @@ class IVPlugin(Plugin):
 
     # helpers ------------------------------------------------------------------
 
-    def addMore(self, more, **kwargs):
+    def addMore(self, more, count=0, **kwargs):
         if more is True:
-            kwargs["page"] = int(kwargs.get("page", 1)) + 1
+            if (index := kwargs.get("index")):
+                if count:
+                    kwargs["index"] = int(index) + count
+                else:
+                    del kwargs["index"]
+            else:
+                kwargs["page"] = int(kwargs.get("page", 1)) + 1
         else:
             kwargs["continuation"] = more
         return self.addItem(
@@ -35,7 +41,7 @@ class IVPlugin(Plugin):
     def addDirectory(self, items, *args, **kwargs):
         if super(IVPlugin, self).addDirectory(items, *args):
             if (more := getattr(items, "more", None)):
-                return self.addMore(more, **kwargs)
+                return self.addMore(more, count=len(items), **kwargs)
             return True
         return False
 
@@ -83,9 +89,13 @@ class IVPlugin(Plugin):
     # playlist -----------------------------------------------------------------
 
     @action()
-    def playlist(self, **kwargs):
+    def playlist(self, index=50, **kwargs):
         self.logger.info(f"playlist(kwargs={kwargs})")
-        return self.addDirectory(self.__client__.playlist(**kwargs), **kwargs)
+        return self.addDirectory(
+            self.__client__.playlist(index=index, **kwargs),
+            index=index,
+            **kwargs
+        )
 
     # home ---------------------------------------------------------------------
 
