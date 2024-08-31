@@ -84,7 +84,7 @@ class IVPlugin(Plugin):
     @action()
     def channel(self, **kwargs):
         self.logger.info(f"channel(kwargs={kwargs})")
-        return True
+        return self.addDirectory(self.__client__.channel(**kwargs), **kwargs)
 
     # playlist -----------------------------------------------------------------
 

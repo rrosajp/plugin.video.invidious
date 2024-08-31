@@ -1,15 +1,33 @@
 # -*- coding: utf-8 -*-
 
 
+from functools import wraps
+
 from iapc import public, Service
 from iapc.tools import (
     containerRefresh, getSetting, makeProfile, notify, ICONERROR
 )
 
-from invidious.extract import IVVideo, IVPlaylistVideos
+from invidious.extract import (
+    IVChannel, IVChannelPlaylists, IVChannelVideos, IVPlaylistVideos, IVVideo
+)
 from invidious.folders import home
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
+
+
+# cached -----------------------------------------------------------------------
+
+def cached(name):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, key, *args, **kwargs):
+            cache = self.__cache__.setdefault(name, {})
+            if (not (value := cache.get(key))):
+                value = cache[key] = func(self, *(args or (key,)), **kwargs)
+            return value
+        return wrapper
+    return decorator
 
 
 # ------------------------------------------------------------------------------
@@ -22,6 +40,7 @@ class IVService(Service):
         makeProfile()
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
+        self.__cache__ = {}
 
     def __setup__(self):
         self.__instance__.__setup__()
@@ -54,6 +73,22 @@ class IVService(Service):
         if (videoId := kwargs.pop("videoId")):
             return IVVideo(self.__instance__.request("video", videoId))
         self.__raise__("Missing videoId", throw=False)
+
+    # channel ------------------------------------------------------------------
+
+    @cached("channels")
+    def __channel__(self, channelId):
+        return IVChannel(self.__instance__.request("channel", channelId))
+
+    @public
+    def channel(self, **kwargs):
+        self.logger.info(f"channel(kwargs={kwargs})")
+        if (channelId := kwargs.pop("channelId")):
+            return IVChannelVideos(
+                self.__channel__(channelId)["channel"],
+                self.__instance__.request("videos", channelId, **kwargs)
+            )
+        self.__raise__("Missing channelId", throw=False)
 
     # playlist -----------------------------------------------------------------
 

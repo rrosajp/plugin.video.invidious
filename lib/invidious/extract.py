@@ -172,26 +172,28 @@ class IVPlaylistVideos(IVPlaylist):
 
 
 # ------------------------------------------------------------------------------
-# IVVideos
+# IVChannelVideos
 
-class IVVideos(dict):
+class IVChannelVideos(dict):
 
-    def __init__(self, item):
-        super(IVVideos, self).__init__(
-            videos=[IVVideo(video) for video in item["videos"]],
-            continuation=item["continuation"]
+    def __init__(self, channel, items):
+        super(IVChannelVideos, self).__init__(
+            channel=channel,
+            continuation=items.get("continuation"),
+            videos=[IVVideo(video) for video in items["videos"]]
         )
 
 
 # ------------------------------------------------------------------------------
-# IVVideos
+# IVChannelPlaylists
 
-class IVPlaylists(dict):
+class IVChannelPlaylists(dict):
 
-    def __init__(self, item):
-        super(IVPlaylists, self).__init__(
-            playlists=[IVPlaylist(playlist) for playlist in item["playlists"]],
-            continuation=item["continuation"]
+    def __init__(self, channel, items):
+        super(IVChannelPlaylists, self).__init__(
+            channel=channel,
+            continuation=items.get("continuation"),
+            playlists=[IVPlaylist(playlist) for playlist in items["playlists"]]
         )
 
 

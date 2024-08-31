@@ -43,6 +43,17 @@ class IVClient(object):
             return (Video(video).makeItem(video["url"]), video["manifestType"])
         return (None, None)
 
+    # channel ------------------------------------------------------------------
+
+    def channel(self, **kwargs):
+        self.logger.info(f"channel(kwargs={kwargs})")
+        channel = self.__client__.channel(**kwargs)
+        return Videos(
+            channel["videos"],
+            continuation=channel["continuation"],
+            category=channel["channel"]
+        )
+
     # playlist -----------------------------------------------------------------
 
     def playlist(self, **kwargs):
