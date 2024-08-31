@@ -57,52 +57,13 @@ class IVService(Service):
 
     # playlist -----------------------------------------------------------------
 
-    def __playlist__(self, playlistId):
-        self.logger.info(f"__playlist__({playlistId})")
-        #page = 1
-        #result = []
-        #while (
-        #    videos := (
-        #        playlist := self.__instance__.request(
-        #            "playlist", playlistId, page=page
-        #        )
-        #    )["videos"]
-        #):
-        #    page += 1
-        #    result.extend(videos)
-        index = 50
-        result = []
-        playlist = self.__instance__.request("playlist", playlistId, index=index)
-        videoCount = playlist["videoCount"]
-        videos = playlist["videos"]
-        result.extend(videos)
-        while len(result) < videoCount:
-            #index += len(videos)
-            #playlist = self.__instance__.request("playlist", playlistId, index=index)
-            #videos = playlist["videos"]
-            index += len(videos)
-            videos = self.__instance__.request("playlist", playlistId, index=index)["videos"]
-            result.extend(videos)
-
-        self.logger.info(f"len(result): {len(result)}")
-
     @public
     def playlist(self, **kwargs):
         self.logger.info(f"playlist(kwargs={kwargs})")
         if (playlistId := kwargs.pop("playlistId")):
-
-            #self.__playlist__(playlistId)
-
             return IVPlaylistVideos(
                 self.__instance__.request("playlist", playlistId, **kwargs)
             )
-            #playlist = self.__instance__.request(
-            #    "playlist", playlistId, **kwargs
-            #)
-            #return (
-            #    playlist["title"],
-            #    [IVVideo(video) for video in playlist["videos"]]
-            #)
         self.__raise__("Missing playlistId", throw=False)
 
     # home ---------------------------------------------------------------------
