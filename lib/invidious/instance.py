@@ -96,7 +96,9 @@ class IVInstance(object):
         "channel": "channels/{}",
         "playlist": "playlists/{}",
         "videos": "channels/{}/videos",
-        "playlists": "channels/{}/playlists"
+        "playlists": "channels/{}/playlists",
+        "streams": "channels/{}/streams",
+        "shorts": "channels/{}/shorts"
     }
 
     def request(self, key, *args, **kwargs):

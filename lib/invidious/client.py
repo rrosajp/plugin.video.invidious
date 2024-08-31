@@ -6,7 +6,7 @@ from functools import wraps
 from iapc import Client
 from iapc.tools import getSetting, selectDialog, setSetting, Logger
 
-from invidious.items import Folders, MixBag, Queries, Video, Videos
+from invidious.items import Folders, MixBag, Playlists, Queries, Video, Videos
 
 
 # instance ---------------------------------------------------------------------
@@ -45,13 +45,27 @@ class IVClient(object):
 
     # channel ------------------------------------------------------------------
 
-    def channel(self, **kwargs):
-        self.logger.info(f"channel(kwargs={kwargs})")
-        channel = self.__client__.channel(**kwargs)
+    def tabs(self, **kwargs):
+        self.logger.info(f"tabs(kwargs={kwargs})")
+        if (tabs := self.__client__.tabs(**kwargs)):
+            return Folders(tabs, **kwargs)
+
+    def tab(self, key, **kwargs):
+        self.logger.info(f"tab(key={key}, kwargs={kwargs})")
+        videos = self.__client__.tab(key, **kwargs)
         return Videos(
-            channel["videos"],
-            continuation=channel["continuation"],
-            category=channel["channel"]
+            videos["videos"],
+            continuation=videos["continuation"],
+            category=videos["channel"]
+        )
+
+    def playlists(self, **kwargs):
+        self.logger.info(f"playlists(kwargs={kwargs})")
+        playlists = self.__client__.playlists(**kwargs)
+        return Playlists(
+            playlists["playlists"],
+            continuation=playlists["continuation"],
+            category=playlists["channel"]
         )
 
     # playlist -----------------------------------------------------------------

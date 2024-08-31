@@ -177,8 +177,8 @@ class Video(Item):
 
     @property
     def title(self):
-        #if self.live:
-        if self.live or (not self.duration):
+        if self.live:
+        #if self.live or (not self.duration):
             return " ".join(("[COLOR red](₍.₎)[/COLOR]", self.get("title")))
         return self.get("title")
 

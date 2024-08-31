@@ -37,6 +37,14 @@ msgctxt "#30203"
 msgid "Playlists"
 msgstr ""
 
+msgctxt "#30204"
+msgid "Streams"
+msgstr ""
+
+msgctxt "#30205"
+msgid "Shorts"
+msgstr ""
+
 msgctxt "#30210"
 msgid "All"
 msgstr ""

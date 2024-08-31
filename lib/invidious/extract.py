@@ -103,6 +103,12 @@ class ChannelThumbnails(Thumbnails):
 
 class IVChannel(dict):
 
+    __tabs__ = {
+        "playlists": {"title": 30203},
+        "streams": {"title": 30204},
+        "shorts": {"title": 30205}
+    }
+
     def __init__(self, item):
         thumbnails = ChannelThumbnails(item.get("authorThumbnails"))
         subs, subsText = item.get("subCount", 0), item.get("subCountText")
@@ -115,7 +121,12 @@ class IVChannel(dict):
             description=(item.get("description") or None),
             thumbnail=getattr(thumbnails, "512", None),
             subs=subs,
-            subsText=subsText
+            subsText=subsText,
+            tabs=[
+                dict(tab, type=type)
+                for type, tab in self.__tabs__.items()
+                if type in item.get("tabs", [])
+            ]
         )
 
 

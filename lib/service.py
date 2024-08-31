@@ -84,11 +84,35 @@ class IVService(Service):
     def channel(self, **kwargs):
         self.logger.info(f"channel(kwargs={kwargs})")
         if (channelId := kwargs.pop("channelId")):
-            return IVChannelVideos(
+            return self.__channel__(channelId)
+        self.__raise__("Missing channelId", throw=False)
+
+    @public
+    def tabs(self, **kwargs):
+        self.logger.info(f"tabs(kwargs={kwargs})")
+        if (channelId := kwargs.pop("channelId")):
+            return self.__channel__(channelId)["tabs"]
+        self.__raise__("Missing channelId", throw=False)
+
+    def __tab__(self, key, **kwargs):
+        self.logger.info(f"__tab__(key={key}, kwargs={kwargs})")
+        if (channelId := kwargs.pop("channelId")):
+            return (
                 self.__channel__(channelId)["channel"],
-                self.__instance__.request("videos", channelId, **kwargs)
+                self.__instance__.request(key, channelId, **kwargs)
             )
         self.__raise__("Missing channelId", throw=False)
+
+    @public
+    def tab(self, key, **kwargs):
+        self.logger.info(f"tab(kwargs={kwargs})")
+        return IVChannelVideos(*self.__tab__(key, **kwargs))
+
+    @public
+    def playlists(self, **kwargs):
+        self.logger.info(f"playlists(kwargs={kwargs})")
+        return IVChannelPlaylists(*self.__tab__("playlists", **kwargs))
+
 
     # playlist -----------------------------------------------------------------
 

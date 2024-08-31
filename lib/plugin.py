@@ -84,7 +84,34 @@ class IVPlugin(Plugin):
     @action()
     def channel(self, **kwargs):
         self.logger.info(f"channel(kwargs={kwargs})")
-        return self.addDirectory(self.__client__.channel(**kwargs), **kwargs)
+        if (
+            (not ("continuation" in kwargs)) and
+            (tabs := self.__client__.tabs(**kwargs)) and
+            (not self.addItems(tabs))
+        ):
+            return False
+        return self.addDirectory(
+            self.__client__.tab("videos", **kwargs), **kwargs
+        )
+
+    @action()
+    def playlists(self, **kwargs):
+        self.logger.info(f"playlists(kwargs={kwargs})")
+        return self.addDirectory(self.__client__.playlists(**kwargs), **kwargs)
+
+    @action()
+    def streams(self, **kwargs):
+        self.logger.info(f"streams(kwargs={kwargs})")
+        return self.addDirectory(
+            self.__client__.tab("streams", **kwargs), **kwargs
+        )
+
+    @action()
+    def shorts(self, **kwargs):
+        self.logger.info(f"shorts(kwargs={kwargs})")
+        return self.addDirectory(
+            self.__client__.tab("shorts", **kwargs), **kwargs
+        )
 
     # playlist -----------------------------------------------------------------
 
