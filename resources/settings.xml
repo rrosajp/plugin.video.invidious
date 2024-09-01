@@ -154,15 +154,21 @@
 
             </group>
 
-            <!--<group id="context" label="40220">
+            <group id="context" label="40220">
 
-                <setting id="context.withyoutube" type="boolean" label="40221">
+                <setting id="context.fromyoutube" type="boolean" label="40221">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle" />
                 </setting>
 
-            </group>-->
+                <setting id="context.withyoutube" type="boolean" label="40222">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle" />
+                </setting>
+
+            </group>
 
         </category>
 

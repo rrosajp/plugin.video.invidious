@@ -173,6 +173,23 @@ class Queries(Items):
 
 class Video(Item):
 
+    __menus__ = [
+        (
+            40221, "RunScript({addonId},playFromYouTube,{videoId})",
+            (("context.fromyoutube", bool), True)
+        ),
+        (
+            40222, "RunScript({addonId},playWithYouTube,{videoId})",
+            (("context.withyoutube", bool), True)
+        ),
+        (40223, "RunScript({addonId},goToChannel,{channelId})"),
+        (
+            40224,
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            (("home.feed", bool), True)
+        )
+    ]
+
     __thumbnail__ = "DefaultAddonVideo.png"
 
     @property
@@ -212,6 +229,11 @@ class Video(Item):
                     "duration": self.duration
                 }
             },
+            contextMenus=self.menus(
+                videoId=self.videoId,
+                channelId=self.channelId,
+                channel=self.channel
+            ),
             thumb=self.thumbnail
         )
 
@@ -228,6 +250,14 @@ class Videos(Contents):
 # Channels
 
 class Channel(Item):
+
+    __menus__ = [
+        (
+            40224,
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            (("home.feed", bool), True)
+        )
+    ]
 
     __thumbnail__ = "DefaultArtist.png"
 
@@ -248,6 +278,10 @@ class Channel(Item):
                     "plot": self.plot
                 }
             },
+            contextMenus=self.menus(
+                channelId=self.channelId,
+                channel=self.channel
+            ),
             thumb=self.thumbnail
         )
 
@@ -261,6 +295,15 @@ class Channels(Contents):
 # Playlists
 
 class Playlist(Item):
+
+    __menus__ = [
+        (40223, "RunScript({addonId},goToChannel,{channelId})"),
+        (
+            40224,
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            (("home.feed", bool), True)
+        )
+    ]
 
     __thumbnail__ = "DefaultPlaylist.png"
 
@@ -289,6 +332,11 @@ class Playlist(Item):
                     "plot": self.plot
                 }
             },
+            contextMenus=self.menus(
+                playlistId=self.playlistId,
+                channelId=self.channelId,
+                channel=self.channel
+            ),
             thumb=self.thumbnail
         )
 

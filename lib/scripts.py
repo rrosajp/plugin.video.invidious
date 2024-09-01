@@ -5,7 +5,7 @@ from sys import argv
 from urllib.parse import unquote_plus
 
 from iapc import Client
-from iapc.tools import containerUpdate, getAddonId
+from iapc.tools import containerUpdate, getAddonId, playMedia
 
 
 __plugin_url__ = f"plugin://{getAddonId()}"
@@ -23,12 +23,40 @@ def selectRegion():
     return Client().instance.selectRegion()
 
 
+# playFromYouTube --------------------------------------------------------------
+
+__fromYoutube_url__ = f"{__plugin_url__}/?action=play&yt=true&videoId={{}}"
+
+def playFromYouTube(videoId):
+    playMedia(__fromYoutube_url__.format(videoId))
+
+
+# playWithYouTube --------------------------------------------------------------
+
+__withYoutube_url__ = "plugin://plugin.video.youtube/play/?incognito=true&video_id={}"
+
+def playWithYouTube(videoId):
+    playMedia(__withYoutube_url__.format(videoId))
+
+
 # goToChannel ------------------------------------------------------------------
 
 __channel_url__ = f"{__plugin_url__}/?action=channel&channelId={{}}"
 
 def goToChannel(channelId):
     containerUpdate(__channel_url__.format(channelId))
+
+
+# addChannelToFeed -------------------------------------------------------------
+
+def addChannelToFeed(channelId, channel):
+    return Client().feed.addChannelToFeed(channelId, channel)
+
+
+# removeChannelsFromFeed -------------------------------------------------------
+
+def removeChannelsFromFeed():
+    return Client().feed.removeChannelsFromFeed()
 
 
 # updateQueryType --------------------------------------------------------------
@@ -60,7 +88,11 @@ def clearHistory():
 __scripts__ = {
     "selectInstance": selectInstance,
     "selectRegion": selectRegion,
+    "playFromYouTube": playFromYouTube,
+    "playWithYouTube": playWithYouTube,
     "goToChannel": goToChannel,
+    "addChannelToFeed": addChannelToFeed,
+    "removeChannelsFromFeed": removeChannelsFromFeed,
     "updateQueryType": updateQueryType,
     "updateQuerySort": updateQuerySort,
     "removeQuery": removeQuery,

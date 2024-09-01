@@ -170,7 +170,19 @@ msgid "Context menus"
 msgstr ""
 
 msgctxt "#40221"
+msgid "Play from YouTube"
+msgstr ""
+
+msgctxt "#40222"
 msgid "Play with YouTube add-on"
+msgstr ""
+
+msgctxt "#40223"
+msgid "Go to channel"
+msgstr ""
+
+msgctxt "#40224"
+msgid "Add channel to feed"
 msgstr ""
 
 msgctxt "#40300"

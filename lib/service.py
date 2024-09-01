@@ -3,7 +3,7 @@
 
 from functools import wraps
 
-from iapc import public, Service
+from iapc import public, Client, Service
 from iapc.tools import containerRefresh, getSetting, makeProfile
 
 from invidious.extract import (
@@ -38,6 +38,8 @@ class IVService(Service):
         makeProfile()
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
+        self.__feed__ = None
+        self.__yt__ = Client("service.yt-dlp")
         self.__cache__ = {}
 
     def __setup__(self):
@@ -56,11 +58,19 @@ class IVService(Service):
 
     # play ---------------------------------------------------------------------
 
+    def __play_from_yt__(self, videoId):
+        return self.__yt__.play(f"https://www.youtube.com/watch?v={videoId}")
+
     @public
-    def play(self, videoId=None, **kwargs):
-        self.logger.info(f"play(videoId={videoId}, kwargs={kwargs})")
+    def play(self, videoId=None, yt=False):
+        self.logger.info(f"play(videoId={videoId}, yt={yt})")
         if videoId:
-            return IVVideo(self.__instance__.request("video", videoId))
+            #return IVVideo(self.__instance__.request("video", videoId))
+            if (video := IVVideo(self.__instance__.request("video", videoId))):
+                if (yt and (info := self.__play_from_yt__(videoId))):
+                    video["url"] = info["url"]
+                    video["manifestType"] = info["manifestType"]
+            return video
         self.logger.error(f"Invalid videoId: {videoId}", notify=True)
 
     # channel ------------------------------------------------------------------
