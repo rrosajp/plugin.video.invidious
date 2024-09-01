@@ -94,19 +94,19 @@ class IVPlugin(Plugin):
             self.__client__.tab("videos", **kwargs), **kwargs
         )
 
-    @action()
+    @action(category=30203)
     def playlists(self, **kwargs):
         self.logger.info(f"playlists(kwargs={kwargs})")
         return self.addDirectory(self.__client__.playlists(**kwargs), **kwargs)
 
-    @action()
+    @action(category=30204)
     def streams(self, **kwargs):
         self.logger.info(f"streams(kwargs={kwargs})")
         return self.addDirectory(
             self.__client__.tab("streams", **kwargs), **kwargs
         )
 
-    @action()
+    @action(category=30205)
     def shorts(self, **kwargs):
         self.logger.info(f"shorts(kwargs={kwargs})")
         return self.addDirectory(

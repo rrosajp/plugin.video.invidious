@@ -4,9 +4,7 @@
 from functools import wraps
 
 from iapc import public, Service
-from iapc.tools import (
-    containerRefresh, getSetting, makeProfile, notify, ICONERROR
-)
+from iapc.tools import containerRefresh, getSetting, makeProfile
 
 from invidious.extract import (
     IVChannel, IVChannelPlaylists, IVChannelVideos, IVPlaylistVideos, IVVideo
@@ -23,7 +21,7 @@ def cached(name):
         @wraps(func)
         def wrapper(self, key, *args, **kwargs):
             cache = self.__cache__.setdefault(name, {})
-            if (not (value := cache.get(key))):
+            if ((value := cache.get(key)) is None):
                 value = cache[key] = func(self, *(args or (key,)), **kwargs)
             return value
         return wrapper
@@ -56,56 +54,46 @@ class IVService(Service):
         self.__setup__()
         containerRefresh()
 
-    # --------------------------------------------------------------------------
-
-    def __raise__(self, error, throw=True):
-        if not isinstance(error, Exception):
-            error = Exception(error)
-        notify(f"error: {error}", icon=ICONERROR)
-        if throw:
-            raise error
-
     # play ---------------------------------------------------------------------
 
     @public
-    def play(self, **kwargs):
-        self.logger.info(f"play(kwargs={kwargs})")
-        if (videoId := kwargs.pop("videoId")):
+    def play(self, videoId=None, **kwargs):
+        self.logger.info(f"play(videoId={videoId}, kwargs={kwargs})")
+        if videoId:
             return IVVideo(self.__instance__.request("video", videoId))
-        self.__raise__("Missing videoId", throw=False)
+        self.logger.error(f"Invalid videoId: {videoId}", notify=True)
 
     # channel ------------------------------------------------------------------
 
     @cached("channels")
     def __channel__(self, channelId):
-        return IVChannel(self.__instance__.request("channel", channelId))
+        self.logger.info(f"__channel__({channelId})")
+        if channelId:
+            return IVChannel(self.__instance__.request("channel", channelId))
+        self.logger.error(f"Invalid channelId: {channelId}", notify=True)
 
     @public
-    def channel(self, **kwargs):
-        self.logger.info(f"channel(kwargs={kwargs})")
-        if (channelId := kwargs.pop("channelId")):
-            return self.__channel__(channelId)
-        self.__raise__("Missing channelId", throw=False)
+    def channel(self, channelId=None):
+        self.logger.info(f"channel(channelId={channelId})")
+        return self.__channel__(channelId)
 
     @public
-    def tabs(self, **kwargs):
-        self.logger.info(f"tabs(kwargs={kwargs})")
-        if (channelId := kwargs.pop("channelId")):
-            return self.__channel__(channelId)["tabs"]
-        self.__raise__("Missing channelId", throw=False)
+    def tabs(self, channelId=None, **kwargs):
+        self.logger.info(f"tabs(channelId={channelId}, kwargs={kwargs})")
+        if (channel := self.__channel__(channelId)):
+            return channel["tabs"]
 
-    def __tab__(self, key, **kwargs):
-        self.logger.info(f"__tab__(key={key}, kwargs={kwargs})")
-        if (channelId := kwargs.pop("channelId")):
+    def __tab__(self, key, channelId=None, **kwargs):
+        self.logger.info(f"__tab__(key={key}, channelId={channelId}, kwargs={kwargs})")
+        if (channel := self.__channel__(channelId)):
             return (
-                self.__channel__(channelId)["channel"],
+                channel["channel"],
                 self.__instance__.request(key, channelId, **kwargs)
             )
-        self.__raise__("Missing channelId", throw=False)
 
     @public
     def tab(self, key, **kwargs):
-        self.logger.info(f"tab(kwargs={kwargs})")
+        self.logger.info(f"tab(key={key}, kwargs={kwargs})")
         return IVChannelVideos(*self.__tab__(key, **kwargs))
 
     @public
@@ -117,13 +105,13 @@ class IVService(Service):
     # playlist -----------------------------------------------------------------
 
     @public
-    def playlist(self, **kwargs):
-        self.logger.info(f"playlist(kwargs={kwargs})")
-        if (playlistId := kwargs.pop("playlistId")):
+    def playlist(self, playlistId=None, **kwargs):
+        self.logger.info(f"playlist(playlistId={playlistId}, kwargs={kwargs})")
+        if playlistId:
             return IVPlaylistVideos(
                 self.__instance__.request("playlist", playlistId, **kwargs)
             )
-        self.__raise__("Missing playlistId", throw=False)
+        self.logger.error(f"Invalid playlistId: {playlistId}", notify=True)
 
     # home ---------------------------------------------------------------------
 

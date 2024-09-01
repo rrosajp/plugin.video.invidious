@@ -3,7 +3,7 @@
 
 from requests import Session, Timeout
 
-from iapc.tools import buildUrl, notify, ICONERROR
+from iapc.tools import buildUrl
 
 
 # ------------------------------------------------------------------------------
@@ -24,8 +24,7 @@ class IVSession(Session):
         try:
             response = super(IVSession, self).request(method, url, **kwargs)
         except Timeout as error:
-            self.logger.error(message := f"error: {error}")
-            notify(message, icon=ICONERROR)
+            self.logger.error(f"timeout error: {error}", notify=True)
         else:
             response.raise_for_status()
             return response.json()
