@@ -7,8 +7,6 @@ from urllib.parse import unquote_plus
 from iapc import Client
 from iapc.tools import containerUpdate, getAddonId
 
-from invidious.regional import selectRegion
-
 
 __plugin_url__ = f"plugin://{getAddonId()}"
 
@@ -17,6 +15,12 @@ __plugin_url__ = f"plugin://{getAddonId()}"
 
 def selectInstance():
     return Client().instance.selectInstance()
+
+
+# selectRegion -----------------------------------------------------------------
+
+def selectRegion():
+    return Client().instance.selectRegion()
 
 
 # goToChannel ------------------------------------------------------------------
@@ -54,8 +58,8 @@ def clearHistory():
 # __main__ ---------------------------------------------------------------------
 
 __scripts__ = {
-    "selectRegion": selectRegion,
     "selectInstance": selectInstance,
+    "selectRegion": selectRegion,
     "goToChannel": goToChannel,
     "updateQueryType": updateQueryType,
     "updateQuerySort": updateQuerySort,

@@ -3,10 +3,8 @@
 
 from collections import OrderedDict
 
-from iapc.tools import getSetting, selectDialog, setSetting
 
-
-# selectRegion -----------------------------------------------------------------
+# regions ----------------------------------------------------------------------
 
 regions = OrderedDict(
     (
@@ -119,20 +117,3 @@ regions = OrderedDict(
         ("ZW", "Zimbabwe")
     )
 )
-
-def selectRegion():
-    region = getSetting("regional.region", str)
-    keys = list(regions.keys())
-    values = list(regions.values())
-    preselect = keys.index(region) if region in regions else -1
-    if (
-        (
-            index := selectDialog(
-                [f"({k})\t{v}" for k, v in regions.items()],
-                heading=40123,
-                preselect=preselect
-            )
-        ) >= 0
-    ):
-        setSetting("regional.region", keys[index], str)
-        setSetting("regional.region.text", values[index], str)

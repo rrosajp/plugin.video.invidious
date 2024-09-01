@@ -8,6 +8,7 @@ from iapc.tools import (
     buildUrl, getSetting, localizedString, selectDialog, setSetting
 )
 
+from invidious.regional import regions
 from invidious.session import IVSession
 
 
@@ -75,6 +76,26 @@ class IVInstance(object):
                 setSetting("instance.uri", keys[index], str)
                 return True
         return False
+
+    # region -------------------------------------------------------------------
+
+    @public
+    def selectRegion(self):
+        region = getSetting("regional.region", str)
+        keys = list(regions.keys())
+        values = list(regions.values())
+        preselect = keys.index(region) if region in regions else -1
+        if (
+            (
+                index := selectDialog(
+                    [f"({k})\t{v}" for k, v in regions.items()],
+                    heading=40123,
+                    preselect=preselect
+                )
+            ) > -1
+        ):
+            setSetting("regional.region", keys[index], str)
+            setSetting("regional.region.text", values[index], str)
 
     # get ----------------------------------------------------------------------
 
