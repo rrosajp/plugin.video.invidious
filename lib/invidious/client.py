@@ -87,6 +87,7 @@ class IVClient(object):
     @instance
     def feed(self, **kwargs):
         self.logger.info(f"feed(kwargs={kwargs})")
+        self.__client__.feed()
 
     # search -------------------------------------------------------------------
 

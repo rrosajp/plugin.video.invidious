@@ -27,3 +27,17 @@ class IVSearchHistory(Persistent, OrderedDict):
     @save
     def move_to_end(self, q):
         super(IVSearchHistory, self).move_to_end(q)
+
+
+# ------------------------------------------------------------------------------
+# IVFeedChannels
+
+class IVFeedChannels(Persistent, OrderedDict):
+
+    @save
+    def add(self, key):
+        self[key] = None
+
+    @save
+    def remove(self, key):
+        del self[key]

@@ -185,6 +185,10 @@ msgctxt "#40224"
 msgid "Add channel to feed"
 msgstr ""
 
+msgctxt "#40225"
+msgid "Remove channel from feed"
+msgstr ""
+
 msgctxt "#40300"
 msgid "Video"
 msgstr ""

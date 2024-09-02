@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-from concurrent.futures import ThreadPoolExecutor
-
 from iapc import public
 from iapc.tools import (
     buildUrl, getSetting, localizedString, selectDialog, setSetting
@@ -41,9 +39,18 @@ class IVInstance(object):
             f"{self.region} - {getSetting('regional.region.text', str)}"
         )
 
-    def __get__(self, *args, **kwargs):
+    def __stop__(self):
+        self.__session__.close()
+        self.logger.info("stopped")
+
+    def __get__(self, url, **kwargs):
         return self.__session__.get(
-            *args, params=kwargs, timeout=self.__timeout__
+            url, params=kwargs, timeout=self.__timeout__
+        )
+
+    def __map_get__(self, urls, **kwargs):
+        return self.__session__.map_get(
+            urls, params=kwargs, timeout=self.__timeout__
         )
 
     # instance -----------------------------------------------------------------
@@ -99,16 +106,23 @@ class IVInstance(object):
 
     # get ----------------------------------------------------------------------
 
+    def __region__(self, regional, kwargs):
+        if regional:
+            kwargs["region"] = self.region
+        else:
+            kwargs.pop("region", None)
+
     def get(self, path, regional=True, **kwargs):
         if self.__instance__:
-            self.logger.info(
-                f"get(url={buildUrl(self.__instance__, path)}, kwargs={kwargs})"
-            )
-            if regional:
-                kwargs["region"] = self.region
-            else:
-                kwargs.pop("region", None)
+            self.__region__(regional, kwargs)
             return self.__get__(buildUrl(self.__instance__, path), **kwargs)
+
+    def map_get(self, paths, regional=True, **kwargs):
+        if self.__instance__:
+            self.__region__(regional, kwargs)
+            return self.__map_get__(
+                (buildUrl(self.__instance__, path) for path in paths), **kwargs
+            )
 
     # query --------------------------------------------------------------------
 
@@ -124,3 +138,9 @@ class IVInstance(object):
 
     def request(self, key, *args, **kwargs):
         return self.get(self.__paths__.get(key, key).format(*args), **kwargs)
+
+    def map_request(self, key, args, **kwargs):
+        #path = self.__paths__.get(key, key)
+        return self.map_get(
+            (self.__paths__.get(key, key).format(arg) for arg in args), **kwargs
+        )

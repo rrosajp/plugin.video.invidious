@@ -66,6 +66,9 @@ class IVSearch(object):
             ("query.sort", int), querySort, 40421
         )
 
+    def __stop__(self):
+        pass
+
     def __q_select__(self, key, ordered, heading):
         keys = [key for key in ordered.keys() if key]
         index = selectDialog(

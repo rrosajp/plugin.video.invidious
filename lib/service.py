@@ -9,6 +9,7 @@ from iapc.tools import containerRefresh, getSetting, makeProfile
 from invidious.extract import (
     IVChannel, IVChannelPlaylists, IVChannelVideos, IVPlaylistVideos, IVVideo
 )
+from invidious.feed import IVFeed
 from invidious.folders import home
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
@@ -38,7 +39,7 @@ class IVService(Service):
         makeProfile()
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
-        self.__feed__ = None
+        self.__feed__ = IVFeed(self.logger)
         self.__yt__ = Client("service.yt-dlp")
         self.__cache__ = {}
 
@@ -46,11 +47,15 @@ class IVService(Service):
         self.__instance__.__setup__()
         self.__search__.__setup__()
 
+    def __stop__(self):
+        self.__instance__.__stop__()
+        self.logger.info("stopped")
+
     def start(self, **kwargs):
         self.logger.info("starting...")
         self.__setup__()
         self.serve(**kwargs)
-        self.logger.info("stopped")
+        self.__stop__()
 
     def onSettingsChanged(self):
         self.__setup__()
@@ -149,6 +154,7 @@ if __name__ == "__main__":
     service = IVService()
     kwargs = {
         "instance": service.__instance__,
-        "search": service.__search__
+        "search": service.__search__,
+        "feed": service.__feed__
     }
     service.start(**kwargs)

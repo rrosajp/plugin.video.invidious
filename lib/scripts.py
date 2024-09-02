@@ -49,14 +49,14 @@ def goToChannel(channelId):
 
 # addChannelToFeed -------------------------------------------------------------
 
-def addChannelToFeed(channelId, channel):
-    return Client().feed.addChannelToFeed(channelId, channel)
+def addChannelToFeed(channelId):
+    return Client().feed.addChannel(channelId)
 
 
-# removeChannelsFromFeed -------------------------------------------------------
+# removeChannelFromFeed -------------------------------------------------------
 
-def removeChannelsFromFeed():
-    return Client().feed.removeChannelsFromFeed()
+def removeChannelFromFeed(channelId):
+    return Client().feed.removeChannel(channelId)
 
 
 # updateQueryType --------------------------------------------------------------
@@ -92,7 +92,7 @@ __scripts__ = {
     "playWithYouTube": playWithYouTube,
     "goToChannel": goToChannel,
     "addChannelToFeed": addChannelToFeed,
-    "removeChannelsFromFeed": removeChannelsFromFeed,
+    "removeChannelFromFeed": removeChannelFromFeed,
     "updateQueryType": updateQueryType,
     "updateQuerySort": updateQuerySort,
     "removeQuery": removeQuery,

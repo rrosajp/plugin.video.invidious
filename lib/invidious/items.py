@@ -185,7 +185,7 @@ class Video(Item):
         (40223, "RunScript({addonId},goToChannel,{channelId})"),
         (
             40224,
-            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            "RunScript({addonId},addChannelToFeed,{channelId})",
             (("home.feed", bool), True)
         )
     ]
@@ -231,8 +231,7 @@ class Video(Item):
             },
             contextMenus=self.menus(
                 videoId=self.videoId,
-                channelId=self.channelId,
-                channel=self.channel
+                channelId=self.channelId
             ),
             thumb=self.thumbnail
         )
@@ -249,15 +248,7 @@ class Videos(Contents):
 # ------------------------------------------------------------------------------
 # Channels
 
-class Channel(Item):
-
-    __menus__ = [
-        (
-            40224,
-            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-            (("home.feed", bool), True)
-        )
-    ]
+class BaseChannel(Item):
 
     __thumbnail__ = "DefaultArtist.png"
 
@@ -279,16 +270,40 @@ class Channel(Item):
                 }
             },
             contextMenus=self.menus(
-                channelId=self.channelId,
-                channel=self.channel
+                channelId=self.channelId
             ),
             thumb=self.thumbnail
         )
 
 
+class Channel(BaseChannel):
+
+    __menus__ = [
+        (
+            40224,
+            "RunScript({addonId},addChannelToFeed,{channelId})",
+            (("home.feed", bool), True)
+        )
+    ]
+
 class Channels(Contents):
 
     __ctor__ = Channel
+
+
+class FeedChannel(BaseChannel):
+
+    __menus__ = [
+        (
+            40225,
+            "RunScript({addonId},removeChannelFromFeed,{channelId})",
+            (("home.feed", bool), True)
+        )
+    ]
+
+class FeedChannels(Contents):
+
+    __ctor__ = FeedChannel
 
 
 # ------------------------------------------------------------------------------
@@ -300,7 +315,7 @@ class Playlist(Item):
         (40223, "RunScript({addonId},goToChannel,{channelId})"),
         (
             40224,
-            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            "RunScript({addonId},addChannelToFeed,{channelId})",
             (("home.feed", bool), True)
         )
     ]
@@ -334,8 +349,7 @@ class Playlist(Item):
             },
             contextMenus=self.menus(
                 playlistId=self.playlistId,
-                channelId=self.channelId,
-                channel=self.channel
+                channelId=self.channelId
             ),
             thumb=self.thumbnail
         )

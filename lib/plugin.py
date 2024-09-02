@@ -136,6 +136,7 @@ class IVPlugin(Plugin):
 
     @action(category=30101)
     def feed(self, **kwargs):
+        self.__client__.feed(**kwargs)
         return True
 
     # search -------------------------------------------------------------------
