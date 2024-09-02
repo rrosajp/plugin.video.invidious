@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 
 
-from itertools import chain
 from time import time
 
 from iapc import public
 from iapc.tools import containerRefresh
 
-from invidious.extract import IVVideo
+from invidious.extract import IVChannel, IVVideo
 from invidious.persistence import IVFeedChannels
+
+
+# ------------------------------------------------------------------------------
+
+def extractChannels(channels):
+    return (IVChannel(channel) for channel in channels)
+
+def extractVideos(videos):
+    return (IVVideo(video) for video in videos)
 
 
 # ------------------------------------------------------------------------------
@@ -16,9 +24,10 @@ from invidious.persistence import IVFeedChannels
 
 class IVFeed(object):
 
-    def __init__(self, logger, instance, timeout=1800):
+    def __init__(self, logger, instance, cache, timeout=1800):
         self.logger = logger.getLogger(f"{logger.component}.feed")
         self.__instance__ = instance
+        self.__cache__ = cache.setdefault("channels", {})
         self.__channels__ = IVFeedChannels()
         self.__timeout__ = timeout
         self.__last__ = time()
@@ -46,12 +55,24 @@ class IVFeed(object):
         if (invalid or self.__expired__()):
             return self.__keys__
 
-    def update(self, videos):
+    def __update_cache__(self, channel):
+        # this is wonky, but I couldn't bring myself to move
+        # the channel cache from the service to the feed.
+        # ¯\_(ツ)_/¯
+        self.__cache__[channel["channelId"]] = channel
+
+    def __update_videos__(self, videos):
         self.__videos__ = sorted(
-            (IVVideo(video) for video in videos),
-            key=lambda x: x["published"], reverse=True
+            videos, key=lambda x: x["published"], reverse=True
         )
         self.__last__ = time()
+
+    def update(self, channels):
+        _videos_ = []
+        for channel in channels:
+            _videos_.extend(channel.pop("latestVideos", [])[:15])
+            self.__update_cache__(IVChannel(channel))
+        self.__update_videos__(IVVideo(video) for video in _videos_)
 
     def page(self, limit, page):
         return self.__videos__[(limit * (page - 1)):(limit * page)]
@@ -65,12 +86,7 @@ class IVFeed(object):
             ((page := int(page)) == 1) and
             ((keys := self.invalid()) is not None)
         ):
-            channels = self.__instance__.map_request("channel", keys)
-            self.update(
-                chain.from_iterable(
-                    channel["latestVideos"][:15] for channel in channels
-                )
-            )
+            self.update(self.__instance__.map_request("channel", keys))
         return self.page(limit, page)
 
     # public methods -----------------------------------------------------------

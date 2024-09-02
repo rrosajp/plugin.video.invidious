@@ -129,6 +129,9 @@ class IVChannel(dict):
             ]
         )
 
+    def __repr__(self):
+        return f"IVChannel({self['channel']})"
+
 
 # ------------------------------------------------------------------------------
 # IVPlaylist

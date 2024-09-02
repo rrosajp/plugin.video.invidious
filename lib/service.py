@@ -37,22 +37,23 @@ class IVService(Service):
     def __init__(self, *args, **kwargs):
         super(IVService, self).__init__(*args, **kwargs)
         makeProfile()
+        self.__cache__ = {}
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
-        self.__feed__ = IVFeed(self.logger, self.__instance__)
+        self.__feed__ = IVFeed(self.logger, self.__instance__, self.__cache__)
         self.__yt__ = Client("service.yt-dlp")
-        self.__cache__ = {}
 
     def __setup__(self):
         self.__instance__.__setup__()
         self.__search__.__setup__()
 
     def __stop__(self):
-        self.__cache__.clear()
         self.__yt__ = None
         self.__feed__.__stop__()
         self.__search__.__stop__()
         self.__instance__.__stop__()
+        self.logger.info(f"self.__cache__: {self.__cache__}")
+        self.__cache__.clear()
         self.logger.info("stopped")
 
     def start(self, **kwargs):
