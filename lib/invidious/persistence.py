@@ -41,3 +41,7 @@ class IVFeedChannels(Persistent, OrderedDict):
     @save
     def remove(self, key):
         del self[key]
+
+    @save
+    def clear(self):
+        super(IVFeedChannels, self).clear()

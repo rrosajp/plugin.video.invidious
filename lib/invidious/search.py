@@ -48,8 +48,8 @@ class IVSearch(object):
     def __init__(self, logger, instance):
         self.logger = logger.getLogger(f"{logger.component}.search")
         self.__instance__ = instance
-        self.__cache__ = deque()
         self.__history__ = IVSearchHistory()
+        self.__cache__ = deque()
 
     def __q_setup__(self, setting, ordered, label):
         q_setting = list(ordered.keys())[getSetting(*setting)]
@@ -67,7 +67,8 @@ class IVSearch(object):
         )
 
     def __stop__(self):
-        pass
+        self.__instance__ = None
+        self.logger.info("stopped")
 
     def __q_select__(self, key, ordered, heading):
         keys = [key for key in ordered.keys() if key]

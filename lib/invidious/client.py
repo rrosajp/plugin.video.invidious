@@ -85,9 +85,9 @@ class IVClient(object):
     # feed ---------------------------------------------------------------------
 
     @instance
-    def feed(self, **kwargs):
+    def feed(self, limit=19, **kwargs):
         self.logger.info(f"feed(kwargs={kwargs})")
-        self.__client__.feed()
+        return Videos(self.__client__.feed.feed(limit, **kwargs), limit=limit)
 
     # search -------------------------------------------------------------------
 

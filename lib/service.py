@@ -39,7 +39,7 @@ class IVService(Service):
         makeProfile()
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
-        self.__feed__ = IVFeed(self.logger)
+        self.__feed__ = IVFeed(self.logger, self.__instance__)
         self.__yt__ = Client("service.yt-dlp")
         self.__cache__ = {}
 
@@ -48,6 +48,10 @@ class IVService(Service):
         self.__search__.__setup__()
 
     def __stop__(self):
+        self.__cache__.clear()
+        self.__yt__ = None
+        self.__feed__.__stop__()
+        self.__search__.__stop__()
         self.__instance__.__stop__()
         self.logger.info("stopped")
 
@@ -140,12 +144,6 @@ class IVService(Service):
                 else True
             )
         ]
-
-    # feed ---------------------------------------------------------------------
-
-    @public
-    def feed(self, **kwargs):
-        self.logger.info(f"feed(kwargs={kwargs})")
 
 
 # __main__ ---------------------------------------------------------------------

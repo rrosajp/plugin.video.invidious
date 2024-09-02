@@ -37,7 +37,6 @@ class IVSession(Session):
             return response.json()
 
     def map_get(self, urls, **kwargs):
-        self.logger.info(f"map_get(urls={urls}, kwargs={kwargs})")
         def __map_get__(url):
             return self.get(url, **kwargs) # maybe swallow exceptions
         return self.__pool__.map(__map_get__, urls)
