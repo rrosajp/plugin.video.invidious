@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+from functools import wraps
+from itertools import chain
 from time import time
 
 from iapc import public
@@ -10,13 +12,18 @@ from invidious.extract import IVChannel, IVVideo
 from invidious.persistence import IVFeedChannels
 
 
-# ------------------------------------------------------------------------------
+# cached -----------------------------------------------------------------------
 
-def extractChannels(channels):
-    return (IVChannel(channel) for channel in channels)
-
-def extractVideos(videos):
-    return (IVVideo(video) for video in videos)
+def cached(name):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, key, *args, **kwargs):
+            cache = self.__cache__.setdefault(name, {})
+            if ((value := cache.get(key)) is None):
+                value = cache[key] = func(self, *(args or (key,)), **kwargs)
+            return value
+        return wrapper
+    return decorator
 
 
 # ------------------------------------------------------------------------------
@@ -24,10 +31,10 @@ def extractVideos(videos):
 
 class IVFeed(object):
 
-    def __init__(self, logger, instance, cache, timeout=1800):
+    def __init__(self, logger, instance, timeout=1800):
         self.logger = logger.getLogger(f"{logger.component}.feed")
         self.__instance__ = instance
-        self.__cache__ = cache.setdefault("channels", {})
+        self.__cache__ = {}
         self.__channels__ = IVFeedChannels()
         self.__timeout__ = timeout
         self.__last__ = time()
@@ -38,8 +45,16 @@ class IVFeed(object):
         pass
 
     def __stop__(self):
+        self.__cache__.clear()
         self.__instance__ = None
         self.logger.info("stopped")
+
+    # --------------------------------------------------------------------------
+
+    @cached("channels")
+    def __channel__(self, channelId):
+        self.logger.info(f"__channel__({channelId})")
+        return IVChannel(self.__instance__.request("channel", channelId))
 
     # --------------------------------------------------------------------------
 
@@ -55,24 +70,20 @@ class IVFeed(object):
         if (invalid or self.__expired__()):
             return self.__keys__
 
-    def __update_cache__(self, channel):
-        # this is wonky, but I couldn't bring myself to move
-        # the channel cache from the service to the feed.
-        # ¯\_(ツ)_/¯
-        self.__cache__[channel["channelId"]] = channel
-
-    def __update_videos__(self, videos):
-        self.__videos__ = sorted(
-            videos, key=lambda x: x["published"], reverse=True
-        )
-        self.__last__ = time()
+    def __update__(self, channels):
+        cache = self.__cache__.setdefault("channels", {})
+        for channel in channels:
+            if channel and (videos := channel.pop("latestVideos", [])[:15]):
+                cache[channel["channelId"]] = (channel := IVChannel(channel))
+                yield (IVVideo(video) for video in videos)
 
     def update(self, channels):
-        _videos_ = []
-        for channel in channels:
-            _videos_.extend(channel.pop("latestVideos", [])[:15])
-            self.__update_cache__(IVChannel(channel)) # see __update_cache__
-        self.__update_videos__(IVVideo(video) for video in _videos_)
+        self.__videos__ = sorted(
+            chain.from_iterable(self.__update__(channels)),
+            key=lambda x: x["published"],
+            reverse=True
+        )
+        self.__last__ = time()
 
     def page(self, limit, page):
         return self.__videos__[(limit * (page - 1)):(limit * page)]
@@ -94,8 +105,7 @@ class IVFeed(object):
     @public
     def channels(self):
         self.logger.info(f"channels()")
-        return [self.__cache__[key] for key in self.__channels__.keys()]
-        #return []
+        return [self.__channel__(key) for key in self.__channels__.keys()]
 
     @public
     def addChannel(self, key):

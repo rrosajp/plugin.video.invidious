@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-from functools import wraps
-
 from iapc import public, Client, Service
 from iapc.tools import containerRefresh, getSetting, makeProfile
 
@@ -15,20 +13,6 @@ from invidious.instance import IVInstance
 from invidious.search import IVSearch
 
 
-# cached -----------------------------------------------------------------------
-
-def cached(name):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(self, key, *args, **kwargs):
-            cache = self.__cache__.setdefault(name, {})
-            if ((value := cache.get(key)) is None):
-                value = cache[key] = func(self, *(args or (key,)), **kwargs)
-            return value
-        return wrapper
-    return decorator
-
-
 # ------------------------------------------------------------------------------
 # IVService
 
@@ -37,10 +21,9 @@ class IVService(Service):
     def __init__(self, *args, **kwargs):
         super(IVService, self).__init__(*args, **kwargs)
         makeProfile()
-        self.__cache__ = {}
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
-        self.__feed__ = IVFeed(self.logger, self.__instance__, self.__cache__)
+        self.__feed__ = IVFeed(self.logger, self.__instance__)
         self.__yt__ = Client("service.yt-dlp")
 
     def __setup__(self):
@@ -52,8 +35,6 @@ class IVService(Service):
         self.__feed__.__stop__()
         self.__search__.__stop__()
         self.__instance__.__stop__()
-        self.logger.info(f"self.__cache__: {self.__cache__}")
-        self.__cache__.clear()
         self.logger.info("stopped")
 
     def start(self, **kwargs):
@@ -85,11 +66,10 @@ class IVService(Service):
 
     # channel ------------------------------------------------------------------
 
-    @cached("channels")
     def __channel__(self, channelId):
         self.logger.info(f"__channel__({channelId})")
         if channelId:
-            return IVChannel(self.__instance__.request("channel", channelId))
+            return self.__feed__.__channel__(channelId)
         self.logger.error(f"Invalid channelId: {channelId}", notify=True)
 
     @public

@@ -32,12 +32,17 @@ class IVSession(Session):
             response = super(IVSession, self).request(method, url, **kwargs)
         except Timeout as error:
             self.logger.error(f"timeout error: {error}", notify=True)
+            raise error
         else:
             response.raise_for_status()
             return response.json()
 
     def map_get(self, urls, **kwargs):
         def __map_get__(url):
-            return self.get(url, **kwargs) # maybe swallow exceptions
+            try:
+                return self.get(url, **kwargs)
+            except Exception:
+                # swallow exceptions ???
+                return None
         return self.__pool__.map(__map_get__, urls)
 
