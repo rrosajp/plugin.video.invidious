@@ -71,7 +71,7 @@ class IVFeed(object):
         _videos_ = []
         for channel in channels:
             _videos_.extend(channel.pop("latestVideos", [])[:15])
-            self.__update_cache__(IVChannel(channel))
+            self.__update_cache__(IVChannel(channel)) # see __update_cache__
         self.__update_videos__(IVVideo(video) for video in _videos_)
 
     def page(self, limit, page):
@@ -89,7 +89,13 @@ class IVFeed(object):
             self.update(self.__instance__.map_request("channel", keys))
         return self.page(limit, page)
 
-    # public methods -----------------------------------------------------------
+    # channels -----------------------------------------------------------------
+
+    @public
+    def channels(self):
+        self.logger.info(f"channels()")
+        return [self.__cache__[key] for key in self.__channels__.keys()]
+        #return []
 
     @public
     def addChannel(self, key):
@@ -98,7 +104,9 @@ class IVFeed(object):
     @public
     def removeChannel(self, key):
         self.__channels__.remove(key)
+        containerRefresh()
 
     @public
     def clearChannels(self):
         self.__channels__.clear()
+        containerRefresh()

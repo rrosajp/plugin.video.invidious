@@ -9,7 +9,7 @@ from inputstreamhelper import Helper
 from iapc.tools import action, getSetting, openSettings, parseQuery, Plugin
 
 from invidious.client import IVClient
-from invidious.utils import moreItem, newQueryItem, settingsItem
+from invidious.utils import channelsItem, moreItem, newQueryItem, settingsItem
 
 
 # ------------------------------------------------------------------------------
@@ -52,6 +52,9 @@ class IVPlugin(Plugin):
 
     def addNewQueryItem(self):
         return self.addItem(newQueryItem(self.url, action="search", new=True))
+
+    def addChannelsItem(self):
+        return self.addItem(channelsItem(self.url, action="channels"))
 
     def playItem(
         self, item, manifestType, mimeType=None, headers=None, params=None
@@ -134,9 +137,17 @@ class IVPlugin(Plugin):
 
     # feed ---------------------------------------------------------------------
 
-    @action(category=30101)
+    @action(category=30101, cacheToDisc=False)
     def feed(self, **kwargs):
+        self.logger.info(f"feed(kwargs={kwargs})")
+        if ((int(kwargs.get("page", 1)) == 1) and (not self.addChannelsItem())):
+            return False
         return self.addDirectory(self.__client__.feed(**kwargs), **kwargs)
+
+    @action(category=30206)
+    def channels(self, **kwargs):
+        self.logger.info(f"channels(kwargs={kwargs})")
+        return self.addDirectory(self.__client__.channels(), **kwargs)
 
     # search -------------------------------------------------------------------
 

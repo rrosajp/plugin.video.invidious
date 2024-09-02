@@ -45,6 +45,10 @@ msgctxt "#30205"
 msgid "Shorts"
 msgstr ""
 
+msgctxt "#30206"
+msgid "Feed / Channels"
+msgstr ""
+
 msgctxt "#30210"
 msgid "All"
 msgstr ""

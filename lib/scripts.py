@@ -47,37 +47,28 @@ def goToChannel(channelId):
     containerUpdate(__channel_url__.format(channelId))
 
 
-# addChannelToFeed -------------------------------------------------------------
+# feed -------------------------------------------------------------------------
 
 def addChannelToFeed(channelId):
     return Client().feed.addChannel(channelId)
 
-
-# removeChannelFromFeed -------------------------------------------------------
-
 def removeChannelFromFeed(channelId):
     return Client().feed.removeChannel(channelId)
 
+def clearChannelsFromFeed():
+    return Client().feed.clearChannels()
 
-# updateQueryType --------------------------------------------------------------
+
+# search -----------------------------------------------------------------------
 
 def updateQueryType(q):
     return Client().search.updateQueryType(q)
 
-
-# updateQuerySort --------------------------------------------------------------
-
 def updateQuerySort(q):
     return Client().search.updateQuerySort(q)
 
-
-# removeQuery ------------------------------------------------------------------
-
 def removeQuery(q):
     return Client().search.removeQuery(q)
-
-
-# clearHistory -----------------------------------------------------------------
 
 def clearHistory():
     return Client().search.clearHistory()
@@ -93,6 +84,7 @@ __scripts__ = {
     "goToChannel": goToChannel,
     "addChannelToFeed": addChannelToFeed,
     "removeChannelFromFeed": removeChannelFromFeed,
+    "clearChannelsFromFeed": clearChannelsFromFeed,
     "updateQueryType": updateQueryType,
     "updateQuerySort": updateQuerySort,
     "removeQuery": removeQuery,

@@ -275,7 +275,6 @@ class BaseChannel(Item):
             thumb=self.thumbnail
         )
 
-
 class Channel(BaseChannel):
 
     __menus__ = [
@@ -286,22 +285,14 @@ class Channel(BaseChannel):
         )
     ]
 
-class Channels(Contents):
-
-    __ctor__ = Channel
-
-
 class FeedChannel(BaseChannel):
 
     __menus__ = [
-        (
-            40225,
-            "RunScript({addonId},removeChannelFromFeed,{channelId})",
-            (("home.feed", bool), True)
-        )
+        (40225, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
+        (40226, "RunScript({addonId},clearChannelsFromFeed)")
     ]
 
-class FeedChannels(Contents):
+class Channels(Contents):
 
     __ctor__ = FeedChannel
 

@@ -32,6 +32,11 @@ def newQueryItem(url, **kwargs):
     return __makeItem__(30801, url, art="DefaultAddSource.png", **kwargs)
 
 
+# channels item
+def channelsItem(url, **kwargs):
+    return __makeItem__(30202, url, art="DefaultArtist.png", **kwargs)
+
+
 # more item
 __more_art__ = getMedia("more")
 
