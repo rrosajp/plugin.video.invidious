@@ -76,7 +76,7 @@
         <!-- Search -->
         <category id="search" label="30102">
 
-            <!--<group id="history" label="40410">
+            <group id="history" label="40410">
 
                 <setting id="search.history" type="boolean" label="40411">
                     <level>0</level>
@@ -84,18 +84,7 @@
                     <control type="toggle" />
                 </setting>
 
-                <setting id="clearSearchHistory" type="action" label="40412" parent="search.history">
-                    <level>0</level>
-                    <data>RunScript($ID,clearSearchHistory)</data>
-                    <dependencies>
-                        <dependency type="enable" setting="search.history">
-                            <![CDATA[true]]>
-                        </dependency>
-                    </dependencies>
-                    <control type="button" format="action" />
-                </setting>
-
-            </group>-->
+            </group>
 
             <group id="queries" label="40420">
 

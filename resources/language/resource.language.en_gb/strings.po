@@ -229,10 +229,6 @@ msgctxt "#40411"
 msgid "Search history"
 msgstr ""
 
-msgctxt "#40412"
-msgid "Clear search history"
-msgstr ""
-
 msgctxt "#40420"
 msgid "Queries"
 msgstr ""
@@ -295,4 +291,8 @@ msgstr ""
 
 msgctxt "#90002"
 msgid "Channel '{}' added to feed"
+msgstr ""
+
+msgctxt "#90003"
+msgid "Search history cleared"
 msgstr ""

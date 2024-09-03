@@ -29,6 +29,7 @@ class IVService(Service):
     def __setup__(self):
         self.__instance__.__setup__()
         self.__search__.__setup__()
+        self.__feed__.__setup__()
 
     def __stop__(self):
         self.__yt__ = None
