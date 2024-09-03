@@ -8,49 +8,40 @@ from iapc import Client
 from iapc.tools import containerUpdate, getAddonId, playMedia
 
 
-__plugin_url__ = f"plugin://{getAddonId()}"
+# play -------------------------------------------------------------------------
+
+def playFromYouTube(videoId):
+    playMedia(
+        f"plugin://{getAddonId()}/?action=play&yt=true&videoId={videoId}"
+    )
+
+def playWithYouTube(videoId):
+    playMedia(
+        f"plugin://plugin.video.youtube/play/?incognito=true&video_id={videoId}"
+    )
 
 
-# selectInstance ---------------------------------------------------------------
+# goToChannel ------------------------------------------------------------------
+
+def goToChannel(channelId):
+    containerUpdate(
+        f"plugin://{getAddonId()}/?action=channel&channelId={channelId}"
+    )
+
+
+# instance ---------------------------------------------------------------------
 
 def selectInstance():
     return Client().instance.selectInstance()
-
-
-# selectRegion -----------------------------------------------------------------
 
 def selectRegion():
     return Client().instance.selectRegion()
 
 
-# playFromYouTube --------------------------------------------------------------
-
-__fromYoutube_url__ = f"{__plugin_url__}/?action=play&yt=true&videoId={{}}"
-
-def playFromYouTube(videoId):
-    playMedia(__fromYoutube_url__.format(videoId))
-
-
-# playWithYouTube --------------------------------------------------------------
-
-__withYoutube_url__ = "plugin://plugin.video.youtube/play/?incognito=true&video_id={}"
-
-def playWithYouTube(videoId):
-    playMedia(__withYoutube_url__.format(videoId))
-
-
-# goToChannel ------------------------------------------------------------------
-
-__channel_url__ = f"{__plugin_url__}/?action=channel&channelId={{}}"
-
-def goToChannel(channelId):
-    containerUpdate(__channel_url__.format(channelId))
-
-
 # feed -------------------------------------------------------------------------
 
-def addChannelToFeed(channelId):
-    return Client().feed.addChannel(channelId)
+def addChannelToFeed(channelId, channel):
+    return Client().feed.addChannel(channelId, channel)
 
 def removeChannelFromFeed(channelId):
     return Client().feed.removeChannel(channelId)
@@ -77,11 +68,11 @@ def clearHistory():
 # __main__ ---------------------------------------------------------------------
 
 __scripts__ = {
-    "selectInstance": selectInstance,
-    "selectRegion": selectRegion,
     "playFromYouTube": playFromYouTube,
     "playWithYouTube": playWithYouTube,
     "goToChannel": goToChannel,
+    "selectInstance": selectInstance,
+    "selectRegion": selectRegion,
     "addChannelToFeed": addChannelToFeed,
     "removeChannelFromFeed": removeChannelFromFeed,
     "clearChannelsFromFeed": clearChannelsFromFeed,

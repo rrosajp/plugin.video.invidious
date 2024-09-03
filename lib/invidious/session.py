@@ -42,7 +42,7 @@ class IVSession(Session):
             try:
                 return self.get(url, **kwargs)
             except Exception:
-                # swallow exceptions ???
+                # ignore exceptions ???
                 return None
         return self.__pool__.map(__map_get__, urls)
 

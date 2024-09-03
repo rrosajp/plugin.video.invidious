@@ -185,7 +185,7 @@ class Video(Item):
         (40223, "RunScript({addonId},goToChannel,{channelId})"),
         (
             40224,
-            "RunScript({addonId},addChannelToFeed,{channelId})",
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
             (("home.feed", bool), True)
         )
     ]
@@ -231,7 +231,8 @@ class Video(Item):
             },
             contextMenus=self.menus(
                 videoId=self.videoId,
-                channelId=self.channelId
+                channelId=self.channelId,
+                channel=self.channel
             ),
             thumb=self.thumbnail
         )
@@ -270,20 +271,27 @@ class BaseChannel(Item):
                 }
             },
             contextMenus=self.menus(
-                channelId=self.channelId
+                channelId=self.channelId,
+                channel=self.channel
             ),
             thumb=self.thumbnail
         )
+
 
 class Channel(BaseChannel):
 
     __menus__ = [
         (
             40224,
-            "RunScript({addonId},addChannelToFeed,{channelId})",
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
             (("home.feed", bool), True)
         )
     ]
+
+class Channels(Contents):
+
+    __ctor__ = Channel
+
 
 class FeedChannel(BaseChannel):
 
@@ -292,7 +300,7 @@ class FeedChannel(BaseChannel):
         (40226, "RunScript({addonId},clearChannelsFromFeed)")
     ]
 
-class Channels(Contents):
+class FeedChannels(Contents):
 
     __ctor__ = FeedChannel
 
@@ -306,7 +314,7 @@ class Playlist(Item):
         (40223, "RunScript({addonId},goToChannel,{channelId})"),
         (
             40224,
-            "RunScript({addonId},addChannelToFeed,{channelId})",
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
             (("home.feed", bool), True)
         )
     ]
@@ -340,7 +348,8 @@ class Playlist(Item):
             },
             contextMenus=self.menus(
                 playlistId=self.playlistId,
-                channelId=self.channelId
+                channelId=self.channelId,
+                channel=self.channel
             ),
             thumb=self.thumbnail
         )

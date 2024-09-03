@@ -2,14 +2,14 @@
 
 
 from functools import wraps
-from itertools import chain
 from time import time
 
 from iapc import public
-from iapc.tools import containerRefresh
+from iapc.tools import containerRefresh, localizedString, notify, ICONINFO
 
 from invidious.extract import IVChannel, IVVideo
 from invidious.persistence import IVFeedChannels
+from invidious.utils import confirm
 
 
 # cached -----------------------------------------------------------------------
@@ -70,20 +70,20 @@ class IVFeed(object):
         if (invalid or self.__expired__()):
             return self.__keys__
 
-    def __update__(self, channels):
-        cache = self.__cache__.setdefault("channels", {})
-        for channel in channels:
-            if channel and (videos := channel.pop("latestVideos", [])[:15]):
-                cache[channel["channelId"]] = (channel := IVChannel(channel))
-                yield (IVVideo(video) for video in videos)
-
-    def update(self, channels):
+    def __update__(self, videos):
         self.__videos__ = sorted(
-            chain.from_iterable(self.__update__(channels)),
-            key=lambda x: x["published"],
-            reverse=True
+            videos, key=lambda x: x["published"], reverse=True
         )
         self.__last__ = time()
+
+    def update(self, channels):
+        videos = []
+        cache = self.__cache__.setdefault("channels", {})
+        for channel in channels:
+            if channel:
+                videos.extend(channel.pop("latestVideos", [])[:15])
+                cache[channel["channelId"]] = (channel := IVChannel(channel))
+        self.__update__(IVVideo(video) for video in videos)
 
     def page(self, limit, page):
         return self.__videos__[(limit * (page - 1)):(limit * page)]
@@ -108,8 +108,9 @@ class IVFeed(object):
         return [self.__channel__(key) for key in self.__channels__.keys()]
 
     @public
-    def addChannel(self, key):
+    def addChannel(self, key, value):
         self.__channels__.add(key)
+        notify(localizedString(90002).format(value), icon=ICONINFO, time=1000)
 
     @public
     def removeChannel(self, key):
@@ -118,5 +119,6 @@ class IVFeed(object):
 
     @public
     def clearChannels(self):
-        self.__channels__.clear()
-        containerRefresh()
+        if confirm():
+            self.__channels__.clear()
+            containerRefresh()

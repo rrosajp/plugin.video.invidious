@@ -5,12 +5,13 @@ from collections import deque, OrderedDict
 
 from iapc import public
 from iapc.tools import (
-    containerRefresh, containerUpdate, getAddonId, getSetting,
-    inputDialog, localizedString, selectDialog
+    containerRefresh, getSetting, inputDialog, localizedString, selectDialog
 )
 
 from invidious.extract import extractIVItems
 from invidious.persistence import IVSearchHistory
+from invidious.utils import confirm
+
 
 #-------------------------------------------------------------------------------
 
@@ -42,8 +43,6 @@ querySort = OrderedDict(
 # IVSearch
 
 class IVSearch(object):
-
-    __search_url__ = f"plugin://{getAddonId()}/?action=search"
 
     def __init__(self, logger, instance):
         self.logger = logger.getLogger(f"{logger.component}.search")
@@ -147,9 +146,7 @@ class IVSearch(object):
         containerRefresh()
 
     @public
-    def clearHistory(self, update=False):
-        self.__history__.clear()
-        if update:
-            containerUpdate(self.__search_url__, "replace")
-        else:
+    def clearHistory(self):
+        if confirm():
+            self.__history__.clear()
             containerRefresh()

@@ -7,7 +7,7 @@ from iapc import Client
 from iapc.tools import getSetting, selectDialog, setSetting, Logger
 
 from invidious.items import (
-    Channels, Folders, MixBag, Playlists, Queries, Video, Videos
+    FeedChannels, Folders, MixBag, Playlists, Queries, Video, Videos
 )
 
 
@@ -98,7 +98,7 @@ class IVClient(object):
     @instance
     def channels(self):
         self.logger.info(f"channels()")
-        return Channels(self.__client__.feed.channels())
+        return FeedChannels(self.__client__.feed.channels())
 
     # search -------------------------------------------------------------------
 

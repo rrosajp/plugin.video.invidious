@@ -288,3 +288,11 @@ msgstr ""
 msgctxt "#50504"
 msgid "Clear search history"
 msgstr ""
+
+msgctxt "#90001"
+msgid "Are you sure?"
+msgstr ""
+
+msgctxt "#90002"
+msgid "Channel '{}' added to feed"
+msgstr ""

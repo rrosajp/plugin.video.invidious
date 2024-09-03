@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from iapc.tools import localizedString, ListItem, buildUrl, getMedia
+from iapc.tools import (
+    localizedString, ListItem, buildUrl, getMedia, yesnoDialog
+)
 
 
 # misc useful items ------------------------------------------------------------
@@ -42,3 +44,9 @@ __more_art__ = getMedia("more")
 
 def moreItem(url, **kwargs):
     return __makeItem__(30802, url, art=__more_art__, **kwargs)
+
+
+# dialogs ----------------------------------------------------------------------
+
+def confirm():
+    return yesnoDialog(localizedString(90001))
