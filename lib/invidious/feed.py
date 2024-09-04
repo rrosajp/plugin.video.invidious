@@ -5,7 +5,7 @@ from functools import wraps
 from time import time
 
 from iapc import public
-from iapc.tools import containerRefresh, localizedString, notify, ICONINFO
+from nuttig import containerRefresh, localizedString, notify, ICONINFO
 
 from invidious.extract import IVChannel, IVVideo
 from invidious.persistence import IVFeedChannels

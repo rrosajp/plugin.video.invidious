@@ -4,7 +4,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from requests import Session, Timeout
 
-from iapc.tools import buildUrl
+from nuttig import buildUrl
 
 
 # ------------------------------------------------------------------------------

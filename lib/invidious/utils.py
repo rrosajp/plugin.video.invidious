@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from iapc.tools import (
+from nuttig import (
     localizedString, ListItem, buildUrl, getMedia, yesnoDialog
 )
 

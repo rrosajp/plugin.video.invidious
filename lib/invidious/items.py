@@ -3,10 +3,10 @@
 
 from urllib.parse import quote_plus
 
-from iapc.tools import (
+from nuttig import (
     buildUrl, getAddonId, getSetting, localizedString, maybeLocalize, ListItem
 )
-from iapc.tools.objects import List, Object
+from nuttig.objects import List, Object
 
 from invidious.search import queryType, querySort
 

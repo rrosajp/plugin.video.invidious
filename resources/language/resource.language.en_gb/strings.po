@@ -25,6 +25,26 @@ msgctxt "#30103"
 msgid "Settings"
 msgstr ""
 
+msgctxt "#30104"
+msgid "Popular"
+msgstr ""
+
+msgctxt "#30105"
+msgid "Trending"
+msgstr ""
+
+msgctxt "#30111"
+msgid "Music"
+msgstr ""
+
+msgctxt "#30112"
+msgid "Gaming"
+msgstr ""
+
+msgctxt "#30113"
+msgid "Movies"
+msgstr ""
+
 msgctxt "#30201"
 msgid "Videos"
 msgstr ""
@@ -295,4 +315,8 @@ msgstr ""
 
 msgctxt "#90003"
 msgid "Search history cleared"
+msgstr ""
+
+msgctxt "#90004"
+msgid "To use this feature you must install and enable the following addon:\n\n'{}'"
 msgstr ""

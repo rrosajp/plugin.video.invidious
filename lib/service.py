@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
-from iapc import public, Client, Service
-from iapc.tools import containerRefresh, getSetting, makeProfile
+from iapc import public, AddonNotAvailable, Client, Service
+from nuttig import (
+    containerRefresh, getSetting, localizedString, makeProfile, okDialog
+)
 
 from invidious.extract import (
-    IVChannel, IVChannelPlaylists, IVChannelVideos, IVPlaylistVideos, IVVideo
+    extractIVVideos, IVChannel, IVChannelPlaylists,
+    IVChannelVideos, IVPlaylistVideos, IVVideo
 )
 from invidious.feed import IVFeed
 from invidious.folders import home
@@ -24,7 +27,6 @@ class IVService(Service):
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
         self.__feed__ = IVFeed(self.logger, self.__instance__)
-        self.__yt__ = Client("service.yt-dlp")
 
     def __setup__(self):
         self.__instance__.__setup__()
@@ -32,7 +34,6 @@ class IVService(Service):
         self.__feed__.__setup__()
 
     def __stop__(self):
-        self.__yt__ = None
         self.__feed__.__stop__()
         self.__search__.__stop__()
         self.__instance__.__stop__()
@@ -51,7 +52,14 @@ class IVService(Service):
     # play ---------------------------------------------------------------------
 
     def __play_from_yt__(self, videoId):
-        return self.__yt__.play(f"https://www.youtube.com/watch?v={videoId}")
+        __yt_id__ = "service.yt-dlp"
+        try:
+            return Client(__yt_id__).play(
+                f"https://www.youtube.com/watch?v={videoId}"
+            )
+        except AddonNotAvailable:
+            okDialog(localizedString(90004).format(__yt_id__))
+            return None
 
     @public
     def play(self, videoId=None, yt=False):
@@ -59,7 +67,12 @@ class IVService(Service):
         if videoId:
             #return IVVideo(self.__instance__.request("video", videoId))
             if (video := IVVideo(self.__instance__.request("video", videoId))):
-                if (yt and (info := self.__play_from_yt__(videoId))):
+                #if (yt and (info := self.__play_from_yt__(videoId))):
+                #    video["url"] = info["url"]
+                #    video["manifestType"] = info["manifestType"]
+                if yt:
+                    if (not (info := self.__play_from_yt__(videoId))):
+                        return None
                     video["url"] = info["url"]
                     video["manifestType"] = info["manifestType"]
             return video
@@ -110,7 +123,9 @@ class IVService(Service):
         self.logger.info(f"playlist(playlistId={playlistId}, kwargs={kwargs})")
         if playlistId:
             return IVPlaylistVideos(
-                self.__instance__.request("playlist", playlistId, **kwargs)
+                self.__instance__.request(
+                    "playlist", playlistId, regional=False, **kwargs
+                )
             )
         self.logger.error(f"Invalid playlistId: {playlistId}", notify=True)
 
@@ -126,6 +141,16 @@ class IVService(Service):
                 else True
             )
         ]
+
+
+    # popular ------------------------------------------------------------------
+
+    @public
+    def popular(self, **kwargs):
+        self.logger.info(f"popular(kwargs={kwargs})")
+        return extractIVVideos(
+            self.__instance__.request("popular", regional=False, **kwargs)
+        )
 
 
 # __main__ ---------------------------------------------------------------------

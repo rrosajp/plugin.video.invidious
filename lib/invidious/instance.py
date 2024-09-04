@@ -2,7 +2,7 @@
 
 
 from iapc import public
-from iapc.tools import (
+from nuttig import (
     buildUrl, getSetting, localizedString, selectDialog, setSetting
 )
 

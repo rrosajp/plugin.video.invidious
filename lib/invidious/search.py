@@ -4,7 +4,7 @@
 from collections import deque, OrderedDict
 
 from iapc import public
-from iapc.tools import (
+from nuttig import (
     containerRefresh, getSetting, inputDialog, localizedString,
     notify, selectDialog, ICONINFO
 )

@@ -135,6 +135,18 @@
                     <control type="toggle" />
                 </setting>
 
+                <setting id="home.popular" type="boolean" label="30104">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                </setting>
+
+                <setting id="home.trending" type="boolean" label="30105">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                </setting>
+
                 <setting id="home.settings" type="boolean" label="30103">
                     <level>0</level>
                     <default>true</default>

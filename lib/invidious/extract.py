@@ -3,7 +3,7 @@
 
 from datetime import date
 
-from iapc.tools import localizedString
+from nuttig import localizedString
 
 
 # ------------------------------------------------------------------------------
@@ -221,3 +221,7 @@ __itemTypes__ = {
 
 def extractIVItems(items):
     return [__itemTypes__[item["type"]](item) for item in items]
+
+
+def extractIVVideos(videos):
+    return [IVVideo(video) for video in videos]

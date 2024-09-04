@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from inputstreamhelper import Helper
 
-from iapc.tools import action, getSetting, openSettings, parseQuery, Plugin
+from nuttig import action, getSetting, openSettings, parseQuery, Plugin
 
 from invidious.client import IVClient
 from invidious.utils import channelsItem, moreItem, newQueryItem, settingsItem
@@ -149,6 +149,20 @@ class IVPlugin(Plugin):
         self.logger.info(f"channels(kwargs={kwargs})")
         return self.addDirectory(self.__client__.channels(), **kwargs)
 
+    # popular ------------------------------------------------------------------
+
+    @action(category=30104)
+    def popular(self, **kwargs):
+        self.logger.info(f"popular(kwargs={kwargs})")
+        return self.addDirectory(self.__client__.popular(**kwargs), **kwargs)
+
+    # trending -----------------------------------------------------------------
+
+    @action(category=30105)
+    def trending(self, **kwargs):
+        self.logger.info(f"trending(kwargs={kwargs})")
+        return True
+
     # search -------------------------------------------------------------------
 
     def __query__(self):
@@ -158,7 +172,7 @@ class IVPlugin(Plugin):
     def __history__(self):
         self.logger.info(f"__history__()")
         if self.addNewQueryItem():
-            return self.addItems(self.__client__.history())
+            return self.addDirectory(self.__client__.history())
         return False
 
     def __search__(self, query):
