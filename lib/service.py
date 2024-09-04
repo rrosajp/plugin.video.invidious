@@ -65,16 +65,12 @@ class IVService(Service):
     def play(self, videoId=None, yt=False):
         self.logger.info(f"play(videoId={videoId}, yt={yt})")
         if videoId:
-            #return IVVideo(self.__instance__.request("video", videoId))
-            if (video := IVVideo(self.__instance__.request("video", videoId))):
-                #if (yt and (info := self.__play_from_yt__(videoId))):
-                #    video["url"] = info["url"]
-                #    video["manifestType"] = info["manifestType"]
-                if yt:
-                    if (not (info := self.__play_from_yt__(videoId))):
-                        return None
-                    video["url"] = info["url"]
-                    video["manifestType"] = info["manifestType"]
+            video = IVVideo(self.__instance__.request("video", videoId))
+            if video and yt:
+                if (not (info := self.__play_from_yt__(videoId))):
+                    return None
+                video["url"] = info["url"]
+                video["manifestType"] = info["manifestType"]
             return video
         self.logger.error(f"Invalid videoId: {videoId}", notify=True)
 
