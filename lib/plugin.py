@@ -161,7 +161,12 @@ class IVPlugin(Plugin):
     @action(category=30105)
     def trending(self, **kwargs):
         self.logger.info(f"trending(kwargs={kwargs})")
-        return True
+        if (
+            (not "type" in kwargs) and
+            not self.addItems(self.__client__.trending(folders=True))
+        ):
+            return False
+        return self.addDirectory(self.__client__.trending(**kwargs), **kwargs)
 
     # search -------------------------------------------------------------------
 

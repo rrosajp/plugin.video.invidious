@@ -11,7 +11,7 @@ from invidious.extract import (
     IVChannelVideos, IVPlaylistVideos, IVVideo
 )
 from invidious.feed import IVFeed
-from invidious.folders import home
+from invidious.folders import home, subFolders
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
 
@@ -111,7 +111,6 @@ class IVService(Service):
         self.logger.info(f"playlists(kwargs={kwargs})")
         return IVChannelPlaylists(*self.__tab__("playlists", **kwargs))
 
-
     # playlist -----------------------------------------------------------------
 
     @public
@@ -138,7 +137,6 @@ class IVService(Service):
             )
         ]
 
-
     # popular ------------------------------------------------------------------
 
     @public
@@ -147,6 +145,15 @@ class IVService(Service):
         return extractIVVideos(
             self.__instance__.request("popular", regional=False, **kwargs)
         )
+
+    # trending -----------------------------------------------------------------
+
+    @public
+    def trending(self, folders=False, **kwargs):
+        self.logger.info(f"trending(kwargs={kwargs})")
+        if folders:
+            return subFolders.get("trending", [])
+        return extractIVVideos(self.__instance__.request("trending", **kwargs))
 
 
 # __main__ ---------------------------------------------------------------------

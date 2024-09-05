@@ -100,12 +100,21 @@ class IVClient(object):
         self.logger.info(f"channels()")
         return FeedChannels(self.__client__.feed.channels())
 
-    # popular ---------------------------------------------------------------------
+    # popular ------------------------------------------------------------------
 
     @instance
     def popular(self, **kwargs):
         self.logger.info(f"popular(kwargs={kwargs})")
         return Videos(self.__client__.popular(**kwargs), **kwargs)
+
+    # trending -----------------------------------------------------------------
+
+    @instance
+    def trending(self, folders=False, **kwargs):
+        self.logger.info(f"trending(kwargs={kwargs})")
+        if folders:
+            return Folders(self.__client__.trending(folders=folders))
+        return Videos(self.__client__.trending(**kwargs), **kwargs)
 
     # search -------------------------------------------------------------------
 
