@@ -163,6 +163,17 @@
                     <control type="toggle" />
                 </setting>
 
+                <setting id="fps.limit.30" type="boolean" label="40321" parent="context.fromyoutube">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="enable" setting="context.fromyoutube">
+                            <![CDATA[true]]>
+                        </dependency>
+                    </dependencies>
+                </setting>
+
                 <setting id="context.withyoutube" type="boolean" label="40222">
                     <level>0</level>
                     <default>false</default>

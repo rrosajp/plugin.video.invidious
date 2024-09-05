@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from iapc import public, AddonNotAvailable, Client, Service
-from nuttig import (
-    containerRefresh, getSetting, localizedString, makeProfile, okDialog
-)
+from iapc import public, Service
+from nuttig import containerRefresh, getSetting, makeProfile
 
 from invidious.extract import (
     extractIVVideos, IVChannel, IVChannelPlaylists,
@@ -14,6 +12,7 @@ from invidious.feed import IVFeed
 from invidious.folders import home, subFolders
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
+from invidious.ytdlp import YtDlp
 
 
 # ------------------------------------------------------------------------------
@@ -27,13 +26,16 @@ class IVService(Service):
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
         self.__feed__ = IVFeed(self.logger, self.__instance__)
+        self.__ytdlp__ = YtDlp(self.logger)
 
     def __setup__(self):
         self.__instance__.__setup__()
         self.__search__.__setup__()
         self.__feed__.__setup__()
+        self.__ytdlp__.__setup__()
 
     def __stop__(self):
+        self.__ytdlp__.__stop__()
         self.__feed__.__stop__()
         self.__search__.__stop__()
         self.__instance__.__stop__()
@@ -51,23 +53,13 @@ class IVService(Service):
 
     # play ---------------------------------------------------------------------
 
-    def __play_from_yt__(self, videoId):
-        __yt_id__ = "service.yt-dlp"
-        try:
-            return Client(__yt_id__).play(
-                f"https://www.youtube.com/watch?v={videoId}"
-            )
-        except AddonNotAvailable:
-            okDialog(localizedString(90004).format(__yt_id__))
-            return None
-
     @public
     def play(self, videoId=None, yt=False):
         self.logger.info(f"play(videoId={videoId}, yt={yt})")
         if videoId:
             video = IVVideo(self.__instance__.request("video", videoId))
             if video and yt:
-                if (not (info := self.__play_from_yt__(videoId))):
+                if (not (info := self.__ytdlp__.play(videoId))):
                     return None
                 video["url"] = info["url"]
                 video["manifestType"] = info["manifestType"]
