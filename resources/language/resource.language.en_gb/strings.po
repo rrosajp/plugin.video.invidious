@@ -238,7 +238,15 @@ msgid "Framerate"
 msgstr ""
 
 msgctxt "#40321"
-msgid "Limit framerate to 30 fps"
+msgid "Limit framerate"
+msgstr ""
+
+msgctxt "#40331"
+msgid "No limit"
+msgstr ""
+
+msgctxt "#40332"
+msgid "30 fps"
 msgstr ""
 
 msgctxt "#40410"
