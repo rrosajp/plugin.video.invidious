@@ -2,7 +2,9 @@
 
 
 from iapc import AddonNotAvailable, Client
-from nuttig import getSetting, localizedString, okDialog
+from nuttig import (
+    addonIsEnabled, getSetting, localizedString, okDialog, setSetting
+)
 
 
 # ------------------------------------------------------------------------------
@@ -11,12 +13,22 @@ from nuttig import getSetting, localizedString, okDialog
 class YtDlp(object):
 
     __service_id__ = "service.yt-dlp"
+    __setting_id__ = "context.fromyoutube"
 
     def __init__(self, logger):
         self.logger = logger.getLogger(f"{logger.component}.yt-dlp")
+        self.__check__()
+
+    def __check__(self):
+        if (
+            getSetting(self.__setting_id__, bool) and
+            (not addonIsEnabled(self.__service_id__))
+        ):
+            setSetting(self.__setting_id__, False, bool)
 
     def __setup__(self):
-        self.__enabled__ = getSetting("context.fromyoutube", bool)
+        self.__check__()
+        self.__enabled__ = getSetting(self.__setting_id__, bool)
 
     def __stop__(self):
         pass
