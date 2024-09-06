@@ -202,6 +202,14 @@ msgid "Play with YouTube add-on"
 msgstr ""
 
 msgctxt "#40223"
+msgid "yt-dlp service settings..."
+msgstr ""
+
+msgctxt "#40224"
+msgid "To use this feature you must install and enable the 'service.yt-dlp' addon"
+msgstr ""
+
+msgctxt "#40223"
 msgid "Go to channel"
 msgstr ""
 
@@ -215,38 +223,6 @@ msgstr ""
 
 msgctxt "#40226"
 msgid "Clear all channels from feed"
-msgstr ""
-
-msgctxt "#40300"
-msgid "Video"
-msgstr ""
-
-msgctxt "#40310"
-msgid "Codecs"
-msgstr ""
-
-msgctxt "#40311"
-msgid "Enable VP9"
-msgstr ""
-
-msgctxt "#40312"
-msgid "Enable AV1"
-msgstr ""
-
-msgctxt "#40320"
-msgid "Framerate"
-msgstr ""
-
-msgctxt "#40321"
-msgid "Limit framerate"
-msgstr ""
-
-msgctxt "#40331"
-msgid "No limit"
-msgstr ""
-
-msgctxt "#40332"
-msgid "30 fps"
 msgstr ""
 
 msgctxt "#40410"

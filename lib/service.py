@@ -54,11 +54,11 @@ class IVService(Service):
     # play ---------------------------------------------------------------------
 
     @public
-    def play(self, videoId=None, yt=False):
-        self.logger.info(f"play(videoId={videoId}, yt={yt})")
+    def play(self, videoId=None, ytdlp=False):
+        self.logger.info(f"play(videoId={videoId}, ytdlp={ytdlp})")
         if videoId:
             video = IVVideo(self.__instance__.request("video", videoId))
-            if video and yt:
+            if video and ytdlp:
                 if (not (info := self.__ytdlp__.play(videoId))):
                     return None
                 video["url"] = info["url"]
