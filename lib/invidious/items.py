@@ -182,9 +182,9 @@ class Video(Item):
             40222, "RunScript({addonId},playWithYouTube,{videoId})",
             (("context.withyoutube", bool), True)
         ),
-        (40223, "RunScript({addonId},goToChannel,{channelId})"),
+        (40225, "RunScript({addonId},goToChannel,{channelId})"),
         (
-            40224,
+            40226,
             "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
             (("home.feed", bool), True)
         )
@@ -282,7 +282,7 @@ class Channel(BaseChannel):
 
     __menus__ = [
         (
-            40224,
+            40226,
             "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
             (("home.feed", bool), True)
         )
@@ -296,8 +296,8 @@ class Channels(Contents):
 class FeedChannel(BaseChannel):
 
     __menus__ = [
-        (40225, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
-        (40226, "RunScript({addonId},clearChannelsFromFeed)")
+        (40227, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
+        (40228, "RunScript({addonId},clearChannelsFromFeed)")
     ]
 
 class FeedChannels(Contents):
@@ -311,9 +311,9 @@ class FeedChannels(Contents):
 class Playlist(Item):
 
     __menus__ = [
-        (40223, "RunScript({addonId},goToChannel,{channelId})"),
+        (40225, "RunScript({addonId},goToChannel,{channelId})"),
         (
-            40224,
+            40226,
             "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
             (("home.feed", bool), True)
         )

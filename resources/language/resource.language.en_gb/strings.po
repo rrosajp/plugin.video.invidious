@@ -209,19 +209,19 @@ msgctxt "#40224"
 msgid "To use this feature you must install and enable the 'service.yt-dlp' addon"
 msgstr ""
 
-msgctxt "#40223"
+msgctxt "#40225"
 msgid "Go to channel"
 msgstr ""
 
-msgctxt "#40224"
+msgctxt "#40226"
 msgid "Add channel to feed"
 msgstr ""
 
-msgctxt "#40225"
+msgctxt "#40227"
 msgid "Remove channel from feed"
 msgstr ""
 
-msgctxt "#40226"
+msgctxt "#40228"
 msgid "Clear all channels from feed"
 msgstr ""
 
