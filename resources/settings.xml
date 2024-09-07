@@ -157,10 +157,23 @@
 
             <group id="context" label="40220">
 
-                <setting id="context.fromyoutube" type="boolean" label="40221" help="40224">
+                <setting id="ytdlp.warning" type="action" label="40224">
+                    <level>0</level>
+                    <control type="button" format="action">
+                        <hidevalue>true</hidevalue>
+                    </control>
+                    <dependencies>
+                        <dependency type="visible" on="property" name="infobool" operator="!is">System.AddonIsEnabled(service.yt-dlp)</dependency>
+                    </dependencies>
+                </setting>
+
+                <setting id="context.fromyoutube" type="boolean" label="40221">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle" />
+                    <dependencies>
+                        <dependency type="enable" on="property" name="infobool" operator="is">System.AddonIsEnabled(service.yt-dlp)</dependency>
+                    </dependencies>
                 </setting>
 
                 <setting id="ytdlp.settings" type="action" label="40223">
@@ -170,8 +183,8 @@
                         <close>true</close>
                     </control>
                     <dependencies>
+                        <dependency type="enable" on="property" name="infobool" operator="is">System.AddonIsEnabled(service.yt-dlp)</dependency>
                         <dependency type="visible" setting="context.fromyoutube" operator="is">true</dependency>
-                        <dependency type="enable" on="property" name="infobool">System.AddonIsEnabled(service.yt-dlp)</dependency>
                     </dependencies>
                 </setting>
 

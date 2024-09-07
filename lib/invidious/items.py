@@ -4,7 +4,8 @@
 from urllib.parse import quote_plus
 
 from nuttig import (
-    buildUrl, getAddonId, getSetting, localizedString, maybeLocalize, ListItem
+    buildUrl, getAddonId, getCondition, getSetting,
+    localizedString, maybeLocalize, ListItem
 )
 from nuttig.objects import List, Object
 
@@ -20,6 +21,11 @@ class Item(Object):
     __menus__ = []
 
     @classmethod
+    def __condition__(cls, args, expected):
+        result = getSetting(*args) if (len(args) > 1) else getCondition(*args)
+        return (result == expected)
+
+    @classmethod
     def menus(cls, **kwargs):
         return [
             (
@@ -29,8 +35,8 @@ class Item(Object):
                     **{key: quote_plus(value) for key, value in kwargs.items()}
                 )
             )
-            for label, action, *settings in cls.__menus__
-            if all(getSetting(*iargs) == ires for iargs, ires in settings)
+            for label, action, *conditions in cls.__menus__
+            if all(cls.__condition__(*condition) for condition in conditions)
         ]
 
     def __infos__(self, *args):
@@ -176,7 +182,8 @@ class Video(Item):
     __menus__ = [
         (
             40221, "RunScript({addonId},playFromYouTube,{videoId})",
-            (("context.fromyoutube", bool), True)
+            (("context.fromyoutube", bool), True),
+            (("System.AddonIsEnabled(service.yt-dlp)",), True)
         ),
         (
             40222, "RunScript({addonId},playWithYouTube,{videoId})",
