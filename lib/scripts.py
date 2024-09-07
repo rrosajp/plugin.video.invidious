@@ -12,7 +12,7 @@ from nuttig import containerUpdate, getAddonId, playMedia, addonEnabled, addonIn
 
 def playFromYouTube(videoId):
     playMedia(
-        f"plugin://{getAddonId()}/?action=play&ytdlp=true&videoId={videoId}"
+        f"plugin://{getAddonId()}/?action=play&yt=true&videoId={videoId}"
     )
 
 def playWithYouTube(videoId):
