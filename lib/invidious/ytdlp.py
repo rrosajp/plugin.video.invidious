@@ -23,7 +23,8 @@ class YtDlp(object):
 
     __service_id__ = "service.yt-dlp"
 
-    def play(self, videoId, yt=False, iv=False):
+    def play(self, videoId, **kwargs):
+        self.logger.info(f"play(videoId={videoId}, kwargs={kwargs})")
         if addonIsEnabled(self.__service_id__):
             return Client(self.__service_id__).play(
                 f"https://www.youtube.com/watch?v={videoId}"
