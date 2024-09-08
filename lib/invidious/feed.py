@@ -92,13 +92,17 @@ class IVFeed(object):
 
     @public
     def feed(self, limit, page=1):
-        self.logger.info(f"feed(limit={limit}, page={page})")
-        if (
-            ((page := int(page)) == 1) and
-            ((keys := self.invalid()) is not None)
-        ):
-            self.update(self.__instance__.map_request("channel", keys))
-        return self.page(limit, page)
+        t = time()
+        try:
+            self.logger.info(f"feed(limit={limit}, page={page})")
+            if (
+                ((page := int(page)) == 1) and
+                ((keys := self.invalid()) is not None)
+            ):
+                self.update(self.__instance__.map_request("channel", keys))
+            return self.page(limit, page)
+        finally:
+            self.logger.info(f"feed() took: {time() - t} seconds")
 
     # channels -----------------------------------------------------------------
 
@@ -109,7 +113,7 @@ class IVFeed(object):
 
     @public
     def addChannel(self, key, value):
-        self.__channels__.add(key)
+        self.__channels__.add(key, value)
         notify(localizedString(90002).format(value), icon=ICONINFO, time=1000)
 
     @public

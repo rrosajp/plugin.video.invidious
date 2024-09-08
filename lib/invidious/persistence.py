@@ -35,8 +35,8 @@ class IVSearchHistory(Persistent, OrderedDict):
 class IVFeedChannels(Persistent, OrderedDict):
 
     @save
-    def add(self, key):
-        self[key] = None
+    def add(self, key, value):
+        self[key] = value
 
     @save
     def remove(self, key):

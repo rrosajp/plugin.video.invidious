@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+from time import time
+
 from sys import argv
 from urllib.parse import urlencode
 
@@ -139,10 +141,14 @@ class IVPlugin(Plugin):
 
     @action(category=30101, cacheToDisc=False)
     def feed(self, **kwargs):
-        self.logger.info(f"feed(kwargs={kwargs})")
-        if ((int(kwargs.get("page", 1)) == 1) and (not self.addChannelsItem())):
-            return False
-        return self.addDirectory(self.__client__.feed(**kwargs), **kwargs)
+        t = time()
+        try:
+            self.logger.info(f"feed(kwargs={kwargs})")
+            if ((int(kwargs.get("page", 1)) == 1) and (not self.addChannelsItem())):
+                return False
+            return self.addDirectory(self.__client__.feed(**kwargs), **kwargs)
+        finally:
+            self.logger.info(f"feed() took: {time() - t} seconds")
 
     @action(category=30206)
     def channels(self, **kwargs):
