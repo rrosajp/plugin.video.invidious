@@ -38,9 +38,8 @@ class IVSession(Session):
             return response.json()
 
     def map_get(self, urls, **kwargs):
-        # I'm making the assumption that the thread safety issues between
-        # requests and urllib3 have been solved (couln't find definitive info on
-        # the topic).
+        # I'm assuming that the thread safety issues between requests and urllib3
+        # have been solved (couln't find definitive info on the topic).
         # If connections issues spawn from this, I'll revert back to storing
         # the session on a per thread basis in the instance (threading.local())
         # and using one session per connection (which is a waste).
