@@ -8,13 +8,14 @@ from nuttig import (
 
 # misc useful items ------------------------------------------------------------
 
-def __makeItem__(label, url, art=None, isFolder=True, **kwargs):
+def __makeItem__(label, url, art=None, isFolder=True, properties=None, **kwargs):
     label = localizedString(label)
     return ListItem(
         label,
         buildUrl(url, **kwargs),
         isFolder=isFolder,
         isPlayable=False,
+        properties=properties,
         infoLabels={"video": {"title": label, "plot": label}},
         thumb=art,
         poster=art,
@@ -43,7 +44,9 @@ def channelsItem(url, **kwargs):
 __more_art__ = getMedia("more")
 
 def moreItem(url, **kwargs):
-    return __makeItem__(30802, url, art=__more_art__, **kwargs)
+    return __makeItem__(
+        30802, url, art=__more_art__, properties={"SpecialSort": "bottom"}, **kwargs
+    )
 
 
 # dialogs ----------------------------------------------------------------------
