@@ -133,6 +133,7 @@ class IVPlugin(Plugin):
 
     @action(category=30000)
     def home(self, **kwargs):
+        self.logger.info(f"home(kwargs={kwargs})")
         if self.addDirectory(self.__client__.home()):
             return self.addSettingsItem()
         return False
@@ -154,6 +155,13 @@ class IVPlugin(Plugin):
     def channels(self, **kwargs):
         self.logger.info(f"channels(kwargs={kwargs})")
         return self.addDirectory(self.__client__.channels(), **kwargs)
+
+    # explore ------------------------------------------------------------------
+
+    @action(category=30106)
+    def explore(self, **kwargs):
+        self.logger.info(f"explore(kwargs={kwargs})")
+        return self.addDirectory(self.__client__.explore(), **kwargs)
 
     # popular ------------------------------------------------------------------
 

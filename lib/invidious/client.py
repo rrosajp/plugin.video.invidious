@@ -86,7 +86,7 @@ class IVClient(object):
     # home ---------------------------------------------------------------------
 
     def home(self):
-        return Folders(self.__client__.home())
+        return Folders(self.__client__.folders())
 
     # feed ---------------------------------------------------------------------
 
@@ -99,6 +99,12 @@ class IVClient(object):
     def channels(self):
         self.logger.info(f"channels()")
         return FeedChannels(self.__client__.feed.channels())
+
+    # explore ------------------------------------------------------------------
+
+    def explore(self):
+        self.logger.info(f"explore()")
+        return Folders(self.__client__.folders("explore"))
 
     # popular ------------------------------------------------------------------
 
@@ -113,7 +119,7 @@ class IVClient(object):
     def trending(self, folders=False, **kwargs):
         self.logger.info(f"trending(kwargs={kwargs})")
         if folders:
-            return Folders(self.__client__.trending(folders=folders))
+            return Folders(self.__client__.folders("explore", "trending"))
         return Videos(self.__client__.trending(**kwargs), **kwargs)
 
     # search -------------------------------------------------------------------

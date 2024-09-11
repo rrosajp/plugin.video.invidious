@@ -9,7 +9,7 @@ from invidious.extract import (
     IVChannelVideos, IVPlaylistVideos, IVVideo
 )
 from invidious.feed import IVFeed
-from invidious.folders import home, subFolders
+from invidious.folders import getFolders
 from invidious.instance import IVInstance
 from invidious.search import IVSearch
 from invidious.ytdlp import YtDlp
@@ -23,6 +23,7 @@ class IVService(Service):
     def __init__(self, *args, **kwargs):
         super(IVService, self).__init__(*args, **kwargs)
         makeProfile()
+        self.__folders__ = {}
         self.__instance__ = IVInstance(self.logger)
         self.__search__ = IVSearch(self.logger, self.__instance__)
         self.__feed__ = IVFeed(self.logger, self.__instance__)
@@ -39,6 +40,7 @@ class IVService(Service):
         self.__feed__.__stop__()
         self.__search__.__stop__()
         self.__instance__.__stop__()
+        self.__folders__.clear()
         self.logger.info("stopped")
 
     def start(self, **kwargs):
@@ -116,17 +118,15 @@ class IVService(Service):
             )
         self.logger.error(f"Invalid playlistId: {playlistId}", notify=True)
 
-    # home ---------------------------------------------------------------------
+    # folders ------------------------------------------------------------------
 
     @public
-    def home(self):
+    def folders(self, *paths):
+        self.logger.info(f"folders(paths={paths})")
+        folders = self.__folders__.setdefault(paths, getFolders(*paths))
         return [
-            folder for folder in home
-            if (
-                getSetting(f"home.{folder['type']}", bool)
-                if folder.get("optional", False)
-                else True
-            )
+            folder for folder in folders
+            if not (setting := folder["setting"]) or getSetting(setting, bool)
         ]
 
     # popular ------------------------------------------------------------------
@@ -141,10 +141,8 @@ class IVService(Service):
     # trending -----------------------------------------------------------------
 
     @public
-    def trending(self, folders=False, **kwargs):
+    def trending(self, **kwargs):
         self.logger.info(f"trending(kwargs={kwargs})")
-        if folders:
-            return subFolders.get("trending", [])
         return extractIVVideos(self.__instance__.request("trending", **kwargs))
 
 

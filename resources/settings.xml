@@ -135,16 +135,28 @@
                     <control type="toggle" />
                 </setting>
 
-                <setting id="home.popular" type="boolean" label="30104">
+                <setting id="home.explore" type="boolean" label="30106">
                     <level>0</level>
-                    <default>true</default>
+                    <default>false</default>
                     <control type="toggle" />
                 </setting>
 
-                <setting id="home.trending" type="boolean" label="30105">
+                <setting id="explore.popular" type="boolean" label="30104" parent="home.explore">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle" />
+                    <dependencies>
+                        <dependency type="enable" setting="home.explore">true</dependency>
+                    </dependencies>
+                </setting>
+
+                <setting id="explore.trending" type="boolean" label="30105" parent="home.explore">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                    <dependencies>
+                        <dependency type="enable" setting="home.explore">true</dependency>
+                    </dependencies>
                 </setting>
 
                 <setting id="home.settings" type="boolean" label="30103">

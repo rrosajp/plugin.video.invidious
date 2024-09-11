@@ -33,6 +33,10 @@ msgctxt "#30105"
 msgid "Trending"
 msgstr ""
 
+msgctxt "#30106"
+msgid "Explore"
+msgstr ""
+
 msgctxt "#30111"
 msgid "Music"
 msgstr ""
