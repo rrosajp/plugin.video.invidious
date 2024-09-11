@@ -149,9 +149,9 @@ class IVPlugin(Plugin):
 
     # explore ------------------------------------------------------------------
 
-    @action(category=30106)
-    def explore(self, **kwargs):
-        return self.addDirectory(self.__client__.explore(), **kwargs)
+    #@action(category=30106)
+    #def explore(self, **kwargs):
+    #    return self.addDirectory(self.__client__.explore(), **kwargs)
 
     # popular ------------------------------------------------------------------
 

@@ -95,8 +95,8 @@ class IVClient(object):
 
     # explore ------------------------------------------------------------------
 
-    def explore(self):
-        return Folders(self.__client__.folders("explore"))
+    #def explore(self):
+    #    return Folders(self.__client__.folders("explore"))
 
     # popular ------------------------------------------------------------------
 
@@ -109,7 +109,8 @@ class IVClient(object):
     @instance
     def trending(self, folders=False, **kwargs):
         if folders:
-            return Folders(self.__client__.folders("explore", "trending"))
+            #return Folders(self.__client__.folders("explore", "trending"))
+            return Folders(self.__client__.folders("trending"))
         return Videos(self.__client__.trending(**kwargs), **kwargs)
 
     # search -------------------------------------------------------------------
