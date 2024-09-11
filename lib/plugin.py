@@ -81,14 +81,12 @@ class IVPlugin(Plugin):
 
     @action()
     def play(self, **kwargs):
-        self.logger.info(f"play(kwargs={kwargs})")
         return self.playItem(*self.__client__.play(**kwargs))
 
     # channel ------------------------------------------------------------------
 
     @action()
     def channel(self, **kwargs):
-        self.logger.info(f"channel(kwargs={kwargs})")
         if (
             (not ("continuation" in kwargs)) and
             (tabs := self.__client__.tabs(**kwargs)) and
@@ -101,19 +99,16 @@ class IVPlugin(Plugin):
 
     @action(category=30203)
     def playlists(self, **kwargs):
-        self.logger.info(f"playlists(kwargs={kwargs})")
         return self.addDirectory(self.__client__.playlists(**kwargs), **kwargs)
 
     @action(category=30204)
     def streams(self, **kwargs):
-        self.logger.info(f"streams(kwargs={kwargs})")
         return self.addDirectory(
             self.__client__.tab("streams", **kwargs), **kwargs
         )
 
     @action(category=30205)
     def shorts(self, **kwargs):
-        self.logger.info(f"shorts(kwargs={kwargs})")
         return self.addDirectory(
             self.__client__.tab("shorts", **kwargs), **kwargs
         )
@@ -122,7 +117,6 @@ class IVPlugin(Plugin):
 
     @action()
     def playlist(self, index=50, **kwargs):
-        self.logger.info(f"playlist(kwargs={kwargs})")
         return self.addDirectory(
             self.__client__.playlist(index=index, **kwargs),
             index=index,
@@ -133,7 +127,6 @@ class IVPlugin(Plugin):
 
     @action(category=30000)
     def home(self, **kwargs):
-        self.logger.info(f"home(kwargs={kwargs})")
         if self.addDirectory(self.__client__.home()):
             return self.addSettingsItem()
         return False
@@ -144,7 +137,6 @@ class IVPlugin(Plugin):
     def feed(self, **kwargs):
         t = time()
         try:
-            self.logger.info(f"feed(kwargs={kwargs})")
             if ((int(kwargs.get("page", 1)) == 1) and (not self.addChannelsItem())):
                 return False
             return self.addDirectory(self.__client__.feed(**kwargs), **kwargs)
@@ -153,28 +145,24 @@ class IVPlugin(Plugin):
 
     @action(category=30206)
     def channels(self, **kwargs):
-        self.logger.info(f"channels(kwargs={kwargs})")
         return self.addDirectory(self.__client__.channels(), **kwargs)
 
     # explore ------------------------------------------------------------------
 
     @action(category=30106)
     def explore(self, **kwargs):
-        self.logger.info(f"explore(kwargs={kwargs})")
         return self.addDirectory(self.__client__.explore(), **kwargs)
 
     # popular ------------------------------------------------------------------
 
     @action(category=30104)
     def popular(self, **kwargs):
-        self.logger.info(f"popular(kwargs={kwargs})")
         return self.addDirectory(self.__client__.popular(**kwargs), **kwargs)
 
     # trending -----------------------------------------------------------------
 
     @action(category=30105)
     def trending(self, **kwargs):
-        self.logger.info(f"trending(kwargs={kwargs})")
         if (
             (not "type" in kwargs) and
             not self.addItems(self.__client__.trending(folders=True))
@@ -185,22 +173,18 @@ class IVPlugin(Plugin):
     # search -------------------------------------------------------------------
 
     def __query__(self):
-        self.logger.info(f"__query__()")
         return self.__client__.query()
 
     def __history__(self):
-        self.logger.info(f"__history__()")
         if self.addNewQueryItem():
             return self.addDirectory(self.__client__.history())
         return False
 
     def __search__(self, query):
-        self.logger.info(f"__search__(query={query})")
         return self.addDirectory(self.__client__.search(query), **query)
 
     @action(category=30102)
     def search(self, **kwargs):
-        self.logger.info(f"search(kwargs={kwargs})")
         if kwargs:
             if (query := (self.__query__() if "new" in kwargs else kwargs)):
                 return self.__search__(query)
@@ -218,9 +202,7 @@ class IVPlugin(Plugin):
 # __main__ ---------------------------------------------------------------------
 
 def dispatch(url, handle, query, *args):
-    plugin = IVPlugin(url, int(handle))
-    plugin.logger.info(f"dispatch(url='{url}', handle='{handle}', query='{query}', args={args})")
-    plugin.dispatch(**parseQuery(query))
+    IVPlugin(url, int(handle)).dispatch(**parseQuery(query))
 
 
 if __name__ == "__main__":
