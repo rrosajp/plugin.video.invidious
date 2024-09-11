@@ -57,7 +57,6 @@ class IVService(Service):
 
     @public
     def play(self, videoId=None, **kwargs):
-        self.logger.info(f"play(videoId={videoId}, kwargs={kwargs})")
         if videoId:
             video = IVVideo(self.__instance__.request("video", videoId))
             if video and kwargs:
@@ -71,24 +70,20 @@ class IVService(Service):
     # channel ------------------------------------------------------------------
 
     def __channel__(self, channelId):
-        self.logger.info(f"__channel__({channelId})")
         if channelId:
             return self.__feed__.__channel__(channelId)
         self.logger.error(f"Invalid channelId: {channelId}", notify=True)
 
     @public
     def channel(self, channelId=None):
-        self.logger.info(f"channel(channelId={channelId})")
         return self.__channel__(channelId)
 
     @public
     def tabs(self, channelId=None, **kwargs):
-        self.logger.info(f"tabs(channelId={channelId}, kwargs={kwargs})")
         if (channel := self.__channel__(channelId)):
             return channel["tabs"]
 
     def __tab__(self, key, channelId=None, **kwargs):
-        self.logger.info(f"__tab__(key={key}, channelId={channelId}, kwargs={kwargs})")
         if (channel := self.__channel__(channelId)):
             return (
                 channel["channel"],
@@ -97,19 +92,16 @@ class IVService(Service):
 
     @public
     def tab(self, key, **kwargs):
-        self.logger.info(f"tab(key={key}, kwargs={kwargs})")
         return IVChannelVideos(*self.__tab__(key, **kwargs))
 
     @public
     def playlists(self, **kwargs):
-        self.logger.info(f"playlists(kwargs={kwargs})")
         return IVChannelPlaylists(*self.__tab__("playlists", **kwargs))
 
     # playlist -----------------------------------------------------------------
 
     @public
     def playlist(self, playlistId=None, **kwargs):
-        self.logger.info(f"playlist(playlistId={playlistId}, kwargs={kwargs})")
         if playlistId:
             return IVPlaylistVideos(
                 self.__instance__.request(
@@ -122,7 +114,6 @@ class IVService(Service):
 
     @public
     def folders(self, *paths):
-        self.logger.info(f"folders(paths={paths})")
         folders = self.__folders__.setdefault(paths, getFolders(*paths))
         return [
             folder for folder in folders
@@ -133,7 +124,6 @@ class IVService(Service):
 
     @public
     def popular(self, **kwargs):
-        self.logger.info(f"popular(kwargs={kwargs})")
         return extractIVVideos(
             self.__instance__.request("popular", regional=False, **kwargs)
         )
@@ -142,7 +132,6 @@ class IVService(Service):
 
     @public
     def trending(self, **kwargs):
-        self.logger.info(f"trending(kwargs={kwargs})")
         return extractIVVideos(self.__instance__.request("trending", **kwargs))
 
 
