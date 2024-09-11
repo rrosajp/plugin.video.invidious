@@ -129,6 +129,12 @@
 
             <group id="home" label="40210">
 
+                <setting id="home.feed" type="boolean" label="30101">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                </setting>
+
                 <setting id="home.popular" type="boolean" label="30104">
                     <level>0</level>
                     <default>true</default>
@@ -136,12 +142,6 @@
                 </setting>
 
                 <setting id="home.trending" type="boolean" label="30105">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle" />
-                </setting>
-
-                <setting id="home.feed" type="boolean" label="30101">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle" />

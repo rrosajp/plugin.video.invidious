@@ -6,62 +6,51 @@ from nuttig import getMedia
 
 # folders ----------------------------------------------------------------------
 
-__feed_art__ = getMedia("feed")
-
 __folders__ = {
     "folders": {
+        "feed": {
+            "title": 30101,
+            "setting": "home.feed",
+            "art": "icons/settings/network.png"
+        },
         "popular": {
             "title": 30104,
-            "setting": "home.popular"
+            "setting": "home.popular",
+            "art": "DefaultMusicTop100.png"
         },
         "trending": {
             "title": 30105,
             "setting": "home.trending",
+            "art": "DefaultFavourites.png",
             "folders": {
                 "music": {
                     "action": "trending",
                     "title": 30111,
-                    "art": {
-                        "poster": "DefaultAddonMusic.png",
-                        "icon": "DefaultAddonMusic.png"
-                    },
+                    "art": "DefaultAddonMusic.png",
                     "kwargs": {"type": "music"}
                 },
                 "gaming": {
                     "action": "trending",
                     "title": 30112,
-                    "art": {
-                        "poster": "DefaultAddonGame.png",
-                        "icon": "DefaultAddonGame.png"
-                    },
+                    "art": "DefaultAddonGame.png",
                     "kwargs": {"type": "gaming"}
                 },
                 "movies": {
                     "action": "trending",
                     "title": 30113,
-                    "art": {
-                        "poster": "DefaultMovies.png",
-                        "icon": "DefaultMovies.png"
-                    },
+                    "art": "DefaultMovies.png",
                     "kwargs": {"type": "movies"}
                 }
             }
         },
-        "feed": {
-            "title": 30101,
-            "setting": "home.feed",
-            "art": {
-                "poster": __feed_art__,
-                "icon": __feed_art__
-            }
+        "search": {
+            "title": 30102,
+            "art": "DefaultAddonsSearch.png"
         },
 #        "explore": {
 #            "title": 30106,
 #            "setting": "home.explore",
-#            "art": {
-#                "poster": "DefaultAddSource.png",
-#                "icon": "DefaultAddSource.png"
-#            },
+#            "art": "DefaultAddSource.png",
 #            "folders": {
 #                "popular": {
 #                    "title": 30104,
@@ -74,41 +63,25 @@ __folders__ = {
 #                        "music": {
 #                            "action": "trending",
 #                            "title": 30111,
-#                            "art": {
-#                                "poster": "DefaultAddonMusic.png",
-#                                "icon": "DefaultAddonMusic.png"
-#                            },
+#                            "art": "DefaultAddonMusic.png",
 #                            "kwargs": {"type": "music"}
 #                        },
 #                        "gaming": {
 #                            "action": "trending",
 #                            "title": 30112,
-#                            "art": {
-#                                "poster": "DefaultAddonGame.png",
-#                                "icon": "DefaultAddonGame.png"
-#                            },
+#                            "art": "DefaultAddonGame.png",
 #                            "kwargs": {"type": "gaming"}
 #                        },
 #                        "movies": {
 #                            "action": "trending",
 #                            "title": 30113,
-#                            "art": {
-#                                "poster": "DefaultMovies.png",
-#                                "icon": "DefaultMovies.png"
-#                            },
+#                            "art": "DefaultMovies.png",
 #                            "kwargs": {"type": "movies"}
 #                        }
 #                    }
 #                }
 #            }
-#        },
-        "search": {
-            "title": 30102,
-            "art": {
-                "poster": "DefaultAddonsSearch.png",
-                "icon": "DefaultAddonsSearch.png"
-            }
-        }
+#        }
     }
 }
 
@@ -120,7 +93,7 @@ class Folder(dict):
             title=folder["title"],
             action=folder.get("action", action),
             setting=folder.get("setting"),
-            art=folder.get("art", {}),
+            art=dict.fromkeys(("poster", "icon"), folder.get("art")),
             kwargs=folder.get("kwargs", {})
         )
 

@@ -26,7 +26,7 @@ def __makeItem__(label, url, art=None, isFolder=True, properties=None, **kwargs)
 # settings item
 def settingsItem(url, **kwargs):
     return __makeItem__(
-        30103, url, art="icons/settings/system.png", isFolder=False, **kwargs
+        30103, url, art="DefaultAddonService.png", isFolder=False, **kwargs
     )
 
 
