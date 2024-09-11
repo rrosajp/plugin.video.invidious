@@ -53,7 +53,6 @@ class IVFeed(object):
 
     @cached("channels")
     def __channel__(self, channelId):
-        self.logger.info(f"__channel__({channelId})")
         return IVChannel(self.__instance__.request("channel", channelId))
 
     # --------------------------------------------------------------------------
@@ -94,7 +93,6 @@ class IVFeed(object):
     def feed(self, limit, page=1):
         t = time()
         try:
-            self.logger.info(f"feed(limit={limit}, page={page})")
             if (
                 ((page := int(page)) == 1) and
                 ((keys := self.invalid()) is not None)
@@ -108,7 +106,6 @@ class IVFeed(object):
 
     @public
     def channels(self):
-        self.logger.info(f"channels()")
         return [self.__channel__(key) for key in self.__channels__.keys()]
 
     @public
