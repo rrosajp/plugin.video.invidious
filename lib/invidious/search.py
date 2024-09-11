@@ -97,7 +97,6 @@ class IVSearch(object):
 
     @public
     def query(self, **query):
-        self.logger.info(f"query(query={query}))")
         try:
             query = self.__cache__.pop()
         except IndexError:
@@ -114,13 +113,11 @@ class IVSearch(object):
 
     @public
     def history(self):
-        self.logger.info(f"history()")
         self.__cache__.clear()
         return list(reversed(self.__queries__.values()))
 
     @public
     def search(self, query):
-        self.logger.info(f"search(query={query})")
         self.__cache__.append(query)
         if self.__history__:
             self.__queries__.move_to_end(query["q"])
