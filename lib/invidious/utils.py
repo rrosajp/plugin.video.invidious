@@ -26,7 +26,7 @@ def __makeItem__(label, url, art=None, isFolder=True, properties=None, **kwargs)
 # settings item
 def settingsItem(url, **kwargs):
     return __makeItem__(
-        30103, url, art="DefaultAddonService.png", isFolder=False, **kwargs
+        5, url, art="DefaultAddonService.png", isFolder=False, **kwargs
     )
 
 
@@ -45,7 +45,11 @@ __more_art__ = getMedia("more")
 
 def moreItem(url, **kwargs):
     return __makeItem__(
-        30802, url, art=__more_art__, properties={"SpecialSort": "bottom"}, **kwargs
+        30802,
+        url,
+        art=__more_art__,
+        properties={"SpecialSort": "bottom"},
+        **kwargs
     )
 
 

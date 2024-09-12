@@ -4,7 +4,7 @@
 from functools import wraps
 
 from iapc import Client
-from nuttig import getSetting, selectDialog, setSetting, Logger
+from nuttig import Logger
 
 from invidious.items import (
     FeedChannels, Folders, MixBag, Playlists, Queries, Video, Videos

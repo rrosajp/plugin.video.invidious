@@ -21,10 +21,6 @@ msgctxt "#30102"
 msgid "Search"
 msgstr ""
 
-msgctxt "#30103"
-msgid "Settings"
-msgstr ""
-
 msgctxt "#30104"
 msgid "Popular"
 msgstr ""
