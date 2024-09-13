@@ -43,14 +43,40 @@ class IVInstance(object):
         self.__session__.close()
         self.logger.info("stopped")
 
+    # --------------------------------------------------------------------------
+
+    def __error__(self, result):
+        # this is wonky because invidious sometimes
+        # includes legitimate results with errors
+        if (isinstance(result, dict) and (error := result.pop("error", None))):
+            self.logger.error(error, notify=True)
+            return (True, result or None)
+        return (False, result)
+
+    def __response__(self, response):
+        notified, result = self.__error__(response.json())
+        try:
+            response.raise_for_status()
+        except Exception as error:
+            self.logger.error(
+                f"{error.__class__.__name__}: {error}", notify=(not notified)
+            )
+        return result
+
     def __get__(self, url, **kwargs):
-        return self.__session__.get(
-            url, params=kwargs, timeout=self.__timeout__
+        return self.__response__(
+            self.__session__.get(
+                url, params=kwargs, timeout=self.__timeout__
+            )
         )
 
     def __map_get__(self, urls, **kwargs):
-        return self.__session__.map_get(
-            urls, params=kwargs, timeout=self.__timeout__
+        return (
+            self.__response__(response)
+            for response in self.__session__.map_get(
+                urls, params=kwargs, timeout=self.__timeout__
+            )
+            if response
         )
 
     # instance -----------------------------------------------------------------

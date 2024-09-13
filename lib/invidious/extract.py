@@ -27,6 +27,14 @@ class Thumbnails(object):
         return __url__(super(Thumbnails, self).__getattribute__(name))
 
 
+class Dict(dict):
+
+    def __new__(cls, item):
+        if item is not None:
+            return super(Dict, cls).__new__(cls)
+        return item
+
+
 # ------------------------------------------------------------------------------
 # IVVideo
 
@@ -41,7 +49,7 @@ class VideoThumbnails(Thumbnails):
             setattr(self, thumbnail["quality"], thumbnail["url"])
 
 
-class IVVideo(dict):
+class IVVideo(Dict):
 
     def __init__(self, item):
         duration = (
@@ -101,7 +109,7 @@ class ChannelThumbnails(Thumbnails):
             setattr(self, str(thumbnail["height"]), thumbnail["url"])
 
 
-class IVChannel(dict):
+class IVChannel(Dict):
 
     __tabs__ = {
         "playlists": {"title": 30203},
@@ -136,7 +144,7 @@ class IVChannel(dict):
 # ------------------------------------------------------------------------------
 # IVPlaylist
 
-class IVPlaylist(dict):
+class IVPlaylist(Dict):
 
     def __init__(self, item):
         thumbnail = (
@@ -182,7 +190,7 @@ class IVPlaylistVideos(IVPlaylist):
 
     def __init__(self, item):
         super(IVPlaylistVideos, self).__init__(item)
-        self["videos"] = [IVVideo(video) for video in item["videos"]]
+        self["videos"] = [IVVideo(video) for video in item["videos"] if video]
 
 
 # ------------------------------------------------------------------------------
@@ -194,7 +202,7 @@ class IVChannelVideos(dict):
         super(IVChannelVideos, self).__init__(
             channel=channel,
             continuation=items.get("continuation"),
-            videos=[IVVideo(video) for video in items["videos"]]
+            videos=[IVVideo(video) for video in items["videos"] if video]
         )
 
 
@@ -207,7 +215,11 @@ class IVChannelPlaylists(dict):
         super(IVChannelPlaylists, self).__init__(
             channel=channel,
             continuation=items.get("continuation"),
-            playlists=[IVPlaylist(playlist) for playlist in items["playlists"]]
+            playlists=[
+                IVPlaylist(playlist)
+                for playlist in items["playlists"]
+                if playlist
+            ]
         )
 
 
@@ -220,8 +232,8 @@ __itemTypes__ = {
 }
 
 def extractIVItems(items):
-    return [__itemTypes__[item["type"]](item) for item in items]
+    return [__itemTypes__[item["type"]](item) for item in items if item]
 
 
 def extractIVVideos(videos):
-    return [IVVideo(video) for video in videos]
+    return [IVVideo(video) for video in videos if video]

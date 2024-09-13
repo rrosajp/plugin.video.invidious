@@ -28,14 +28,16 @@ class IVSession(Session):
         self.logger.info(
             f"request: {method} {buildUrl(url, **kwargs.get('params', {}))}"
         )
+        return super(IVSession, self).request(method, url, **kwargs)
+
+    def get(self, url, notify=True, **kwargs):
         try:
-            response = super(IVSession, self).request(method, url, **kwargs)
-        except Timeout as error:
-            self.logger.error(f"timeout error: {error}", notify=True)
+            return super(IVSession, self).get(url, **kwargs)
+        except Exception as error:
+            self.logger.error(
+                f"{error.__class__.__name__}: {error}", notify=notify
+            )
             raise error
-        else:
-            response.raise_for_status()
-            return response.json()
 
     def map_get(self, urls, **kwargs):
         # I'm assuming that the thread safety issues between requests and urllib3
@@ -45,7 +47,7 @@ class IVSession(Session):
         # and using one session per connection (which is a waste).
         def __map_get__(url):
             try:
-                return self.get(url, **kwargs)
+                return self.get(url, notify=False, **kwargs)
             except Exception:
                 # ignore exceptions ???
                 return None
