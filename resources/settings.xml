@@ -47,7 +47,7 @@
 
             </group>
 
-            <group id="regional" label="40120">
+            <group id="regional" label="14222">
 
                 <setting id="selectRegion" type="action" label="40121">
                     <level>0</level>
