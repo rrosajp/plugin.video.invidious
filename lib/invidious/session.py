@@ -34,9 +34,7 @@ class IVSession(Session):
         try:
             return super(IVSession, self).get(url, **kwargs)
         except Exception as error:
-            self.logger.error(
-                f"{error.__class__.__name__}: {error}", notify=notify
-            )
+            self.logger.error(error, notify=notify)
             raise error
 
     def map_get(self, urls, **kwargs):

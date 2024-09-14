@@ -58,9 +58,7 @@ class IVInstance(object):
         try:
             response.raise_for_status()
         except Exception as error:
-            self.logger.error(
-                f"{error.__class__.__name__}: {error}", notify=(not notified)
-            )
+            self.logger.error(error, notify=(not notified))
         return result
 
     def __get__(self, url, **kwargs):
