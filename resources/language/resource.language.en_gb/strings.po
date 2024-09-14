@@ -125,20 +125,12 @@ msgctxt "#30802"
 msgid "More..."
 msgstr ""
 
-msgctxt "#30901"
-msgid "VP9"
-msgstr ""
-
-msgctxt "#30902"
-msgid "AV1"
-msgstr ""
-
 msgctxt "#40100"
-msgid "General"
+msgid "Instance"
 msgstr ""
 
 msgctxt "#40110"
-msgid "Instance"
+msgid "Connection"
 msgstr ""
 
 msgctxt "#40111"

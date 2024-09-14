@@ -15,7 +15,10 @@ from invidious.session import IVSession
 
 class IVInstance(object):
 
-    headers = {}
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "*",
+    }
 
     def __init__(self, logger):
         self.logger = logger.getLogger(f"{logger.component}.instance")
@@ -33,10 +36,10 @@ class IVInstance(object):
         else:
             self.__timeout__ = None
         self.logger.info(f"{localizedString(40116)}: {self.__timeout__}")
-        self.region = getSetting("regional.region", str)
+        self.region = getSetting("instance.region", str)
         self.logger.info(
             f"{localizedString(40124)}: "
-            f"{self.region} - {getSetting('regional.region.text', str)}"
+            f"{self.region} - {getSetting('instance.region.text', str)}"
         )
 
     def __stop__(self):
@@ -112,7 +115,7 @@ class IVInstance(object):
 
     @public
     def selectRegion(self):
-        region = getSetting("regional.region", str)
+        region = getSetting("instance.region", str)
         keys = list(regions.keys())
         values = list(regions.values())
         preselect = keys.index(region) if region in regions else -1
@@ -125,8 +128,8 @@ class IVInstance(object):
                 )
             ) > -1
         ):
-            setSetting("regional.region", keys[index], str)
-            setSetting("regional.region.text", values[index], str)
+            setSetting("instance.region", keys[index], str)
+            setSetting("instance.region.text", values[index], str)
 
     # get ----------------------------------------------------------------------
 

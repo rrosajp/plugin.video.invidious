@@ -4,11 +4,11 @@
 
     <section id="plugin.video.invidious">
 
-        <!-- General -->
-        <category id="general" label="40100">
+        <!-- Instance -->
+        <category id="instance" label="40100">
 
-            <!-- Instance -->
-            <group id="instance" label="40110">
+            <!-- Connection -->
+            <group id="connection" label="40110">
 
                 <setting id="selectInstance" type="action" label="40111" help="40112">
                     <level>0</level>
@@ -55,14 +55,14 @@
                     <control type="button" format="action" />
                 </setting>
 
-                <setting id="regional.region" type="string" label="40124">
+                <setting id="instance.region" type="string" label="40124">
                     <level>0</level>
                     <default>US</default>
                     <visible>false</visible>
                     <control type="edit" format="string" />
                 </setting>
 
-                <setting id="regional.region.text" type="string" label="40124">
+                <setting id="instance.region.text" type="string" label="40124">
                     <level>0</level>
                     <default>United States</default>
                     <enable>false</enable>
