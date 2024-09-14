@@ -100,6 +100,51 @@ class IVVideo(Dict):
 
 
 # ------------------------------------------------------------------------------
+# YtDlpVideo
+
+class YtDlpVideo(Dict):
+
+    def __init__(self, item):
+        if (likes := item["like_count"]):
+            likesText = localizedString(30303).format(likes)
+        else:
+            likesText = None
+        if (views := item["view_count"]):
+            viewsText = localizedString(30302).format(views)
+        else:
+            viewsText = None
+        if (published := item["timestamp"]):
+            publishedDate = f"{__date__(published)}"
+            publishedText = localizedString(30301).format(
+                f"{publishedText} ({publishedDate})"
+                if (publishedText := item.get("publishedText"))
+                else publishedDate
+            )
+        else:
+            publishedDate = publishedText = None
+        super(YtDlpVideo, self).__init__(
+            type="video",
+            videoId=item["video_id"],
+            title=item["title"],
+            description=(item.get("description") or None),
+            channelId=item["channel_id"],
+            channel=item["channel"],
+            duration=item["duration"],
+            live=item["is_live"],
+            url=item["url"],
+            manifestType=item["manifestType"],
+            thumbnail=item["thumbnail"],
+            likes=likes,
+            likesText=likesText,
+            views=views,
+            viewsText=viewsText,
+            published=published,
+            publishedDate=publishedDate,
+            publishedText=publishedText
+        )
+
+
+# ------------------------------------------------------------------------------
 # IVChannel
 
 class ChannelThumbnails(Thumbnails):

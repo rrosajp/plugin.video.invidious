@@ -4,6 +4,8 @@
 from iapc import Client
 from nuttig import addonIsEnabled, localizedString, okDialog
 
+from invidious.extract import YtDlpVideo
+
 
 # ------------------------------------------------------------------------------
 # YtDlp
@@ -25,7 +27,9 @@ class YtDlp(object):
 
     def play(self, videoId, **kwargs):
         if addonIsEnabled(self.__service_id__):
-            return Client(self.__service_id__).play(
-                f"https://www.youtube.com/watch?v={videoId}"
+            return YtDlpVideo(
+                Client(self.__service_id__).play(
+                    f"https://www.youtube.com/watch?v={videoId}"
+                )
             )
         okDialog(localizedString(90004).format(self.__service_id__))

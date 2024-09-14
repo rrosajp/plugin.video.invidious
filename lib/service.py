@@ -55,16 +55,24 @@ class IVService(Service):
 
     # play ---------------------------------------------------------------------
 
+    #@public
+    #def play(self, videoId=None, **kwargs):
+    #    if videoId:
+    #        video = IVVideo(self.__instance__.request("video", videoId))
+    #        if video and kwargs:
+    #            if (not (info := self.__ytdlp__.play(videoId, **kwargs))):
+    #                return None
+    #            video["url"] = info["url"]
+    #            video["manifestType"] = info["manifestType"]
+    #        return video
+    #    self.logger.error(f"Invalid videoId: {videoId}", notify=True)
+
     @public
     def play(self, videoId=None, **kwargs):
         if videoId:
-            video = IVVideo(self.__instance__.request("video", videoId))
-            if video and kwargs:
-                if (not (info := self.__ytdlp__.play(videoId, **kwargs))):
-                    return None
-                video["url"] = info["url"]
-                video["manifestType"] = info["manifestType"]
-            return video
+            if kwargs:
+                return self.__ytdlp__.play(videoId, **kwargs)
+            return IVVideo(self.__instance__.request("video", videoId))
         self.logger.error(f"Invalid videoId: {videoId}", notify=True)
 
     # channel ------------------------------------------------------------------
