@@ -368,9 +368,9 @@ class Playlists(Contents):
 
 
 # ------------------------------------------------------------------------------
-# MixBag
+# Results
 
-class MixBag(Contents):
+class Results(Contents):
 
     __ctor__ = None
 

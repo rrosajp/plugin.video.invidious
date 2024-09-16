@@ -7,7 +7,7 @@ from iapc import Client
 from nuttig import Logger
 
 from invidious.items import (
-    FeedChannels, Folders, MixBag, Playlists, Queries, Video, Videos
+    FeedChannels, Folders, Playlists, Queries, Results, Video, Videos
 )
 
 
@@ -124,6 +124,6 @@ class IVClient(object):
 
     @instance
     def search(self, query):
-        return MixBag(
+        return Results(
             self.__client__.search.search(query), limit=20, category=query["q"]
         )
