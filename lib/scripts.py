@@ -5,10 +5,7 @@ from sys import argv
 from urllib.parse import unquote_plus
 
 from iapc import Client
-from nuttig import (
-    containerUpdate, getAddonId, playMedia,
-    addonEnabled, addonInstalled, executeJSONRPC
-)
+from nuttig import containerUpdate, getAddonId, playMedia
 
 
 # play -------------------------------------------------------------------------
