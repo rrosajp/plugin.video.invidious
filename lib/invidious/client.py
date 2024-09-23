@@ -40,7 +40,7 @@ class IVClient(object):
 
     @instance
     def video(self, **kwargs):
-        if (video := self.__client__.video(**kwargs)):
+        if (video := self.__client__.instance.video(**kwargs)):
             return (Video(video).makeItem(video["url"]), video["manifestType"])
         return (None, None)
 

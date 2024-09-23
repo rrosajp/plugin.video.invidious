@@ -39,14 +39,6 @@ class IVService(Service):
         self.__setup__()
         containerRefresh()
 
-    # video --------------------------------------------------------------------
-
-    @public
-    def video(self, **kwargs):
-        if (videoId := kwargs.pop("videoId")):
-            return self.__instance__.video(videoId, **kwargs)
-        self.logger.error(f"Invalid videoId: {videoId}", notify=True)
-
     # channel ------------------------------------------------------------------
 
     # playlist -----------------------------------------------------------------

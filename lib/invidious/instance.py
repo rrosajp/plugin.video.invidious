@@ -44,6 +44,7 @@ class IVInstance(object):
     __headers__ = {
         "User-Agent": "Mozilla/5.0",
         "Accept-Language": "*",
+        "Accept-Encoding": "gzip, deflate, br, zstd"
     }
 
     def __init__(self, logger):
@@ -59,9 +60,16 @@ class IVInstance(object):
             self.__url__ = None
         self.logger.info(f"Url: {self.__url__}")
 
+        self.__locale__ = "en-US"
+        #getSetting("regional.locale", str)
+        #self.logger.info(
+        #    f"{localizedString(41221)}: "
+        #    f"({self.__locale__})\\t{getSetting('regional.locale.text', str)}"
+
         self.__region__ = getSetting("regional.region", str)
         self.logger.info(
-            f"{localizedString(41211)}: {getSetting('regional.region.text', str)}"
+            f"{localizedString(41211)}: "
+            f"({self.__region__})\\t{getSetting('regional.region.text', str)}"
         )
 
         self.__session__.__setup__()
@@ -132,6 +140,7 @@ class IVInstance(object):
             kwargs["region"] = self.__region__
         elif "region" in kwargs:
             del kwargs["region"]
+        kwargs["hl"] = self.__locale__
 
     __paths__ = {
         "video": "videos/{}",
@@ -143,7 +152,7 @@ class IVInstance(object):
         "shorts": "channels/{}/shorts"
     }
 
-    def __buildUrl__(self, key, *arg):
+    def __buildUrl__(self, key, *arg):# *arg is a trick
         return buildUrl(self.__url__, self.__paths__.get(key, key).format(*arg))
 
     def __get__(self, key, *arg, regional=True, **kwargs):# *arg is a trick
@@ -168,10 +177,13 @@ class IVInstance(object):
 
     # video --------------------------------------------------------------------
 
-    def video(self, videoId, **kwargs):
-        if kwargs:
-            return self.__ytdlp__.video(videoId, **kwargs)
-        return self.__video__(videoId)
+    @public
+    def video(self, **kwargs):
+        if (videoId := kwargs.pop("videoId", None)):
+            if kwargs:
+                return self.__ytdlp__.video(videoId, **kwargs)
+            return self.__video__(videoId)
+        self.logger.error(f"Invalid videoId: {videoId}", notify=True)
 
     # popular ------------------------------------------------------------------
 
