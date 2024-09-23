@@ -1,87 +1,49 @@
 # -*- coding: utf-8 -*-
 
 
-from nuttig import getMedia
-
-
 # folders ----------------------------------------------------------------------
 
 __folders__ = {
     "folders": {
         "feed": {
-            "title": 30101,
+            "title": 30100,
             "setting": "home.feed",
             "art": "icons/settings/network.png"
         },
         "popular": {
-            "title": 30104,
+            "title": 30200,
             "setting": "home.popular",
             "art": "DefaultMusicTop100.png"
         },
         "trending": {
-            "title": 30105,
+            "title": 30300,
             "setting": "home.trending",
             "art": "DefaultFavourites.png",
             "folders": {
                 "music": {
                     "action": "trending",
-                    "title": 30111,
+                    "title": 30310,
                     "art": "DefaultAddonMusic.png",
                     "kwargs": {"type": "music"}
                 },
                 "gaming": {
                     "action": "trending",
-                    "title": 30112,
+                    "title": 30320,
                     "art": "DefaultAddonGame.png",
                     "kwargs": {"type": "gaming"}
                 },
                 "movies": {
                     "action": "trending",
-                    "title": 30113,
+                    "title": 30330,
                     "art": "DefaultMovies.png",
                     "kwargs": {"type": "movies"}
                 }
             }
         },
         "search": {
-            "title": 30102,
+            "title": 137,
             "art": "DefaultAddonsSearch.png"
-        },
-#        "explore": {
-#            "title": 30106,
-#            "setting": "home.explore",
-#            "art": "DefaultAddSource.png",
-#            "folders": {
-#                "popular": {
-#                    "title": 30104,
-#                    "setting": "explore.popular"
-#                },
-#                "trending": {
-#                    "title": 30105,
-#                    "setting": "explore.trending",
-#                    "folders": {
-#                        "music": {
-#                            "action": "trending",
-#                            "title": 30111,
-#                            "art": "DefaultAddonMusic.png",
-#                            "kwargs": {"type": "music"}
-#                        },
-#                        "gaming": {
-#                            "action": "trending",
-#                            "title": 30112,
-#                            "art": "DefaultAddonGame.png",
-#                            "kwargs": {"type": "gaming"}
-#                        },
-#                        "movies": {
-#                            "action": "trending",
-#                            "title": 30113,
-#                            "art": "DefaultMovies.png",
-#                            "kwargs": {"type": "movies"}
-#                        }
-#                    }
-#                }
-#            }
-#        }
+        }
     }
 }
 

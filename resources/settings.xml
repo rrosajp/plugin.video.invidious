@@ -5,18 +5,17 @@
     <section id="plugin.video.invidious">
 
         <!-- Instance -->
-        <category id="instance" label="40100">
+        <category id="instance" label="41000">
 
-            <!-- Connection -->
-            <group id="connection" label="40110">
+            <group id="connection" label="41100">
 
-                <setting id="selectInstance" type="action" label="40111" help="40112">
+                <setting id="selectInstance" type="action" label="41111" help="41112">
                     <level>0</level>
                     <data>RunScript($ID,selectInstance)</data>
                     <control type="button" format="action" />
                 </setting>
 
-                <setting id="instance.uri" type="string" label="40114">
+                <setting id="instance.uri" type="string" label="41110">
                     <level>0</level>
                     <default />
                     <constraints>
@@ -25,7 +24,7 @@
                     <control type="edit" format="string" />
                 </setting>
 
-                <setting id="instance.path" type="string" label="40115">
+                <setting id="instance.path" type="string" label="41120">
                     <level>0</level>
                     <default>api/v1</default>
                     <constraints>
@@ -34,7 +33,7 @@
                     <control type="edit" format="string" />
                 </setting>
 
-                <setting id="instance.timeout" type="number" label="40116">
+                <setting id="session.timeout" type="number" label="41130">
                     <level>0</level>
                     <default>10.0</default>
                     <constraints>
@@ -49,20 +48,20 @@
 
             <group id="regional" label="14222">
 
-                <setting id="selectRegion" type="action" label="40121">
+                <setting id="selectRegion" type="action" label="41210">
                     <level>0</level>
                     <data>RunScript($ID,selectRegion)</data>
                     <control type="button" format="action" />
                 </setting>
 
-                <setting id="instance.region" type="string" label="40124">
+                <setting id="regional.region" type="string" label="41211">
                     <level>0</level>
                     <default>US</default>
                     <visible>false</visible>
                     <control type="edit" format="string" />
                 </setting>
 
-                <setting id="instance.region.text" type="string" label="40124">
+                <setting id="regional.region.text" type="string" label="41211">
                     <level>0</level>
                     <default>United States</default>
                     <enable>false</enable>
@@ -74,11 +73,11 @@
         </category>
 
         <!-- Search -->
-        <category id="search" label="30102">
+        <category id="search" label="137">
 
-            <group id="history" label="40410">
+            <group id="history" label="42100">
 
-                <setting id="search.history" type="boolean" label="40411">
+                <setting id="search.history" type="boolean" label="42110">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle" />
@@ -86,35 +85,35 @@
 
             </group>
 
-            <group id="queries" label="40420">
+            <group id="queries" label="42200">
 
-                <setting id="query.type" type="integer" label="40431">
+                <setting id="query.type" type="integer" label="42210">
                     <level>0</level>
-                    <default>0</default>
+                    <default>1</default>
                     <constraints>
                         <options>
-                            <option label="30210">0</option>
-                            <option label="30211">1</option>
-                            <option label="30212">2</option>
-                            <option label="30213">3</option>
-                            <option label="30214">4</option>
-                            <option label="30215">5</option>
-                            <option label="41429">6</option>
+                            <option label="42230">0</option>
+                            <option label="42211">1</option>
+                            <option label="42212">2</option>
+                            <option label="42213">3</option>
+                            <option label="42214">4</option>
+                            <option label="42215">5</option>
+                            <option label="42216">6</option>
                         </options>
                     </constraints>
                     <control type="spinner" format="string" />
                 </setting>
 
-                <setting id="query.sort" type="integer" label="40421">
+                <setting id="query.sort" type="integer" label="42220">
                     <level>0</level>
-                    <default>0</default>
+                    <default>1</default>
                     <constraints>
                         <options>
-                            <option label="41420">0</option>
-                            <option label="41421">1</option>
-                            <option label="41422">2</option>
-                            <option label="41423">3</option>
-                            <option label="41429">4</option>
+                            <option label="42230">0</option>
+                            <option label="42221">1</option>
+                            <option label="42222">2</option>
+                            <option label="42223">3</option>
+                            <option label="42224">4</option>
                         </options>
                     </constraints>
                     <control type="spinner" format="string" />
@@ -125,51 +124,27 @@
         </category>
 
         <!-- Interface -->
-        <category id="interface" label="40200">
+        <category id="interface" label="43000">
 
-            <group id="home" label="40210">
+            <group id="home" label="43100">
 
-                <setting id="home.feed" type="boolean" label="30101">
+                <setting id="home.feed" type="boolean" label="30100">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle" />
                 </setting>
 
-                <setting id="home.popular" type="boolean" label="30104">
+                <setting id="home.popular" type="boolean" label="30200">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle" />
+                </setting>>
+
+                <setting id="home.trending" type="boolean" label="30300">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle" />
                 </setting>
-
-                <setting id="home.trending" type="boolean" label="30105">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle" />
-                </setting>
-
-                <!--<setting id="home.explore" type="boolean" label="30106">
-                    <level>0</level>
-                    <default>false</default>
-                    <control type="toggle" />
-                </setting>
-
-                <setting id="explore.popular" type="boolean" label="30104" parent="home.explore">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle" />
-                    <dependencies>
-                        <dependency type="enable" setting="home.explore">true</dependency>
-                    </dependencies>
-                </setting>
-
-                <setting id="explore.trending" type="boolean" label="30105" parent="home.explore">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle" />
-                    <dependencies>
-                        <dependency type="enable" setting="home.explore">true</dependency>
-                    </dependencies>
-                </setting>-->
 
                 <setting id="home.settings" type="boolean" label="5">
                     <level>0</level>
@@ -179,9 +154,9 @@
 
             </group>
 
-            <group id="context" label="40220">
+            <group id="context" label="43200">
 
-                <setting id="ytdlp.warning" type="action" label="40224">
+                <setting id="ytdlp.warning" type="action" label="43211">
                     <level>0</level>
                     <control type="button" format="action">
                         <hidevalue>true</hidevalue>
@@ -191,7 +166,7 @@
                     </dependencies>
                 </setting>
 
-                <setting id="context.fromyoutube" type="boolean" label="40221">
+                <setting id="context.fromyoutube" type="boolean" label="43210">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle" />
@@ -200,7 +175,7 @@
                     </dependencies>
                 </setting>
 
-                <setting id="ytdlp.settings" type="action" label="40223">
+                <setting id="ytdlp.settings" type="action" label="43212">
                     <level>0</level>
                     <data>Addon.OpenSettings(service.yt-dlp)</data>
                     <control type="button" format="action">
@@ -212,7 +187,7 @@
                     </dependencies>
                 </setting>
 
-                <setting id="context.withyoutube" type="boolean" label="40222">
+                <setting id="context.withyoutube" type="boolean" label="43220">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle" />

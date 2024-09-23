@@ -13,273 +13,276 @@ msgctxt "#30000"
 msgid "Invidious"
 msgstr ""
 
-msgctxt "#30101"
-msgid "Feed"
-msgstr ""
-
-msgctxt "#30102"
-msgid "Search"
-msgstr ""
-
-msgctxt "#30104"
-msgid "Popular"
-msgstr ""
-
-msgctxt "#30105"
-msgid "Trending"
-msgstr ""
-
-msgctxt "#30106"
-msgid "Explore"
-msgstr ""
-
-msgctxt "#30111"
-msgid "Music"
-msgstr ""
-
-msgctxt "#30112"
-msgid "Gaming"
-msgstr ""
-
-msgctxt "#30113"
-msgid "Movies"
-msgstr ""
-
-msgctxt "#30201"
-msgid "Videos"
-msgstr ""
-
-msgctxt "#30202"
-msgid "Channels"
-msgstr ""
-
-msgctxt "#30203"
-msgid "Playlists"
-msgstr ""
-
-msgctxt "#30204"
-msgid "Streams"
-msgstr ""
-
-msgctxt "#30205"
-msgid "Shorts"
-msgstr ""
-
-msgctxt "#30206"
-msgid "Feed / Channels"
-msgstr ""
-
-msgctxt "#30210"
-msgid "All"
-msgstr ""
-
-msgctxt "#30211"
-msgid "Video"
-msgstr ""
-
-msgctxt "#30212"
-msgid "Channel"
-msgstr ""
-
-msgctxt "#30213"
-msgid "Playlist"
-msgstr ""
-
-msgctxt "#30214"
-msgid "Movie"
-msgstr ""
-
-msgctxt "#30215"
-msgid "Show"
-msgstr ""
-
-msgctxt "#30301"
-msgid "published {}"
-msgstr ""
-
-msgctxt "#30302"
-msgid "{} views"
-msgstr ""
-
-msgctxt "#30303"
-msgid "{} likes"
-msgstr ""
-
-msgctxt "#30304"
-msgid "{} subscribers"
-msgstr ""
-
-msgctxt "#30305"
-msgid "{} videos"
-msgstr ""
-
-msgctxt "#30306"
-msgid "last updated {}"
-msgstr ""
-
-msgctxt "#30801"
-msgid "New search"
-msgstr ""
-
-msgctxt "#30802"
+msgctxt "#30001"
 msgid "More..."
 msgstr ""
 
-msgctxt "#40100"
+
+# Folders
+
+msgctxt "#30100"
+msgid "Feed"
+msgstr ""
+
+msgctxt "#30110"
+msgid "Channels"
+msgstr ""
+
+msgctxt "#30111"
+msgid "Feed / Channels"
+msgstr ""
+
+
+msgctxt "#30200"
+msgid "Popular"
+msgstr ""
+
+
+msgctxt "#30300"
+msgid "Trending"
+msgstr ""
+
+msgctxt "#30310"
+msgid "Music"
+msgstr ""
+
+msgctxt "#30320"
+msgid "Gaming"
+msgstr ""
+
+msgctxt "#30330"
+msgid "Movies"
+msgstr ""
+
+
+msgctxt "#30410"
+msgid "New search"
+msgstr ""
+
+
+msgctxt "#31100"
+msgid "Playlists"
+msgstr ""
+
+msgctxt "#31200"
+msgid "Streams"
+msgstr ""
+
+msgctxt "#31300"
+msgid "Shorts"
+msgstr ""
+
+
+# Instance settings
+
+msgctxt "#41000"
 msgid "Instance"
 msgstr ""
 
-msgctxt "#40110"
+msgctxt "#41100"
 msgid "Connection"
 msgstr ""
 
-msgctxt "#40111"
-msgid "Select a public instance"
-msgstr ""
-
-msgctxt "#40112"
-msgid "Displays a list of public instances, along with the region the server is hosted in. Selecting one will update the \"Uri\" setting."
-msgstr ""
-
-msgctxt "#40113"
-msgid "Publicly available instances"
-msgstr ""
-
-msgctxt "#40114"
+msgctxt "#41110"
 msgid "Uri"
 msgstr ""
 
-msgctxt "#40115"
+msgctxt "#41111"
+msgid "Select a public instance"
+msgstr ""
+
+msgctxt "#41112"
+msgid "Displays a list of public instances, along with the region the server is hosted in. Selecting one will update the \"Uri\" setting."
+msgstr ""
+
+msgctxt "#41113"
+msgid "Publicly available instances"
+msgstr ""
+
+msgctxt "#41120"
 msgid "Path"
 msgstr ""
 
-msgctxt "#40116"
+msgctxt "#41130"
 msgid "Timeout"
 msgstr ""
 
-msgctxt "#40120"
-msgid "Regional"
-msgstr ""
-
-msgctxt "#40121"
+msgctxt "#41210"
 msgid "Select your region"
 msgstr ""
 
-msgctxt "#40123"
-msgid "Regions"
-msgstr ""
-
-msgctxt "#40124"
+msgctxt "#41211"
 msgid "Region"
 msgstr ""
 
-msgctxt "#40200"
-msgid "Interface"
+msgctxt "#41212"
+msgid "Regions"
 msgstr ""
 
-msgctxt "#40210"
-msgid "Home"
-msgstr ""
 
-msgctxt "#40220"
-msgid "Context menus"
-msgstr ""
+# Search settings
 
-msgctxt "#40221"
-msgid "Play from YouTube"
-msgstr ""
-
-msgctxt "#40222"
-msgid "Play with YouTube add-on"
-msgstr ""
-
-msgctxt "#40223"
-msgid "yt-dlp service settings..."
-msgstr ""
-
-msgctxt "#40224"
-msgid "To use this feature you must install and enable the 'service.yt-dlp' addon"
-msgstr ""
-
-msgctxt "#40225"
-msgid "Go to channel"
-msgstr ""
-
-msgctxt "#40226"
-msgid "Add channel to feed"
-msgstr ""
-
-msgctxt "#40227"
-msgid "Remove channel from feed"
-msgstr ""
-
-msgctxt "#40228"
-msgid "Clear all channels from feed"
-msgstr ""
-
-msgctxt "#40410"
+msgctxt "#42100"
 msgid "History"
 msgstr ""
 
-msgctxt "#40411"
+msgctxt "#42110"
 msgid "Search history"
 msgstr ""
 
-msgctxt "#40420"
+msgctxt "#42200"
 msgid "Queries"
 msgstr ""
 
-msgctxt "#40421"
-msgid "Sort order"
-msgstr ""
-
-msgctxt "#40422"
-msgid "Sort order: {_sort_}"
-msgstr ""
-
-msgctxt "#41420"
-msgid "Relevance"
-msgstr ""
-
-msgctxt "#41421"
-msgid "Upload date"
-msgstr ""
-
-msgctxt "#41422"
-msgid "View count"
-msgstr ""
-
-msgctxt "#41423"
-msgid "Rating"
-msgstr ""
-
-msgctxt "#41429"
-msgid "Always ask"
-msgstr ""
-
-msgctxt "#40431"
+msgctxt "#42210"
 msgid "Query type"
 msgstr ""
 
-msgctxt "#40432"
+msgctxt "#42211"
+msgid "All"
+msgstr ""
+
+msgctxt "#42212"
+msgid "Video"
+msgstr ""
+
+msgctxt "#42213"
+msgid "Channel"
+msgstr ""
+
+msgctxt "#42214"
+msgid "Playlist"
+msgstr ""
+
+msgctxt "#42215"
+msgid "Movie"
+msgstr ""
+
+msgctxt "#42216"
+msgid "Show"
+msgstr ""
+
+msgctxt "#42220"
+msgid "Sort order"
+msgstr ""
+
+msgctxt "#42221"
+msgid "Relevance"
+msgstr ""
+
+msgctxt "#42222"
+msgid "Upload date"
+msgstr ""
+
+msgctxt "#42223"
+msgid "View count"
+msgstr ""
+
+msgctxt "#42224"
+msgid "Rating"
+msgstr ""
+
+msgctxt "#42230"
+msgid "Always ask"
+msgstr ""
+
+
+# Interface settings
+
+msgctxt "#43000"
+msgid "Interface"
+msgstr ""
+
+msgctxt "#43100"
+msgid "Home"
+msgstr ""
+
+msgctxt "#43200"
+msgid "Context menus"
+msgstr ""
+
+msgctxt "#43210"
+msgid "Play from YouTube"
+msgstr ""
+
+msgctxt "#43211"
+msgid "To use this feature you must install and enable the 'service.yt-dlp' addon"
+msgstr ""
+
+msgctxt "#43212"
+msgid "yt-dlp service settings..."
+msgstr ""
+
+msgctxt "#43220"
+msgid "Play with YouTube addon"
+msgstr ""
+
+
+# Items infos
+
+msgctxt "#50101"
+msgid "published {}"
+msgstr ""
+
+msgctxt "#50102"
+msgid "{} views"
+msgstr ""
+
+msgctxt "#50103"
+msgid "{} likes"
+msgstr ""
+
+msgctxt "#50201"
+msgid "{} subscribers"
+msgstr ""
+
+msgctxt "#50301"
+msgid "{} videos"
+msgstr ""
+
+msgctxt "#50302"
+msgid "last updated {}"
+msgstr ""
+
+
+# Context menus
+
+msgctxt "#60101"
 msgid "Query type: {_type_}"
 msgstr ""
 
-msgctxt "#50501"
-msgid "Go to channel"
+msgctxt "#60102"
+msgid "Sort order: {_sort_}"
 msgstr ""
 
-msgctxt "#50502"
-msgid "Add channel to feed"
-msgstr ""
-
-msgctxt "#50503"
+msgctxt "#60103"
 msgid "Remove"
 msgstr ""
 
-msgctxt "#50504"
+msgctxt "#60104"
 msgid "Clear search history"
 msgstr ""
+
+
+msgctxt "#60201"
+msgid "Go to channel"
+msgstr ""
+
+msgctxt "#60202"
+msgid "Add channel to feed"
+msgstr ""
+
+
+msgctxt "#60301"
+msgid "Remove channel from feed"
+msgstr ""
+
+msgctxt "#60302"
+msgid "Clear all channels from feed"
+msgstr ""
+
+
+# Notifications, dialogs
 
 msgctxt "#90001"
 msgid "Are you sure?"

@@ -1,13 +1,39 @@
 # -*- coding: utf-8 -*-
 
 
+from functools import wraps
+
+from requests import HTTPError
+
 from iapc import public
 from nuttig import (
     buildUrl, getSetting, localizedString, selectDialog, setSetting
 )
 
+from invidious.extract import IVVideo, IVVideos
 from invidious.regional import regions
 from invidious.session import IVSession
+from invidious.ytdlp import YtDlp
+
+
+# cached -----------------------------------------------------------------------
+
+def cached(name):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, key, *args, **kwargs):
+            cache = self.__cache__.setdefault(name, {})
+            if (
+                (not (value := cache.get(key))) or
+                (
+                    (expires := getattr(value, "__expires__", None)) and
+                    (time() >= expires)
+                )
+            ):
+                value = cache[key] = func(self, *(args or (key,)), **kwargs)
+            return value
+        return wrapper
+    return decorator
 
 
 # ------------------------------------------------------------------------------
@@ -15,75 +41,43 @@ from invidious.session import IVSession
 
 class IVInstance(object):
 
-    headers = {
+    __headers__ = {
         "User-Agent": "Mozilla/5.0",
         "Accept-Language": "*",
     }
 
     def __init__(self, logger):
         self.logger = logger.getLogger(f"{logger.component}.instance")
-        self.__session__ = IVSession(self.logger, headers=self.headers)
+        self.__session__ = IVSession(self.logger, headers=self.__headers__)
+        self.__ytdlp__ = YtDlp(self.logger)
+        self.__cache__ = {}
 
     def __setup__(self):
         if (uri := getSetting("instance.uri", str)):
-            self.__instance__ = buildUrl(uri, getSetting("instance.path", str))
+            self.__url__ = buildUrl(uri, getSetting("instance.path", str))
         else:
-            self.__instance__ = None
-        self.logger.info(f"{localizedString(40110)}: {self.__instance__}")
+            self.__url__ = None
+        self.logger.info(f"Url: {self.__url__}")
 
-        if (timeout := getSetting("instance.timeout", float)) > 0.0:
-            self.__timeout__ = (((timeout - (timeout % 3)) + 0.05), timeout)
-        else:
-            self.__timeout__ = None
-        self.logger.info(f"{localizedString(40116)}: {self.__timeout__}")
-        self.region = getSetting("instance.region", str)
+        self.__region__ = getSetting("regional.region", str)
         self.logger.info(
-            f"{localizedString(40124)}: "
-            f"{self.region} - {getSetting('instance.region.text', str)}"
+            f"{localizedString(41211)}: {getSetting('regional.region.text', str)}"
         )
+
+        self.__session__.__setup__()
+        self.__ytdlp__.__setup__()
+        self.__cache__.clear()
 
     def __stop__(self):
-        self.__session__.close()
+        self.__cache__.clear()
+        self.__ytdlp__.__stop__()
+        self.__session__.__stop__()
         self.logger.info("stopped")
-
-    # --------------------------------------------------------------------------
-
-    def __error__(self, result):
-        # this is wonky because invidious sometimes
-        # includes legitimate results with errors
-        if (isinstance(result, dict) and (error := result.pop("error", None))):
-            self.logger.error(error, notify=True)
-            return (True, result or None)
-        return (False, result)
-
-    def __response__(self, response):
-        notified, result = self.__error__(response.json())
-        try:
-            response.raise_for_status()
-        except Exception as error:
-            self.logger.error(error, notify=(not notified))
-        return result
-
-    def __get__(self, url, **kwargs):
-        return self.__response__(
-            self.__session__.get(
-                url, params=kwargs, timeout=self.__timeout__
-            )
-        )
-
-    def __map_get__(self, urls, **kwargs):
-        return (
-            self.__response__(response)
-            for response in self.__session__.map_get(
-                urls, params=kwargs, timeout=self.__timeout__
-            )
-            if response
-        )
 
     # instance -----------------------------------------------------------------
 
     def __instances__(self):
-        return self.__get__(
+        return self.__session__.__get__(
             "https://api.invidious.io/instances.json", sort_by="location"
         )
 
@@ -96,7 +90,7 @@ class IVInstance(object):
 
     @public
     def instance(self):
-        return self.__instance__
+        return self.__url__
 
     @public
     def selectInstance(self):
@@ -105,7 +99,7 @@ class IVInstance(object):
             keys = list(instances.keys())
             values = list(instances.values())
             preselect = keys.index(uri) if uri in keys else -1
-            index = selectDialog(values, heading=40113, preselect=preselect)
+            index = selectDialog(values, heading=41113, preselect=preselect)
             if index > -1:
                 setSetting("instance.uri", keys[index], str)
                 return True
@@ -115,7 +109,7 @@ class IVInstance(object):
 
     @public
     def selectRegion(self):
-        region = getSetting("instance.region", str)
+        region = getSetting("regional.region", str)
         keys = list(regions.keys())
         values = list(regions.values())
         preselect = keys.index(region) if region in regions else -1
@@ -123,35 +117,21 @@ class IVInstance(object):
             (
                 index := selectDialog(
                     [f"({k})\t{v}" for k, v in regions.items()],
-                    heading=40123,
+                    heading=41212,
                     preselect=preselect
                 )
             ) > -1
         ):
-            setSetting("instance.region", keys[index], str)
-            setSetting("instance.region.text", values[index], str)
+            setSetting("regional.region", keys[index], str)
+            setSetting("regional.region.text", values[index], str)
 
-    # get ----------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
-    def __region__(self, regional, kwargs):
+    def __regional__(self, regional, kwargs):
         if regional:
-            kwargs["region"] = self.region
-        else:
-            kwargs.pop("region", None)
-
-    def get(self, path, regional=True, **kwargs):
-        if self.__instance__:
-            self.__region__(regional, kwargs)
-            return self.__get__(buildUrl(self.__instance__, path), **kwargs)
-
-    def map_get(self, paths, regional=True, **kwargs):
-        if self.__instance__:
-            self.__region__(regional, kwargs)
-            return self.__map_get__(
-                (buildUrl(self.__instance__, path) for path in paths), **kwargs
-            )
-
-    # query --------------------------------------------------------------------
+            kwargs["region"] = self.__region__
+        elif "region" in kwargs:
+            del kwargs["region"]
 
     __paths__ = {
         "video": "videos/{}",
@@ -163,11 +143,39 @@ class IVInstance(object):
         "shorts": "channels/{}/shorts"
     }
 
-    def request(self, key, *args, **kwargs):
-        return self.get(self.__paths__.get(key, key).format(*args), **kwargs)
+    def __buildUrl__(self, key, *arg):
+        return buildUrl(self.__url__, self.__paths__.get(key, key).format(*arg))
 
-    def map_request(self, key, args, **kwargs):
-        #path = self.__paths__.get(key, key)
-        return self.map_get(
-            (self.__paths__.get(key, key).format(arg) for arg in args), **kwargs
-        )
+    def __get__(self, key, *arg, regional=True, **kwargs):# *arg is a trick
+        if self.__url__:
+            self.__regional__(regional, kwargs)
+            return self.__session__.__get__(
+                self.__buildUrl__(key, *arg), **kwargs
+            )
+
+    def __map_get__(self, key, args, regional=True, **kwargs):
+        if self.__url__:
+            self.__regional__(regional, kwargs)
+            return self.__session__.__map_get__(
+                (self.__buildUrl__(key, arg) for arg in args), **kwargs
+            )
+
+    # cached -------------------------------------------------------------------
+
+    @cached("videos")
+    def __video__(self, videoId):
+        return IVVideo(self.__get__("video", videoId))
+
+    # video --------------------------------------------------------------------
+
+    def video(self, videoId, **kwargs):
+        if kwargs:
+            return self.__ytdlp__.video(videoId, **kwargs)
+        return self.__video__(videoId)
+
+    # popular ------------------------------------------------------------------
+
+    @public
+    def popular(self, **kwargs):
+        if (videos := self.__get__("popular", regional=False, **kwargs)):
+            return IVVideos(videos)

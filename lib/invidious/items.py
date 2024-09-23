@@ -15,7 +15,6 @@ from invidious.search import queryType, querySort
 # ------------------------------------------------------------------------------
 # Items
 
-
 class Item(Object):
 
     __menus__ = []
@@ -55,6 +54,9 @@ class Item(Object):
     @property
     def icon(self):
         return self.get("icon", self.__thumbnail__)
+
+    def labels(self, title, plot, **kwargs):
+        return dict(video=dict(title=title, plot=plot, **kwargs))
 
 
 class Items(List):
@@ -100,12 +102,7 @@ class Folder(Item):
             title,
             buildUrl(url, action=self.action, **dict(self.kwargs, **kwargs)),
             isFolder=True,
-            infoLabels={
-                "video": {
-                    "title": title,
-                    "plot": self.plot or title
-                }
-            },
+            infoLabels=self.labels(title, self.plot or title),
             **self.art
         )
 
@@ -121,10 +118,10 @@ class Folders(Items):
 class Query(Item):
 
     __menus__ = [
-        (40432, "RunScript({addonId},updateQueryType,{q})"),
-        (40422, "RunScript({addonId},updateQuerySort,{q})"),
-        (50503, "RunScript({addonId},removeQuery,{q})"),
-        (50504, "RunScript({addonId},clearHistory)")
+        #(60101, "RunScript({addonId},updateQueryType,{q})"),
+        #(60102, "RunScript({addonId},updateQuerySort,{q})"),
+        #(60103, "RunScript({addonId},removeQuery,{q})"),
+        #(60104, "RunScript({addonId},clearHistory)")
     ]
 
     __thumbnail__ = "DefaultAddonsSearch.png"
@@ -154,12 +151,7 @@ class Query(Item):
                 page=self.page
             ),
             isFolder=True,
-            infoLabels={
-                "video": {
-                    "title": self.q,
-                    "plot": self.q
-                }
-            },
+            infoLabels=self.labels(self.q, self.q),
             contextMenus=self.menus(
                 q=self.q,
                 _type_=localizedString(queryType[self.type]),
@@ -181,38 +173,41 @@ class Video(Item):
 
     __menus__ = [
         (
-            40221, "RunScript({addonId},playFromYouTube,{videoId})",
+            43210, "RunScript({addonId},playFromYouTube,{videoId})",
             (("context.fromyoutube", bool), True),
             (("System.AddonIsEnabled(service.yt-dlp)",), True)
         ),
         (
-            40222, "RunScript({addonId},playWithYouTube,{videoId})",
+            43220, "RunScript({addonId},playWithYouTube,{videoId})",
             (("context.withyoutube", bool), True)
         ),
-        (40225, "RunScript({addonId},goToChannel,{channelId})"),
-        (
-            40226,
-            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-            (("home.feed", bool), True)
-        )
+        #(60201, "RunScript({addonId},goToChannel,{channelId})"),
+        #(
+        #    60202,
+        #    "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+        #    (("home.feed", bool), True)
+        #)
     ]
 
     __thumbnail__ = "DefaultAddonVideo.png"
 
     @property
+    def live(self):
+        return self.get("live", False)
+
+    @property
     def title(self):
         if self.live:
-        #if self.live or (not self.duration):
             return " ".join(("[COLOR red](₍.₎)[/COLOR]", self.get("title")))
         return self.get("title")
 
     @property
     def _infos_(self):
-        return " • ".join(list(self.__infos__("viewsText", "likesText")))
+        return " • ".join(list(self.__infos__("views", "likes")))
 
     @property
     def infos(self):
-        return "\n".join(list(self.__infos__("_infos_", "publishedText")))
+        return "\n".join(list(self.__infos__("_infos_", "published")))
 
     @property
     def plot(self):
@@ -220,17 +215,20 @@ class Video(Item):
             self.__infos__("title", "channel", "infos", "description")
         )
 
+    @property
+    def duration(self):
+        return self.get("duration", -1)
+
+    def labels(self, *args, **kwargs):
+        if self.live:
+            kwargs["playcount"] = 0
+        return super(Video, self).labels(*args, **kwargs)
+
     def makeItem(self, path):
         return ListItem(
             self.title,
             path,
-            infoLabels={
-                "video": {
-                    "mediatype": "video",
-                    "title": self.title,
-                    "plot": self.plot
-                }
-            },
+            infoLabels=self.labels(self.title, self.plot, mediatype="video"),
             streamInfos={
                 "video": {
                     "duration": self.duration
@@ -263,7 +261,7 @@ class BaseChannel(Item):
     @property
     def plot(self):
         return "\n\n".join(
-            self.__infos__("channel", "subsText", "description")
+            self.__infos__("channel", "subscribers", "description")
         )
 
     def getItem(self, url):
@@ -271,12 +269,7 @@ class BaseChannel(Item):
             self.channel,
             buildUrl(url, action="channel", channelId=self.channelId),
             isFolder=True,
-            infoLabels={
-                "video": {
-                    "title": self.channel,
-                    "plot": self.plot
-                }
-            },
+            infoLabels=self.labels(self.channel, self.plot),
             contextMenus=self.menus(
                 channelId=self.channelId,
                 channel=self.channel
@@ -288,11 +281,11 @@ class BaseChannel(Item):
 class Channel(BaseChannel):
 
     __menus__ = [
-        (
-            40226,
-            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-            (("home.feed", bool), True)
-        )
+        #(
+        #    60202,
+        #    "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+        #    (("home.feed", bool), True)
+        #)
     ]
 
 class Channels(Contents):
@@ -303,8 +296,8 @@ class Channels(Contents):
 class FeedChannel(BaseChannel):
 
     __menus__ = [
-        (40227, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
-        (40228, "RunScript({addonId},clearChannelsFromFeed)")
+        #(60301, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
+        #(60302, "RunScript({addonId},clearChannelsFromFeed)")
     ]
 
 class FeedChannels(Contents):
@@ -318,23 +311,23 @@ class FeedChannels(Contents):
 class Playlist(Item):
 
     __menus__ = [
-        (40225, "RunScript({addonId},goToChannel,{channelId})"),
-        (
-            40226,
-            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-            (("home.feed", bool), True)
-        )
+        #(60201, "RunScript({addonId},goToChannel,{channelId})"),
+        #(
+        #    60202,
+        #    "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+        #    (("home.feed", bool), True)
+        #)
     ]
 
     __thumbnail__ = "DefaultPlaylist.png"
 
     @property
     def _infos_(self):
-        return " • ".join(list(self.__infos__("viewsText", "videosText")))
+        return " • ".join(list(self.__infos__("views", "videos")))
 
     @property
     def infos(self):
-        return "\n".join(list(self.__infos__("_infos_", "updatedText")))
+        return "\n".join(list(self.__infos__("_infos_", "updated")))
 
     @property
     def plot(self):
@@ -347,12 +340,7 @@ class Playlist(Item):
             self.title,
             buildUrl(url, action="playlist", playlistId=self.playlistId),
             isFolder=True,
-            infoLabels={
-                "video": {
-                    "title": self.title,
-                    "plot": self.plot
-                }
-            },
+            infoLabels=self.labels(self.title, self.plot),
             contextMenus=self.menus(
                 playlistId=self.playlistId,
                 channelId=self.channelId,
@@ -374,15 +362,14 @@ class Results(Contents):
 
     __ctor__ = None
 
-    __itemTypes__ = {
+    __types__ = {
         "video": Video,
         "channel": Channel,
         "playlist": Playlist
     }
 
     def __init__(self, items, **kwargs):
-        super(MixBag, self).__init__(
-            [self.__itemTypes__[item["type"]](item) for item in items],
+        super(Results, self).__init__(
+            (self.__types__[item["type"]](item) for item in items if item),
             **kwargs
         )
-

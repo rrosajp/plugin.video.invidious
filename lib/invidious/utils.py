@@ -32,12 +32,12 @@ def settingsItem(url, **kwargs):
 
 # newQuery item
 def newQueryItem(url, **kwargs):
-    return __makeItem__(30801, url, art="DefaultAddSource.png", **kwargs)
+    return __makeItem__(30410, url, art="DefaultAddSource.png", **kwargs)
 
 
 # channels item
 def channelsItem(url, **kwargs):
-    return __makeItem__(30202, url, art="DefaultArtist.png", **kwargs)
+    return __makeItem__(30110, url, art="DefaultArtist.png", **kwargs)
 
 
 # more item
@@ -45,7 +45,7 @@ __more_art__ = getMedia("more")
 
 def moreItem(url, **kwargs):
     return __makeItem__(
-        30802,
+        30001,
         url,
         art=__more_art__,
         properties={"SpecialSort": "bottom"},

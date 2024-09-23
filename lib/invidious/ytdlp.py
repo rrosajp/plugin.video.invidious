@@ -19,16 +19,16 @@ class YtDlp(object):
         pass
 
     def __stop__(self):
-        pass
+        self.logger.info("stopped")
 
     # play ---------------------------------------------------------------------
 
     __service_id__ = "service.yt-dlp"
 
-    def play(self, videoId, **kwargs):
+    def video(self, videoId, **kwargs):
         if addonIsEnabled(self.__service_id__):
             return YtDlpVideo(
-                Client(self.__service_id__).play(
+                Client(self.__service_id__).video(
                     f"https://www.youtube.com/watch?v={videoId}"
                 )
             )

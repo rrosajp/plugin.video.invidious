@@ -2,9 +2,9 @@
 
 
 from concurrent.futures import ThreadPoolExecutor
-from requests import Session, Timeout
+from requests import HTTPError, RequestException, Session
 
-from nuttig import buildUrl
+from nuttig import buildUrl, getSetting, localizedString
 
 
 # ------------------------------------------------------------------------------
@@ -19,35 +19,57 @@ class IVSession(Session):
             self.headers.update(headers)
         self.__pool__ = ThreadPoolExecutor()
 
-    def close(self):
-        self.__pool__.shutdown(cancel_futures=True)
-        super(IVSession, self).close()
-        self.logger.info("closed")
+    def __setup__(self):
+        if (timeout := getSetting("session.timeout", float)) > 0.0:
+            self.__timeout__ = (((timeout - (timeout % 3)) + 0.05), timeout)
+        else:
+            self.__timeout__ = None
+        self.logger.info(f"{localizedString(41130)}: {self.__timeout__}")
 
-    def request(self, method, url, **kwargs):
+    def __stop__(self):
+        self.__pool__.shutdown(cancel_futures=True)
+        self.close()
+        self.logger.info("stopped")
+
+    # --------------------------------------------------------------------------
+
+    def request(self, method, url, notify=True, **kwargs):
         self.logger.info(
             f"request: {method} {buildUrl(url, **kwargs.get('params', {}))}"
         )
-        return super(IVSession, self).request(method, url, **kwargs)
-
-    def get(self, url, notify=True, **kwargs):
         try:
-            return super(IVSession, self).get(url, **kwargs)
-        except Exception as error:
+            return super(IVSession, self).request(
+                method, url, timeout=self.__timeout__, **kwargs
+            )
+        except RequestException as error:
             self.logger.error(error, notify=notify)
             raise error
 
-    def map_get(self, urls, **kwargs):
-        # I'm assuming that the thread safety issues between requests and urllib3
-        # have been solved (couln't find definitive info on the topic).
-        # If connections issues spawn from this, I'll revert back to storing
-        # the session on a per thread basis in the instance (threading.local())
-        # and using one session per connection (which is a waste).
-        def __map_get__(url):
+    # --------------------------------------------------------------------------
+
+    # this is wonky because invidious sometimes includes legitimate results with
+    # errors
+
+    def __error__(self, result, notify=True):
+        if (isinstance(result, dict) and (error := result.pop("error", None))):
+            self.logger.error(error, notify=notify)
+            return (True, result or None)
+        return (False, result)
+
+    def __get__(self, url, notify=True, **kwargs):
+        response = self.get(url, notify=notify, params=kwargs)
+        notified, result = self.__error__(response.json(), notify=notify)
+        try:
+            response.raise_for_status()
+        except HTTPError as error:
+            self.logger.error(error, notify=((not notified) and notify))
+        return result
+
+    def __map_get__(self, urls, **kwargs):
+        def __pool_get__(url):
             try:
-                return self.get(url, notify=False, **kwargs)
+                return self.__get__(url, notify=False, **kwargs)
             except Exception:
                 # ignore exceptions ???
                 return None
-        return self.__pool__.map(__map_get__, urls)
-
+        return self.__pool__.map(__pool_get__, urls)

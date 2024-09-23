@@ -4,6 +4,67 @@
 from collections import OrderedDict
 
 
+# locales ----------------------------------------------------------------------
+
+locales = OrderedDict(
+    (
+        ("af", "Afrikaans"),
+        ("ar", "العربية"),
+        ("az", "Azərbaycan"),
+        ("be", "Беларуская"),
+        ("bg", "Български"),
+        ("bn", "বাংলা"),
+        ("ca", "Català"),
+        ("cs", "Čeština"),
+        ("cy", "Welsh"),
+        ("da", "Dansk"),
+        ("de", "Deutsch"),
+        ("el", "Ελληνικά"),
+        ("en-US", "English (US)"),
+        ("eo", "Esperanto"),
+        ("es", "Español (España)"),
+        ("et", "Eesti"),
+        ("eu", "Euskara"),
+        ("fa", "فارسی"),
+        ("fi", "Suomi"),
+        ("fr", "Français"),
+        ("he", "עברית"),
+        ("hi", "हिन्दी"),
+        ("hr", "Hrvatski"),
+        ("hu-HU", "Magyar"),
+        ("ia", "Interlingua"),
+        ("id", "Bahasa Indonesia"),
+        ("is", "Íslenska"),
+        ("it", "Italiano"),
+        ("ja", "日本語"),
+        ("ko", "한국어"),
+        ("lmo", "Lombard"),
+        ("lt", "Lietuvių"),
+        ("nb-NO", "Norsk Bokmål"),
+        ("nl", "Nederlands"),
+        ("or", "ଓଡ଼ିଆ"),
+        ("pl", "Polski"),
+        ("pt-BR", "Português (Brasil)"),
+        ("pt-PT", "Português (Portugal)"),
+        ("pt", "Português"),
+        ("ro", "Română"),
+        ("ru", "Русский"),
+        ("si", "සිංහල"),
+        ("sk", "Slovenčina"),
+        ("sl", "Slovenščina"),
+        ("sq", "Shqip"),
+        ("sr", "Српски"),
+        ("sv-SE", "Svenska"),
+        ("tk", "Turkmen"),
+        ("tr", "Türkçe"),
+        ("uk", "Українська"),
+        ("vi", "Tiếng Việt"),
+        ("zh-CN", "中文 (简体)"),
+        ("zh-TW", "中文 (繁體)")
+    )
+)
+
+
 # regions ----------------------------------------------------------------------
 
 regions = OrderedDict(
