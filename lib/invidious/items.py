@@ -118,10 +118,10 @@ class Folders(Items):
 class Query(Item):
 
     __menus__ = [
-        #(60101, "RunScript({addonId},updateQueryType,{q})"),
-        #(60102, "RunScript({addonId},updateQuerySort,{q})"),
-        #(60103, "RunScript({addonId},removeQuery,{q})"),
-        #(60104, "RunScript({addonId},clearHistory)")
+        (60101, "RunScript({addonId},updateQueryType,{q})"),
+        (60102, "RunScript({addonId},updateQuerySort,{q})"),
+        (60103, "RunScript({addonId},removeQuery,{q})"),
+        (60104, "RunScript({addonId},clearHistory)")
     ]
 
     __thumbnail__ = "DefaultAddonsSearch.png"
@@ -181,12 +181,12 @@ class Video(Item):
             43220, "RunScript({addonId},playWithYouTube,{videoId})",
             (("context.withyoutube", bool), True)
         ),
-        #(60201, "RunScript({addonId},goToChannel,{channelId})"),
-        #(
-        #    60202,
-        #    "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-        #    (("home.feed", bool), True)
-        #)
+        (60201, "RunScript({addonId},goToChannel,{channelId})"),
+        (
+            60202,
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            (("home.feed", bool), True)
+        )
     ]
 
     __thumbnail__ = "DefaultAddonVideo.png"
@@ -203,11 +203,11 @@ class Video(Item):
 
     @property
     def _infos_(self):
-        return " • ".join(list(self.__infos__("views", "likes")))
+        return " • ".join(list(self.__infos__("viewsText", "likesText")))
 
     @property
     def infos(self):
-        return "\n".join(list(self.__infos__("_infos_", "published")))
+        return "\n".join(list(self.__infos__("_infos_", "publishedText")))
 
     @property
     def plot(self):
@@ -261,7 +261,7 @@ class BaseChannel(Item):
     @property
     def plot(self):
         return "\n\n".join(
-            self.__infos__("channel", "subscribers", "description")
+            self.__infos__("channel", "subscribersText", "description")
         )
 
     def getItem(self, url):
@@ -281,11 +281,11 @@ class BaseChannel(Item):
 class Channel(BaseChannel):
 
     __menus__ = [
-        #(
-        #    60202,
-        #    "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-        #    (("home.feed", bool), True)
-        #)
+        (
+            60202,
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            (("home.feed", bool), True)
+        )
     ]
 
 class Channels(Contents):
@@ -296,8 +296,8 @@ class Channels(Contents):
 class FeedChannel(BaseChannel):
 
     __menus__ = [
-        #(60301, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
-        #(60302, "RunScript({addonId},clearChannelsFromFeed)")
+        (60301, "RunScript({addonId},removeChannelFromFeed,{channelId})"),
+        (60302, "RunScript({addonId},clearChannelsFromFeed)")
     ]
 
 class FeedChannels(Contents):
@@ -311,23 +311,23 @@ class FeedChannels(Contents):
 class Playlist(Item):
 
     __menus__ = [
-        #(60201, "RunScript({addonId},goToChannel,{channelId})"),
-        #(
-        #    60202,
-        #    "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
-        #    (("home.feed", bool), True)
-        #)
+        (60201, "RunScript({addonId},goToChannel,{channelId})"),
+        (
+            60202,
+            "RunScript({addonId},addChannelToFeed,{channelId},{channel})",
+            (("home.feed", bool), True)
+        )
     ]
 
     __thumbnail__ = "DefaultPlaylist.png"
 
     @property
     def _infos_(self):
-        return " • ".join(list(self.__infos__("views", "videos")))
+        return " • ".join(list(self.__infos__("viewsText", "videosText")))
 
     @property
     def infos(self):
-        return "\n".join(list(self.__infos__("_infos_", "updated")))
+        return "\n".join(list(self.__infos__("_infos_", "updatedText")))
 
     @property
     def plot(self):

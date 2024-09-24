@@ -64,20 +64,24 @@ class IVVideo(Dict):
             manifestType = "mpd"
         thumbnails = VideoThumbnails(item.get("videoThumbnails"))
         # published
-        stamp, published = item.get("published", 0), item.get("publishedText")
-        if stamp:
-            stamp = __date__(stamp)
-            published = f"{published} ({stamp})" if published else stamp
+        published, publishedText = (
+            item.get("published", 0), item.get("publishedText")
+        )
         if published:
-            published = localizedString(50101).format(published)
+            published = f"{__date__(published)}"
+            publishedText = (
+                f"{publishedText} ({published})" if publishedText else published
+            )
+        if publishedText:
+            publishedText = localizedString(50101).format(publishedText)
         # views
-        viewCount, views = item.get("viewCount", 0), item.get("viewCountText")
-        if not views and viewCount:
-            views = localizedString(50102).format(viewCount)
+        views, viewsText = item.get("viewCount", 0), item.get("viewCountText")
+        if not viewsText and views:
+            viewsText = localizedString(50102).format(views)
         # likes
-        likeCount, likes = item.get("likeCount", 0), item.get("likeCountText")
-        if not likes and likeCount:
-            likes = localizedString(50103).format(likeCount)
+        likes, likesText = item.get("likeCount", 0), item.get("likeCountText")
+        if not likesText and likes:
+            likesText = localizedString(50103).format(likes)
         super(IVVideo, self).__init__(
             type="video",
             videoId=item["videoId"],
@@ -91,10 +95,24 @@ class IVVideo(Dict):
             manifestType=manifestType,
             thumbnail=getattr(thumbnails, "high", None),
             published=published,
+            publishedText=publishedText,
             views=views,
-            likes=likes
+            viewsText=viewsText,
+            likes=likes,
+            likesText=likesText
         )
         self.__expires__ = (int(time()) + expires)
+
+
+# ------------------------------------------------------------------------------
+# IVVideos
+
+class IVVideos(list):
+
+    def __init__(self, videos):
+        super(IVVideos, self).__init__(
+            IVVideo(video) for video in videos if video
+        )
 
 
 # ------------------------------------------------------------------------------
@@ -103,27 +121,21 @@ class IVVideo(Dict):
 class YtDlpVideo(Dict):
 
     def __init__(self, item):
-
-        if (published := item["timestamp"]):
-            publishedDate = f"{__date__(published)}"
-            publishedText = localizedString(50101).format(
-                f"{publishedText} ({publishedDate})"
-                if (publishedText := item.get("publishedText"))
-                else publishedDate
-            )
+        # published
+        if ((published := item.get("timestamp")) is not None):
+            publishedText = localizedString(50101).format(__date__(published))
         else:
-            publishedDate = publishedText = None
-
-        if (views := item["view_count"]):
+            publishedText = None
+        # views
+        if ((views := item.get("view_count")) is not None):
             viewsText = localizedString(50102).format(views)
         else:
             viewsText = None
-
-        if (likes := item["like_count"]):
+        # likes
+        if ((likes := item.get("like_count")) is not None):
             likesText = localizedString(50103).format(likes)
         else:
             likesText = None
-
         super(YtDlpVideo, self).__init__(
             type="video",
             videoId=item["video_id"],
@@ -136,14 +148,71 @@ class YtDlpVideo(Dict):
             url=item["url"],
             manifestType=item["manifestType"],
             thumbnail=item["thumbnail"],
-            likes=likes,
-            likesText=likesText,
+            published=published,
+            publishedText=publishedText,
             views=views,
             viewsText=viewsText,
-            published=published,
-            publishedDate=publishedDate,
-            publishedText=publishedText
+            likes=likes,
+            likesText=likesText
         )
+
+
+# ------------------------------------------------------------------------------
+# IVPlaylist
+
+class IVPlaylist(Dict):
+
+    def __init__(self, item, expires=1800):
+        thumbnail = (
+            __url__(url) if (url := item.get("playlistThumbnail")) else None
+        )
+        # views
+        views, viewsText = item.get("viewCount", 0), item.get("viewCountText")
+        if not viewsText and views:
+            viewsText = localizedString(50102).format(views)
+        # videos
+        videos, videosText = (
+            item.get("videoCount", 0), item.get("videoCountText")
+        )
+        if not videosText and videos:
+            videosText = localizedString(50301).format(videos)
+        # updated
+        updated, updatedText = (
+            item.get("updated", 0), item.get("updatedText")
+        )
+        if updated:
+            updated = f"{__date__(updated)}"
+            updatedText = (
+                f"{updatedText} ({updated})" if updatedText else updated
+            )
+        if updatedText:
+            updatedText = localizedString(50302).format(updatedText)
+        super(IVPlaylist, self).__init__(
+            type="playlist",
+            playlistId=item["playlistId"],
+            title=item["title"],
+            description=(item.get("description") or None),
+            channelId=item["authorId"],
+            channel=item["author"],
+            thumbnail=thumbnail,
+            views=views,
+            viewsText=viewsText,
+            videos=videos,
+            videosText=videosText,
+            updated=updated,
+            updatedText=updatedText
+        )
+        self.__expires__ = (int(time()) + expires)
+
+
+# ------------------------------------------------------------------------------
+# IVPlaylistVideos
+
+class IVPlaylistVideos(IVPlaylist):
+
+    def __init__(self, item):
+        super(IVPlaylistVideos, self).__init__(item)
+        self["items"] = IVVideos(item["videos"])
 
 
 # ------------------------------------------------------------------------------
@@ -164,97 +233,32 @@ class IVChannel(Dict):
         "shorts": {"title": 31300}
     }
 
-    def __init__(self, item):
+    def __init__(self, item, expires=1800):
         thumbnails = ChannelThumbnails(item.get("authorThumbnails"))
-
-        subs, subsText = item.get("subCount", 0), item.get("subCountText")
-        if not subsText and subs:
-            subsText = localizedString(50201).format(subs)
-
+        # subscribers
+        subscribers, subscribersText = (
+            item.get("subCount", 0), item.get("subCountText")
+        )
+        if not subscribersText and subscribers:
+            subscribersText = localizedString(50201).format(subscribers)
         super(IVChannel, self).__init__(
             type="channel",
             channelId=item["authorId"],
             channel=item["author"],
             description=(item.get("description") or None),
             thumbnail=getattr(thumbnails, "512", None),
-            subs=subs,
-            subsText=subsText,
+            subscribers=subscribers,
+            subscribersText=subscribersText,
             tabs=[
                 dict(tab, action=action)
                 for action, tab in self.__tabs__.items()
                 if action in item.get("tabs", [])
             ]
         )
+        self.__expires__ = (int(time()) + expires)
 
     def __repr__(self):
         return f"IVChannel({self['channel']})"
-
-
-# ------------------------------------------------------------------------------
-# IVPlaylist
-
-class IVPlaylist(Dict):
-
-    def __init__(self, item):
-        thumbnail = (
-            __url__(url) if (url := item.get("playlistThumbnail")) else None
-        )
-
-        views, viewsText = item.get("viewCount", 0), item.get("viewCountText")
-        if not viewsText and views:
-            viewsText = localizedString(50102).format(views)
-
-        videos, videosText = item.get("videoCount", 0), item.get("videoCountText")
-        if not videosText and videos:
-            videosText = localizedString(50301).format(videos)
-
-        if (updated := item.get("updated")):
-            updatedDate = f"{__date__(updated)}"
-            updatedText = localizedString(50302).format(
-                f"{updatedText} ({updatedDate})"
-                if (updatedText := item.get("updatedText"))
-                else updatedDate
-            )
-        else:
-            updatedDate = updatedText = None
-
-        super(IVPlaylist, self).__init__(
-            type="playlist",
-            playlistId=item["playlistId"],
-            title=item["title"],
-            description=(item.get("description") or None),
-            channelId=item["authorId"],
-            channel=item["author"],
-            thumbnail=thumbnail,
-            views=views,
-            viewsText=viewsText,
-            videos=videos,
-            videosText=videosText,
-            updated=updated,
-            updatedDate=updatedDate,
-            updatedText=updatedText
-        )
-
-
-# ------------------------------------------------------------------------------
-# IVVideos
-
-class IVVideos(list):
-
-    def __init__(self, videos):
-        super(IVVideos, self).__init__(
-            IVVideo(video) for video in videos if video
-        )
-
-
-# ------------------------------------------------------------------------------
-# IVPlaylistVideos
-
-class IVPlaylistVideos(IVPlaylist):
-
-    def __init__(self, item):
-        super(IVPlaylistVideos, self).__init__(item)
-        self["videos"] = [IVVideo(video) for video in item["videos"] if video]
 
 
 # ------------------------------------------------------------------------------
@@ -266,7 +270,7 @@ class IVChannelVideos(dict):
         super(IVChannelVideos, self).__init__(
             channel=channel,
             continuation=items.get("continuation"),
-            videos=[IVVideo(video) for video in items["videos"] if video]
+            items=IVVideos(items["videos"])
         )
 
 
@@ -279,7 +283,7 @@ class IVChannelPlaylists(dict):
         super(IVChannelPlaylists, self).__init__(
             channel=channel,
             continuation=items.get("continuation"),
-            playlists=[
+            items=[
                 IVPlaylist(playlist)
                 for playlist in items["playlists"] if playlist
             ]

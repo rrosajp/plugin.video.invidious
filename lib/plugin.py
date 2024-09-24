@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from time import time
-
 from sys import argv
+from time import time
 from urllib.parse import urlencode
 
 from inputstreamhelper import Helper
@@ -85,7 +84,44 @@ class IVPlugin(Plugin):
 
     # channel ------------------------------------------------------------------
 
+    @action()
+    def channel(self, **kwargs):
+        if (
+            (
+                (not ("continuation" in kwargs)) and
+                (tabs := self.__client__.tabs(**kwargs)) and
+                (not self.addItems(tabs))
+            ) or
+            ((items := self.__client__.tab("videos", **kwargs)) is None)
+        ):
+            return False
+        return self.addDirectory(items, **kwargs)
+
+    @action(category=31100)
+    def playlists(self, **kwargs):
+        if ((items := self.__client__.playlists(**kwargs)) is not None):
+            return self.addDirectory(items, **kwargs)
+        return False
+
+    @action(category=31200)
+    def streams(self, **kwargs):
+        if ((items := self.__client__.tab("streams", **kwargs)) is not None):
+            return self.addDirectory(items, **kwargs)
+        return False
+
+    @action(category=31300)
+    def shorts(self, **kwargs):
+        if ((items := self.__client__.tab("shorts", **kwargs)) is not None):
+            return self.addDirectory(items, **kwargs)
+        return False
+
     # playlist -----------------------------------------------------------------
+
+    @action()
+    def playlist(self, index=50, **kwargs):
+        if ((items := self.__client__.playlist(index=index, **kwargs)) is not None):
+            return self.addDirectory(items, index=index, **kwargs)
+        return False
 
     # home ---------------------------------------------------------------------
 
@@ -97,17 +133,71 @@ class IVPlugin(Plugin):
 
     # feed ---------------------------------------------------------------------
 
+    @action(category=30100, cacheToDisc=False)
+    def feed(self, **kwargs):
+        t = time()
+        try:
+            if (
+                (
+                    (int(kwargs.get("page", 1)) == 1) and
+                    (not self.addChannelsItem())
+                ) or
+                ((items := self.__client__.feed(**kwargs)) is None)
+            ):
+                return False
+            return self.addDirectory(items, **kwargs)
+        finally:
+            self.logger.info(f"feed() took: {time() - t} seconds")
+
+
+    @action(category=30111)
+    def channels(self, **kwargs):
+        return self.addDirectory(self.__client__.channels(), **kwargs)
+
     # popular ------------------------------------------------------------------
 
     @action(category=30200)
     def popular(self, **kwargs):
-        if (items := self.__client__.popular(**kwargs)):
+        if ((items := self.__client__.popular(**kwargs)) is not None):
             return self.addDirectory(items, **kwargs)
         return False
 
     # trending -----------------------------------------------------------------
 
+    @action(category=30300)
+    def trending(self, **kwargs):
+        if (
+            (
+                (not "type" in kwargs) and
+                (not self.addItems(self.__client__.trending(folders=True)))
+            ) or
+            ((items := self.__client__.trending(**kwargs)) is None)
+        ):
+            return False
+        return self.addDirectory(items, **kwargs)
+
     # search -------------------------------------------------------------------
+
+    def __query__(self):
+        return self.__client__.query()
+
+    def __history__(self):
+        if self.addNewQueryItem():
+            return self.addDirectory(self.__client__.history())
+        return False
+
+    def __search__(self, query):
+        if ((results := self.__client__.search(query)) is not None):
+            return self.addDirectory(results, **query)
+        return False
+
+    @action(category=137)
+    def search(self, **kwargs):
+        if kwargs:
+            if (query := (self.__query__() if "new" in kwargs else kwargs)):
+                return self.__search__(query)
+            return False
+        return self.__history__()
 
     # settings -----------------------------------------------------------------
 

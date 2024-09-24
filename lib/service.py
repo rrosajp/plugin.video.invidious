@@ -20,11 +20,18 @@ class IVService(Service):
         makeProfile()
         self.__folders__ = {}
         self.__instance__ = IVInstance(self.logger)
+        self.__search__ = IVSearch(self.logger, self.__instance__)
+        self.__feed__ = IVFeed(self.logger, self.__instance__)
 
     def __setup__(self):
+        self.__folders__.clear()
         self.__instance__.__setup__()
+        self.__search__.__setup__()
+        self.__feed__.__setup__()
 
     def __stop__(self):
+        self.__feed__.__stop__()
+        self.__search__.__stop__()
         self.__instance__.__stop__()
         self.__folders__.clear()
         self.logger.info("stopped")
@@ -39,10 +46,6 @@ class IVService(Service):
         self.__setup__()
         containerRefresh()
 
-    # channel ------------------------------------------------------------------
-
-    # playlist -----------------------------------------------------------------
-
     # folders ------------------------------------------------------------------
 
     @public
@@ -53,16 +56,12 @@ class IVService(Service):
             if (not (setting := folder["setting"])) or getSetting(setting, bool)
         ]
 
-    # popular ------------------------------------------------------------------
-
-    # trending -----------------------------------------------------------------
-
 
 # __main__ ---------------------------------------------------------------------
 
 if __name__ == "__main__":
     (service := IVService()).start(
         instance=service.__instance__,
-        #search=service.__search__,
-        #feed=service.__feed__
+        search=service.__search__,
+        feed=service.__feed__
     )

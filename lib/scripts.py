@@ -34,6 +34,9 @@ def goToChannel(channelId):
 def selectInstance():
     return Client().instance.selectInstance()
 
+def selectLocale():
+    return Client().instance.selectLocale()
+
 def selectRegion():
     return Client().instance.selectRegion()
 
@@ -72,6 +75,7 @@ __scripts__ = {
     "playWithYouTube": playWithYouTube,
     "goToChannel": goToChannel,
     "selectInstance": selectInstance,
+    "selectLocale": selectLocale,
     "selectRegion": selectRegion,
     "addChannelToFeed": addChannelToFeed,
     "removeChannelFromFeed": removeChannelFromFeed,

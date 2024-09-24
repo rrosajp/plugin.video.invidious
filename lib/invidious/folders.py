@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
+from nuttig import localizedString
+
+
 # folders ----------------------------------------------------------------------
 
 __folders__ = {
@@ -24,19 +27,28 @@ __folders__ = {
                     "action": "trending",
                     "title": 30310,
                     "art": "DefaultAddonMusic.png",
-                    "kwargs": {"type": "music"}
+                    "kwargs": {
+                        "type": "music",
+                        "category": localizedString(30310)
+                    }
                 },
                 "gaming": {
                     "action": "trending",
                     "title": 30320,
                     "art": "DefaultAddonGame.png",
-                    "kwargs": {"type": "gaming"}
+                    "kwargs": {
+                        "type": "gaming",
+                        "category": localizedString(30320)
+                    }
                 },
                 "movies": {
                     "action": "trending",
                     "title": 30330,
                     "art": "DefaultMovies.png",
-                    "kwargs": {"type": "movies"}
+                    "kwargs": {
+                        "type": "movies",
+                        "category": localizedString(30330)
+                    }
                 }
             }
         },

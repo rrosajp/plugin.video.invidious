@@ -108,14 +108,26 @@ msgid "Timeout"
 msgstr ""
 
 msgctxt "#41210"
-msgid "Select your region"
+msgid "Select your locale"
 msgstr ""
 
 msgctxt "#41211"
-msgid "Region"
+msgid "Locale"
 msgstr ""
 
 msgctxt "#41212"
+msgid "Locales"
+msgstr ""
+
+msgctxt "#41220"
+msgid "Select your region"
+msgstr ""
+
+msgctxt "#41221"
+msgid "Region"
+msgstr ""
+
+msgctxt "#41222"
 msgid "Regions"
 msgstr ""
 

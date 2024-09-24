@@ -2,16 +2,21 @@
 
 
 from functools import wraps
+from time import time
 
 from requests import HTTPError
 
 from iapc import public
 from nuttig import (
-    buildUrl, getSetting, localizedString, selectDialog, setSetting
+    buildUrl, getSetting, maybeLocalize, selectDialog, setSetting
 )
 
-from invidious.extract import IVVideo, IVVideos
-from invidious.regional import regions
+from invidious.extract import (
+    IVChannel, IVChannelVideos, IVChannelPlaylists,
+    IVPlaylist, IVPlaylistVideos,
+    IVResults, IVVideo, IVVideos
+)
+from invidious.regional import locales, regions
 from invidious.session import IVSession
 from invidious.ytdlp import YtDlp
 
@@ -43,8 +48,7 @@ class IVInstance(object):
 
     __headers__ = {
         "User-Agent": "Mozilla/5.0",
-        "Accept-Language": "*",
-        "Accept-Encoding": "gzip, deflate, br, zstd"
+        "Accept-Language": "*"
     }
 
     def __init__(self, logger):
@@ -58,20 +62,21 @@ class IVInstance(object):
             self.__url__ = buildUrl(uri, getSetting("instance.path", str))
         else:
             self.__url__ = None
-        self.logger.info(f"Url: {self.__url__}")
-
-        self.__locale__ = "en-US"
-        #getSetting("regional.locale", str)
-        #self.logger.info(
-        #    f"{localizedString(41221)}: "
-        #    f"({self.__locale__})\\t{getSetting('regional.locale.text', str)}"
-
+        self.__locale__ = getSetting("regional.locale", str)
         self.__region__ = getSetting("regional.region", str)
-        self.logger.info(
-            f"{localizedString(41211)}: "
-            f"({self.__region__})\\t{getSetting('regional.region.text', str)}"
+        settings = (
+            ("Url", self.__url__),
+            (
+                41211,
+                f"({self.__locale__}) {getSetting('regional.locale.text', str)}"
+            ),
+            (
+                41221,
+                f"({self.__region__}) {getSetting('regional.region.text', str)}"
+            )
         )
-
+        for label, setting in settings:
+            self.logger.info(f"{maybeLocalize(label)}: {setting}")
         self.__session__.__setup__()
         self.__ytdlp__.__setup__()
         self.__cache__.clear()
@@ -115,32 +120,41 @@ class IVInstance(object):
 
     # region -------------------------------------------------------------------
 
-    @public
-    def selectRegion(self):
-        region = getSetting("regional.region", str)
-        keys = list(regions.keys())
-        values = list(regions.values())
-        preselect = keys.index(region) if region in regions else -1
+    def __select__(self, ordered, setting, heading):
+        keys = list(ordered.keys())
+        values = list(ordered.values())
         if (
             (
                 index := selectDialog(
-                    [f"({k})\t{v}" for k, v in regions.items()],
-                    heading=41212,
-                    preselect=preselect
+                    [f"({k}) {v}" for k, v in ordered.items()],
+                    preselect=(
+                        keys.index(current)
+                        if (current := getSetting(setting, str)) in ordered
+                        else -1
+                    ),
+                    heading=heading
                 )
             ) > -1
         ):
-            setSetting("regional.region", keys[index], str)
-            setSetting("regional.region.text", values[index], str)
+            setSetting(setting, keys[index], str)
+            setSetting(f"{setting}.text", values[index], str)
+
+    @public
+    def selectLocale(self):
+        self.__select__(locales, "regional.locale", 41212)
+
+    @public
+    def selectRegion(self):
+        self.__select__(regions, "regional.region", 41222)
 
     # --------------------------------------------------------------------------
 
     def __regional__(self, regional, kwargs):
+        kwargs["hl"] = self.__locale__
         if regional:
             kwargs["region"] = self.__region__
         elif "region" in kwargs:
             del kwargs["region"]
-        kwargs["hl"] = self.__locale__
 
     __paths__ = {
         "video": "videos/{}",
@@ -175,6 +189,17 @@ class IVInstance(object):
     def __video__(self, videoId):
         return IVVideo(self.__get__("video", videoId))
 
+    @cached("channels")
+    def __channel__(self, channelId):
+        return IVChannel(self.__get__("channel", channelId))
+
+    def __get_playlist__(self, playlistId, **kwargs):
+        return self.__get__("playlist", playlistId, regional=False, **kwargs)
+
+    @cached("playlists")
+    def __playlist__(self, playlistId, **kwargs):
+        return IVPlaylist(self.__get_playlist__(playlistId, **kwargs))
+
     # video --------------------------------------------------------------------
 
     @public
@@ -185,9 +210,77 @@ class IVInstance(object):
             return self.__video__(videoId)
         self.logger.error(f"Invalid videoId: {videoId}", notify=True)
 
-    # popular ------------------------------------------------------------------
+    # channel ------------------------------------------------------------------
+
+    def channel(self, **kwargs):
+        if (channelId := kwargs.pop("channelId", None)):
+            return self.__channel__(channelId)
+        self.logger.error(f"Invalid channelId: {channelId}", notify=True)
+
+    @public
+    def tabs(self, **kwargs):
+        if (channelId := kwargs.pop("channelId", None)):
+            return self.__channel__(channelId)["tabs"]
+        self.logger.error(f"Invalid channelId: {channelId}", notify=True)
+
+    def __tab__(self, channelId, key, **kwargs):
+        return (
+            self.__channel__(channelId)["channel"],
+            self.__get__(key, channelId, **kwargs)
+        )
+
+    @public
+    def tab(self, key, **kwargs):
+        if (channelId := kwargs.pop("channelId", None)):
+            return IVChannelVideos(*self.__tab__(channelId, key, **kwargs))
+        self.logger.error(f"Invalid channelId: {channelId}", notify=True)
+
+    @public
+    def playlists(self, **kwargs):
+        if (channelId := kwargs.pop("channelId", None)):
+            return IVChannelPlaylists(
+                *self.__tab__(channelId, "playlists", **kwargs)
+            )
+        self.logger.error(f"Invalid channelId: {channelId}", notify=True)
+
+    # playlist -----------------------------------------------------------------
+
+    @public
+    def playlist(self, **kwargs):
+        if (playlistId := kwargs.pop("playlistId", None)):
+            return IVPlaylistVideos(self.__get_playlist__(playlistId, **kwargs))
+        self.logger.error(f"Invalid playlistId: {playlistId}", notify=True)
+
+    # feed ---------------------------------------------------------------------
+
+    def __feeds__(self, keys):
+        cache = self.__cache__.setdefault("channels", {})
+        for channel in self.__map_get__("channel", keys):
+            if channel:
+                videos = channel.pop("latestVideos", [])[:15]
+                cache[channel["authorId"]] = IVChannel(channel)
+                yield from (IVVideo(video) for video in videos if video)
+
+    def __channels__(self, keys):
+        return (self.__channel__(key) for key in keys)
+
+    # --------------------------------------------------------------------------
+
+    def __videos__(self, *args, **kwargs):
+        if (videos := self.__get__(*args, **kwargs)):
+            return IVVideos(videos)
 
     @public
     def popular(self, **kwargs):
-        if (videos := self.__get__("popular", regional=False, **kwargs)):
-            return IVVideos(videos)
+        return self.__videos__("popular", regional=False, **kwargs)
+
+    @public
+    def trending(self, **kwargs):
+        return self.__videos__("trending", **kwargs)
+
+    # search -------------------------------------------------------------------
+
+    def search(self, query):
+        if (results := self.__get__("search", **query)):
+            return IVResults(results)
+        return []

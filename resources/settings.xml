@@ -48,20 +48,40 @@
 
             <group id="regional" label="14222">
 
-                <setting id="selectRegion" type="action" label="41210">
+                <setting id="selectLocale" type="action" label="41210">
+                    <level>0</level>
+                    <data>RunScript($ID,selectLocale)</data>
+                    <control type="button" format="action" />
+                </setting>
+
+                <setting id="regional.locale" type="string" label="41211">
+                    <level>0</level>
+                    <default>en-US</default>
+                    <visible>false</visible>
+                    <control type="edit" format="string" />
+                </setting>
+
+                <setting id="regional.locale.text" type="string" label="41211">
+                    <level>0</level>
+                    <default>English (US)</default>
+                    <enable>false</enable>
+                    <control type="edit" format="string" />
+                </setting>
+
+                <setting id="selectRegion" type="action" label="41220">
                     <level>0</level>
                     <data>RunScript($ID,selectRegion)</data>
                     <control type="button" format="action" />
                 </setting>
 
-                <setting id="regional.region" type="string" label="41211">
+                <setting id="regional.region" type="string" label="41221">
                     <level>0</level>
                     <default>US</default>
                     <visible>false</visible>
                     <control type="edit" format="string" />
                 </setting>
 
-                <setting id="regional.region.text" type="string" label="41211">
+                <setting id="regional.region.text" type="string" label="41221">
                     <level>0</level>
                     <default>United States</default>
                     <enable>false</enable>
