@@ -25,7 +25,7 @@ class IVFeed(object):
         self.__videos__ = []
 
     def __setup__(self):
-        pass
+        self.__keys__ = None
 
     def __stop__(self):
         self.__instance__ = None
