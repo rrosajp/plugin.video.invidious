@@ -106,9 +106,8 @@ class IVClient(object):
     def trending(self, folders=False, **kwargs):
         if folders:
             return Folders(self.__client__.folders("trending"))
-        category = kwargs.pop("category", None)
         if (videos := self.__client__.instance.trending(**kwargs)):
-            return Videos(videos, category=category, **kwargs)
+            return Videos(videos, **kwargs)
 
     # search -------------------------------------------------------------------
 
